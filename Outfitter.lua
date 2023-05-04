@@ -4689,7 +4689,7 @@ function Outfitter:Initialize()
 	end
 
 	-- Make sure they're not upgrading with a reloadui when there are new files
-	if tonumber(GetAddOnMetadata("Outfitter", "X-ReloadTag")) ~= 2 then
+	if tonumber(C_AddOns.GetAddOnMetadata("Outfitter", "X-ReloadTag")) ~= 2 then
 		OutfitterMinimapButton:Hide() -- Remove access to Outfitter so more errors don't start coming up
 		OutfitterButtonFrame:Hide()
 		StaticPopup_Show("OUTFITTER_CANT_RELOADUI")
