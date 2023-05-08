@@ -28,6 +28,7 @@ OutfitterPrefix.lua
 
 Libraries/Vanilla-C_Container.lua
 Libraries/Vanilla-C_Minimap.lua
+Libraries/Vanilla-C_AddOns.lua
 
 Libraries/MC2AddonLib/MC2AddonLib.lua
 Libraries/MC2DebugLib/MC2DebugLib.lua
