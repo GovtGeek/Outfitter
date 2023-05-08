@@ -1179,7 +1179,7 @@ Outfitter.cShapeshiftIDInfo = {
 }
 
 function Outfitter:ToggleOutfitterFrame()
-	if self:IsOpen() then
+	if Outfitter:IsOpen() then
 		OutfitterFrame:Hide()
 	else
 		OutfitterFrame:Show()
@@ -4667,6 +4667,37 @@ function Outfitter:FindAndAddItemsToOutfit(pOutfit, pSlotName, pItems, pInventor
 	end
 end
 
+-- Make sure Outfitter opens/closes if GearManager is open/closed
+function Outfitter:EquipmentManagerViewSync()
+	if GearManagerDialog:IsVisible() then
+		OutfitterFrame:Show()
+	else
+		OutfitterFrame:Hide()
+	end
+end
+
+-- Make sure the GearManagerDialog closes if we close 
+function Outfitter:EquipmentManagerClose()
+	GearManagerDialog:Hide()
+end
+
+-- Needs to fix GearManagerDialog too
+function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
+	if value == "1" then -- cvar values are strings
+		-- Hook the GearManagerDialog for open/close
+		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
+
+		-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
+		hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
+
+		GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
+		OutfitterButton:Hide()
+	else
+		OutfitterButton:Show()
+	end
+end
+
 function Outfitter:IsInitialized()
 	return self.Initialized
 end
@@ -4932,6 +4963,12 @@ function Outfitter:Initialize()
 	if MI2_TooltipFrame then
 		self:HookScript(MI2_TooltipFrame, "OnShow", self.GameToolTip_OnShow)
 		self:HookScript(MI2_TooltipFrame, "OnHide", self.GameToolTip_OnHide)
+	end
+
+	-- Check for Equipment Manager availability and adjust Outfitter accordingly
+	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+		self.EventLib:RegisterEvent("CVAR_UPDATE", self.EquipmentManagerAdjust, self)
+		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "USE_EQUIPMENT_MANAGER", C_CVar.GetCVar("equipmentManager"))
 	end
 
 	-- Synchronize with the Equipment Manager
