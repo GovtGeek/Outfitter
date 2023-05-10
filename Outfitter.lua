@@ -62,6 +62,7 @@ Outfitter.CreditPlayersByRealm =
 	},
 	[Outfitter.cContributingDeveloper] =
 	{
+		["GovtGeek"] = 1,
 		["Miv\n\"Restoshaman\"\n<Onslaught>"] = 1,
 		["Dridzt"] = 1,
 		["Bruce Quinton"] = 1,
