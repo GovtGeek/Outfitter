@@ -1,15 +1,15 @@
 ## Interface: 30402
-## Author: Gogo, LemonDrake Updates: GovtGeek
-## X-Credits: Mundocani, Miv
+## Author: GovtGeek
+## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 3.0.4
+## Version: 3.4.2.1
 ## Notes: Automate Gear Set Changes, and Build Gear Sets using Pawn Stat Weights
 ## OptionalDeps: 
 ## RequiredDeps: 
 ## SavedVariablesPerCharacter: gOutfitter_Settings
 ## SavedVariables: gOutfitter_GlobalSettings
 ## X-ReloadTag: 2
-## X-Curse-Project-ID: 356701
+## X-Curse-Project-ID:
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
