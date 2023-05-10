@@ -1,7 +1,6 @@
 --[[----------------------------------------
 Outfitter._FlyoutQuickSlots = {}
 ----------------------------------------
-
 function Outfitter._FlyoutQuickSlots:Construct()
 	for _, vSlotName in ipairs(Outfitter.cSlotNames) do
 		local vSlotButton = _G["Character"..vSlotName]
@@ -10,8 +9,8 @@ function Outfitter._FlyoutQuickSlots:Construct()
 			Outfitter:HookScript(vSlotButton, "PostClick", function (...) self:PostClick(...) end)
 		end
 	end
-	
-	local vFlyoutSettings = PaperDollItemsFrame.flyoutSettings
+
+	local vFlyoutSettings = PaperDollItemsFrame.flyoutSettings or {} -- flyoutSettings are only in live
 	local vOrigGetItemsFunc = vFlyoutSettings.getItemsFunc
 	vFlyoutSettings.getItemsFunc = function (pSlotID, pItemTable, ...)
 		vOrigGetItemsFunc(pSlotID, pItemTable, ...)
@@ -39,13 +38,12 @@ end
 
 function Outfitter._FlyoutQuickSlots:PostClick(pButton, ...)
 	local vSlotItemLink = Outfitter:GetInventorySlotIDLink(pButton.id or pButton:GetID())
-	
+
 	if EquipmentFlyoutFrame:IsVisible() and EquipmentFlyoutFrame.button == pButton then
 		EquipmentFlyoutFrame:Hide()
 
 	-- If there's an item on the cursor after clicking or the slot is empty then open the flyout
-	else
-	if CursorHasItem() or not vSlotItemLink then
+	elseif CursorHasItem() or not vSlotItemLink then
 		pButton.popoutButton.flyoutLocked = true
 		EquipmentFlyout_Show(pButton)
 		EquipmentFlyoutPopoutButton_SetReversed(pButton.popoutButton, true)
