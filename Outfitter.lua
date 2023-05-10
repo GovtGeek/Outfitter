@@ -2355,6 +2355,22 @@ function Outfitter.ItemDropDownMenuFunc(dropdown, menu)
 	local listItem = dropdown:GetParent():GetParent()
 	local outfit = listItem:GetOutfit()
 	Outfitter:AddOutfitMenu(menu, outfit)
+  	Outfitter.SchedulerLib:ScheduleTask(2, Outfitter.ItemDropDownMenuAutoClose, dropdown) --DAC
+end
+
+-- If the menu is not being shown, make sure LibDropdown does what it should
+function Outfitter.ItemDropDownMenuAutoClose(dropdown)
+   local f = GetMouseFocus()
+   local frameName = f:GetName() or ""
+   if frameName == "" and f.GetRoot ~= nil then -- Assume it's a libdropdown frame if the GetRoot function is available
+      frameName = f:GetRoot():GetName() or ""
+   end
+
+   if string.find(frameName, "LibDropdown") then -- is the mouse over a dropdown frame?
+     	Outfitter.SchedulerLib:RescheduleTask(1.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) -- If the frame is a dropdown, reschedule the check
+   else
+      dropdown:ToggleMenu()  -- If the frame is not a dropdown frame, close the dropdown
+   end
 end
 
 function Outfitter.ItemDropDown_Initialize(pFrame)
