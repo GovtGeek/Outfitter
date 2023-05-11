@@ -1,4 +1,4 @@
--- This library has been modified and so I've changed the major name to use an MC suffix. Changes are:
+-- This library has been modified and so I've changed the major name to use an MC suffix.
 local MAJOR = "LibDropdownMC-1.0"
 local MINOR = 3
 
@@ -658,10 +658,11 @@ do
 		b.dataname = k
 		b.refresh = grefresh
 
-		-- Tint with a color (mundocani)
+		--[[ Tint with a color (mundocani)
 		if v.color then
 			b.text:SetTextColor(v.color.r, v.color.g, v.color.b, v.color.a)
 		end
+		--]]
 		return b
 	end
 
