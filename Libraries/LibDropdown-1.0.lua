@@ -1,3 +1,4 @@
+-- This library has been modified and so I've changed the major name to use an MC suffix. Changes are:
 local MAJOR = "LibDropdownMC-1.0"
 local MINOR = 3
 
@@ -378,8 +379,8 @@ do
 	local function click(self)
 		if self.OnClick and self.clickable then
 			self.OnClick(self)
-			--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			PlaySound(856)
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+			--PlaySound(856)
 			if self:IsShown() then
 				self:GetParent():GetRoot():Refresh()
 			end
@@ -560,6 +561,11 @@ function ReleaseFrame(f)
 		openMenu = nil
 	end
 	if f.released then return end
+
+	if f.cleanup then
+		f.cleanup()
+	end
+
 	f.released = true
 	f.data = nil
 	f.dataname = nil
@@ -651,6 +657,11 @@ do
 		b.option = v
 		b.dataname = k
 		b.refresh = grefresh
+
+		-- Tint with a color (mundocani)
+		if v.color then
+			b.text:SetTextColor(v.color.r, v.color.g, v.color.b, v.color.a)
+		end
 		return b
 	end
 
@@ -741,6 +752,15 @@ do
 			else
 				self:Enable()
 			end
+		end
+		if self.data.icon then
+			self.swatch:Show()
+			self.swatch.tex:Hide()
+			self.swatch:SetNormalTexture(self.data.icon)
+		else
+			self.swatch:Hide()
+			self.swatch.tex:Show()
+			self.swatch:SetNormalTexture([[Interface\ChatFrame\ChatFrameColorSwatch]])
 		end
 		return isDisabled
 	end
@@ -849,8 +869,6 @@ do
 				local val = not runHandler(self, "get")
 				runHandler(self, "set", val)
 			end
-			self:GetRoot():Refresh()
-			
 			if self:IsShown() then
 				self:GetRoot():Refresh()
 			end
@@ -890,7 +908,7 @@ do
 			local b = setup(k, v, parent)
 			b.swatch:Show()
 			b.clickable = false
-			 b.refresh = refresh
+			b.refresh = refresh
 			b.OnClick = function(self, r, g, b, a)
 				runHandler(self, "set", r, g, b, a)
 				self:GetRoot():Refresh()
@@ -1011,12 +1029,12 @@ do
 
 	do
 		local sortOptions = function(a, b)
-		if (b.order or 100) > (a.order or 100) then return true
-		elseif (b.order or 100) < (a.order or 100) then return false
-		elseif b.name:lower() > a.name:lower() then return true
-		else return false
+			if (b.order or 100) > (a.order or 100) then return true
+			elseif (b.order or 100) < (a.order or 100) then return false
+			elseif b.name:lower() > a.name:lower() then return true
+			else return false
+			end
 		end
-	end
 
 		function lib:OpenAce3Menu(t, parent)
 			assert(t and type(t) == "table", "Expected table, got "..type(t))

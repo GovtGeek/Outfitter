@@ -1,16 +1,16 @@
-## Interface: 11403
+## Interface: 100100
 ## Author: GovtGeek
+## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
 ## Version: 3.4.2.1
-## Notes: Automate Gear Set Changes, and Build Gear Sets using Pawn Stat Weights
-## OptionalDeps: 
-## RequiredDeps: 
+## Notes: Clothing and weapon management and automated equipment changes
+## OptionalDeps:
+## RequiredDeps:
 ## SavedVariablesPerCharacter: gOutfitter_Settings
 ## SavedVariables: gOutfitter_GlobalSettings
 ## X-ReloadTag: 2
-## X-Curse-Project-ID: 
-## X-Contributors: GovtGeek
+## X-Curse-Project-ID:
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
@@ -25,10 +25,6 @@ Libraries/LibTipHooker-1.1.lua
 Libraries/LibDropdown-1.0.lua
 
 OutfitterPrefix.lua
-
-Libraries/Vanilla-C_Container.lua
-Libraries/Vanilla-C_Minimap.lua
-Libraries/Vanilla-C_AddOns.lua
 
 Libraries/MC2AddonLib/MC2AddonLib.lua
 Libraries/MC2DebugLib/MC2DebugLib.lua
