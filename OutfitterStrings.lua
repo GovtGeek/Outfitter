@@ -195,6 +195,7 @@ Outfitter.cKoreanLocalization = "Korean Localization"
 Outfitter.cContributingDeveloper = "Contributing Developer"
 Outfitter.cTester = "Tester"
 Outfitter.cGuildCreditFormat = "The guild of %s"
+Outfitter.cDragonFlightCompatiblity = "People that REALLY want to see this addon continued"
 
 Outfitter.cOpenOutfitter = "Open Outfitter"
 
