@@ -44,22 +44,22 @@ OutfitterStrings_kr.lua
 OutfitterStrings_ru.lua
 OutfitterStrings_ru.lua
 
-Outfitter.lua
+Mainline/Outfitter.lua
 
-OutfitterOutfits.lua
-OutfitterInventory.lua
-OutfitterEquipment.lua
-OutfitterItemStats.lua
+Mainline/OutfitterOutfits.lua
+Mainline/OutfitterInventory.lua
+Mainline/OutfitterEquipment.lua
+Mainline/OutfitterItemStats.lua
 OutfitterOptimize.lua
 OutfitterUITools.lua
 OutfitterScripting.lua
-OutfitterScriptDialog.lua
+Mainline/OutfitterScriptDialog.lua
 OutfitterQuickSlots.lua
-OutfitterMinimapButton.lua
-OutfitterBar.lua
+Mainline/OutfitterMinimapButton.lua
+Mainline/OutfitterBar.lua
 OutfitterAbout.lua
 
 OutfitterLDB.lua
 
-Outfitter.xml
-OutfitterBar.xml
+Mainline/Outfitter.xml
+Mainline/OutfitterBar.xml
