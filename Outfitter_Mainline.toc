@@ -12,7 +12,7 @@
 ## X-ReloadTag: 2
 ## X-Curse-Project-ID:
 
-Compat.lua
+Mainline/Compat.lua
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
