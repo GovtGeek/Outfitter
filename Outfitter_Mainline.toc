@@ -55,7 +55,7 @@ Mainline/OutfitterItemStats.lua
 OutfitterOptimize.lua
 OutfitterUITools.lua
 OutfitterScripting.lua
-Mainline/OutfitterScriptDialog.lua
+OutfitterScriptDialog.lua
 OutfitterQuickSlots.lua
 OutfitterMinimapButton.lua
 Mainline/OutfitterBar.lua
