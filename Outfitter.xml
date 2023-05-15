@@ -21,7 +21,7 @@
 			</OnClick>
 		</Scripts>
 	</CheckButton>
-	
+
 	<Frame name="OutfitterInputFrameTemplate" hidden="false" virtual="true">
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -132,7 +132,7 @@
 		</Scripts>
 		<FontString inherits="ChatFontNormal"/>
 	</EditBox>
-	
+
 	<Frame name="OutfitterScrollbarTrenchTemplate" virtual="true">
 		<Layers>
 			<Layer level="OVERLAY">
@@ -809,7 +809,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					
+
 					<Frame name="OutfitterOptionsFrame" hidden="true" setAllPoints="true">
 						<Layers>
 							<Layer level="BACKGROUND">
@@ -1006,7 +1006,7 @@
 							</OnLoad>
 						</Scripts>
 					</Frame>
-					
+
 					<Frame name="OutfitterAboutFrame" hidden="true" setAllPoints="true">
 						<Layers>
 							<Layer level="BACKGROUND">
@@ -1345,13 +1345,13 @@
 		<NormalTexture file="Interface\Addons\Outfitter\Textures\MinimapButton"/>
 		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 	</Button>
-	
+
 	<GameTooltip name="OutfitterTooltip" parent="UIParent" hidden="true" inherits="GameTooltipTemplate">
 		<Anchors>
 			<Anchor point="CENTER"/>
 		</Anchors>
 	</GameTooltip>
-	
+
 	<Frame name="OutfitterQuickSlotsTemplate" enableMouse="true" frameStrata="DIALOG" hidden="true" virtual="true">
 	</Frame>
 
@@ -1383,7 +1383,7 @@
 			</OnHide>
 		</Scripts>
 	</Frame>
-	
+
 	<ScrollFrame name="OutfitterScrollableEditBox" virtual="true" enableMouse="true" inherits="UIPanelScrollFrameTemplate, OutfitterInputFrameTemplate">
 		<Layers>
 			<Layer level="BACKGROUND">
@@ -1408,10 +1408,10 @@
 				<Scripts>
 					<OnMouseUp>
 						self.EditBox:SetFocus()
-					</OnMouseUp> 
+					</OnMouseUp>
 					<OnShow>
 						local	vFrameLevel = self:GetParent():GetFrameLevel()
-						
+
 						self:SetFrameLevel(vFrameLevel + 5)
 						self.EditBox:SetFrameLevel(vFrameLevel + 6)
 					</OnShow>
@@ -1429,7 +1429,7 @@
 							</OnLoad>
 							<OnTextChanged>
 								ScrollingEdit_OnTextChanged(self, self:GetParent():GetParent())
-								
+
 								if self.TextChanged then
 									self:TextChanged()
 								end
@@ -1457,7 +1457,7 @@
 			</Frame>
 		</ScrollChild>
 	</ScrollFrame>
-	
+
 	<Button name="OutfitterZoneListButton" virtual="true" inherits="UIPanelButtonTemplate">
 		<Size>
 			<AbsDimension x="150" y="21"/>
@@ -1465,7 +1465,7 @@
 		<Scripts>
 			<OnShow>
 				self:SetText(string.format(Outfitter.cInsertFormat, self.GetTextFunc()))
-				
+
 				self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 				self:RegisterEvent("ZONE_CHANGED_INDOORS")
 				self:RegisterEvent("ZONE_CHANGED")
@@ -1485,7 +1485,7 @@
 			</OnClick>
 		</Scripts>
 	</Button>
-	
+
 	<ScrollFrame name="OutfitterZoneListEditBox" virtual="true" inherits="OutfitterScrollableEditBox">
 		<Frames>
 			<Button name="$parentZoneButton" inherits="OutfitterZoneListButton">
@@ -1504,19 +1504,19 @@
 			</Button>
 		</Frames>
 	</ScrollFrame>
-	
+
 	<Button name="OutfitterScriptTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				local vTab = self:GetParent()
-				
+
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
 				PanelTemplates_Tab_OnClick(self, vTab)
 				vTab:SetPanelIndex(vTab.selectedTab)
 			</OnClick>
 		</Scripts>
 	</Button>
-	
+
 	<Frame name="OutfitterEditScriptDialog" toplevel="true" frameStrata="DIALOG" enableMouse="true"
 		hidden="true" parent="UIParent">
 		<Size>
@@ -1619,7 +1619,7 @@
 							</OnLoad>
 						</Scripts>
 					</ScrollFrame>
-					
+
 					<Frame name="$parentStatus">
 						<Size>
 							<AbsDimension x="400" y="40"/>
@@ -1642,14 +1642,14 @@
 										</Anchor>
 									</Anchors>
 								</FontString>
-								
+
 								<FontString name="$parentMessage" inherits="GameFontNormal" text="" justifyH="LEFT" justifyV="TOP" setAllPoints="true"/>
 							</Layer>
 						</Layers>
 					</Frame>
 				</Frames>
 			</Frame>
-			
+
 			<Button name="$parentCancelButton" inherits="UIPanelButtonTemplate" text="CANCEL">
 				<Size>
 					<AbsDimension x="80" y="21"/>

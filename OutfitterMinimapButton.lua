@@ -1,4 +1,8 @@
 Outfitter._MinimapButton = {}
+local OUTFITTER_MINIMAP_BUTTON_RADIUS = 80
+if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
+	OUTFITTER_MINIMAP_BUTTON_RADIUS = 100
+end
 
 function Outfitter._MinimapButton:Construct()
 	self:RegisterForDrag("LeftButton")
@@ -11,21 +15,21 @@ end
 
 function Outfitter._MinimapButton:MouseDown()
 	-- Remember where the cursor was in case the user drags
-	
+
 	local vCursorX, vCursorY = GetCursorPosition()
-	
+
 	vCursorX = vCursorX / self:GetEffectiveScale()
 	vCursorY = vCursorY / self:GetEffectiveScale()
-	
+
 	OutfitterMinimapButton.CursorStartX = vCursorX
 	OutfitterMinimapButton.CursorStartY = vCursorY
-	
+
 	local vCenterX, vCenterY = OutfitterMinimapButton:GetCenter()
 	local vMinimapCenterX, vMinimapCenterY = Minimap:GetCenter()
-	
+
 	OutfitterMinimapButton.CenterStartX = vCenterX - vMinimapCenterX
 	OutfitterMinimapButton.CenterStartY = vCenterY - vMinimapCenterY
-	
+
 	OutfitterMinimapButton.EnableFreeDrag = IsModifierKeyDown()
 end
 
@@ -39,27 +43,27 @@ end
 
 function Outfitter._MinimapButton:UpdateDragPosition()
 	-- Remember where the cursor was in case the user drags
-	
+
 	local vCursorX, vCursorY = GetCursorPosition()
-	
+
 	vCursorX = vCursorX / self:GetEffectiveScale()
 	vCursorY = vCursorY / self:GetEffectiveScale()
-	
+
 	local vCursorDeltaX = vCursorX - OutfitterMinimapButton.CursorStartX
 	local vCursorDeltaY = vCursorY - OutfitterMinimapButton.CursorStartY
-	
+
 	--
-	
+
 	local vCenterX = OutfitterMinimapButton.CenterStartX + vCursorDeltaX
 	local vCenterY = OutfitterMinimapButton.CenterStartY + vCursorDeltaY
-	
+
 	if OutfitterMinimapButton.EnableFreeDrag then
 		self:SetPosition(vCenterX, vCenterY)
 	else
 		-- Calculate the angle and set the new position
-		
+
 		local vAngle = math.atan2(vCenterX, vCenterY)
-		
+
 		self:SetPositionAngle(vAngle)
 	end
 end
@@ -69,9 +73,9 @@ function Outfitter:RestrictAngle(pAngle, pRestrictStart, pRestrictEnd)
 	or pAngle >= pRestrictEnd then
 		return pAngle
 	end
-	
+
 	local vDistance = (pAngle - pRestrictStart) / (pRestrictEnd - pRestrictStart)
-	
+
 	if vDistance > 0.5 then
 		return pRestrictEnd
 	else
@@ -83,18 +87,18 @@ function Outfitter._MinimapButton:SetPosition(pX, pY)
 	gOutfitter_Settings.Options.MinimapButtonAngle = nil
 	gOutfitter_Settings.Options.MinimapButtonX = pX
 	gOutfitter_Settings.Options.MinimapButtonY = pY
-	
+
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", pX, pY)
 end
 
 function Outfitter._MinimapButton:SetPositionAngle(pAngle)
 	local vAngle = pAngle
-	
+
 	-- Restrict the angle from going over the date/time icon or the zoom in/out icons
-	--[[
+	--[[--
 	local vRestrictedStartAngle = nil
 	local vRestrictedEndAngle = nil
-	
+
 	if GameTimeFrame:IsVisible() then
 		if MinimapZoomIn:IsVisible()
 		or MinimapZoomOut:IsVisible() then
@@ -102,26 +106,26 @@ function Outfitter._MinimapButton:SetPositionAngle(pAngle)
 		else
 			vAngle = Outfitter:RestrictAngle(vAngle, 0.4302272732931596, 1.720531504573905)
 		end
-		
+
 	elseif MinimapZoomIn:IsVisible()
 	or MinimapZoomOut:IsVisible() then
 		vAngle = Outfitter:RestrictAngle(vAngle, 1.720531504573905, 2.930420793963121)
 	end
-	
+
 	-- Restrict it from the tracking icon area
-	
+
 	vAngle = Outfitter:RestrictAngle(vAngle, -1.290357134304173, -0.4918423429923585)
-	]]--
-	
+	--]]--
+
 	--
-	
-	local vRadius = 80
-	
-	local vCenterX = math.sin(vAngle) * vRadius
-	local vCenterY = math.cos(vAngle) * vRadius
-	
+
+	--local vRadius = 80
+
+	local vCenterX = math.sin(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
+	local vCenterY = math.cos(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
+
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
-	
+
 	gOutfitter_Settings.Options.MinimapButtonAngle = vAngle
 end
 
@@ -130,7 +134,7 @@ function Outfitter:GetMinimapDropdownItems(items)
 	if not self.Initialized then
 		return
 	end
-	
+
 	-- Add controls for the addon
 	items:AddCategoryTitle(self.cTitleVersion)
 	items:AddFunction(self.cOpenOutfitter, function ()
@@ -142,7 +146,7 @@ function Outfitter:GetMinimapDropdownItems(items)
 		end, function (menu, value)
 			self:SetAutoSwitch(self.Settings.Options.DisableAutoSwitch)
 		end)
-	
+
 	-- Add the outfits
 	self:GetMinimapOutfitItems(items)
 end
@@ -152,37 +156,37 @@ function Outfitter:GetMinimapOutfitItems(items)
 	if not self.Initialized then
 		return
 	end
-	
+
 	--
 	local inventoryCache = self:GetInventoryCache()
 	local categoryOrder = self:GetCategoryOrder()
-		
+
 	for _, categoryID in ipairs(categoryOrder) do
 		local categoryName = self["c"..categoryID.."Outfits"]
 		local outfits = self:GetOutfitsByCategoryID(categoryID)
 
 		if self:HasVisibleOutfits(outfits) then
 			items:AddCategoryTitle(categoryName)
-			
+
 			for vIndex, outfit in ipairs(outfits) do
 				if self:OutfitIsVisible(outfit) then
 					local wearingOutfit = Outfitter:WearingOutfit(outfit)
 					local missingItems, bankedItems = inventoryCache:GetMissingItems(outfit)
 					local itemColor = nil
-					
+
 					if missingItems then
 						itemColor = RED_FONT_COLOR
 					elseif bankedItems then
 						itemColor = Outfitter.BANKED_FONT_COLOR
 					end
-					
+
 					items:AddToggleWithIcon(outfit:GetName(), self.OutfitBar:GetOutfitTexture(outfit), itemColor,
 						function ()
 							return wearingOutfit
 						end, function (menu, value)
 							local categoryID = outfit.CategoryID
 							local doToggle = categoryID ~= "Complete"
-		
+
 							if IsModifierKeyDown() then
 								self:AskSetCurrent(outfit)
 							elseif doToggle
@@ -223,7 +227,7 @@ function Outfitter._MinimapButton:ShowMenu()
 
 	-- Create the items
 	local items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
-		
+
 		-- Close the menu after a short delay when a menu item is selected
 		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
 			self:HideMenu()
