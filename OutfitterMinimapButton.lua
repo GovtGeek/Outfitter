@@ -1,4 +1,5 @@
 Outfitter._MinimapButton = {}
+local OUTFITTER_MINIMAP_BUTTON_RADIUS = 80
 if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
 	OUTFITTER_MINIMAP_BUTTON_RADIUS = 100
 end
@@ -94,7 +95,7 @@ function Outfitter._MinimapButton:SetPositionAngle(pAngle)
 	local vAngle = pAngle
 
 	-- Restrict the angle from going over the date/time icon or the zoom in/out icons
-	--[[
+	--[[--
 	local vRestrictedStartAngle = nil
 	local vRestrictedEndAngle = nil
 
@@ -114,14 +115,12 @@ function Outfitter._MinimapButton:SetPositionAngle(pAngle)
 	-- Restrict it from the tracking icon area
 
 	vAngle = Outfitter:RestrictAngle(vAngle, -1.290357134304173, -0.4918423429923585)
-	]]--
+	--]]--
 
-	--
+	--local vRadius = 80
 
-	local vRadius = 80
-
-	local vCenterX = math.sin(vAngle) * vRadius
-	local vCenterY = math.cos(vAngle) * vRadius
+	local vCenterX = math.sin(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
+	local vCenterY = math.cos(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
 
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
 

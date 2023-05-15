@@ -109,6 +109,8 @@ local function InitializeFrame(frame)
 	if (frame:GetEffectiveScale() ~= GameTooltip:GetEffectiveScale()) then -- consider applied SetIgnoreParentScale() on GameTooltip regarding scaling of the frame
 		frame:SetScale(frame:GetScale() * GameTooltip:GetEffectiveScale() / frame:GetEffectiveScale())
 	end
+	--frame:SetBackdrop(BACKDROP_DARK_DIALOG_32_32) -- keep for nostalgia (the original thick gray border for a dialog)
+
 end
 
 local editBoxCount = 1

@@ -2352,25 +2352,31 @@ function Outfitter:AddScriptCategorySubmenu(menu, category, get, set)
 		end)
 end
 
+--TODO Figure out the RIGHT way to create the menu
 function Outfitter.ItemDropDownMenuFunc(dropdown, menu)
 	local listItem = dropdown:GetParent():GetParent()
 	local outfit = listItem:GetOutfit()
-	Outfitter:AddOutfitMenu(menu, outfit)
-  	Outfitter.SchedulerLib:ScheduleTask(2, Outfitter.ItemDropDownMenuAutoClose, dropdown) --DAC
+	if outfit then
+		Outfitter:AddOutfitMenu(menu, outfit)
+	  	Outfitter.SchedulerLib:ScheduleTask(1.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) --DAC
+	end
 end
 
+-- TODO This is all kinds of odd figure out the RIGHT way to close the dropdown menus
 -- If the menu is not being shown, make sure LibDropdown does what it should
 function Outfitter.ItemDropDownMenuAutoClose(dropdown)
    local f = GetMouseFocus()
    local frameName = f:GetName() or ""
    if frameName == "" and f.GetRoot ~= nil then -- Assume it's a libdropdown frame if the GetRoot function is available
-      frameName = f:GetRoot():GetName() or ""
+		frameName = f:GetRoot():GetName() or ""
    end
-
    if string.find(frameName, "LibDropdown") then -- is the mouse over a dropdown frame?
-     	Outfitter.SchedulerLib:RescheduleTask(1.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) -- If the frame is a dropdown, reschedule the check
+     	Outfitter.SchedulerLib:RescheduleTask(.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) -- If the frame is a dropdown, reschedule the check
    else
-      dropdown:ToggleMenu()  -- If the frame is not a dropdown frame, close the dropdown
+		-- best way so far is using dropdown:ToggleMenu
+		dropdown:ToggleMenu()  -- If the frame is not a dropdown frame, close the dropdown
+		-- This SHOULD be the way we close the menu
+		--self:HideOutfitMenu()
    end
 end
 
@@ -2645,7 +2651,6 @@ function Outfitter:HideOutfitMenu()
 	if not self.outfitMenu then
 		return
 	end
-
 	self.outfitMenu:Hide()
 end
 
@@ -4693,7 +4698,7 @@ function Outfitter:EquipmentManagerViewSync()
 	end
 end
 
--- Make sure the GearManagerDialog closes if we close 
+-- Make sure the GearManagerDialog closes if we close
 function Outfitter:EquipmentManagerClose()
 	GearManagerDialog:Hide()
 end
