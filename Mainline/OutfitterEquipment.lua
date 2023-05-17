@@ -682,7 +682,7 @@ function Outfitter:PickupItemLocation(pItemLocation)
 		if CT_oldPickupContainerItem then
 			CT_oldPickupContainerItem(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 		else
-			OutfitterAPI:PickupContainerItem(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
+			C_Container:PickupContainerItem(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 		end
 	elseif pItemLocation.SlotName then
 		PickupInventoryItem(self.cSlotIDs[pItemLocation.SlotName])

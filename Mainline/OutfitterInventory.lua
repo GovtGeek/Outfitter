@@ -64,7 +64,7 @@ function Outfitter:InventorySlotIsEmpty(pInventorySlot)
 end
 
 function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
-	local itemLink = OutfitterAPI:GetContainerItemLink(bagIndex, slotIndex)
+	local itemLink = C_Container.GetContainerItemLink(bagIndex, slotIndex)
 	if not itemLink then
 		return
 	end
@@ -76,7 +76,7 @@ function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
 
 	local location = ItemLocation:CreateFromBagAndSlot(bagIndex, slotIndex)
 
-	itemInfo.Texture = OutfitterAPI:GetContainerItemInfo(bagIndex, slotIndex)
+	itemInfo.Texture = C_Container.GetContainerItemInfo(bagIndex, slotIndex)
 	-- itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = GetContainerItemGems(bagIndex, slotIndex)
 	itemInfo.AzeriteCodes = self:GetAzeriteCodesForLocation(location)
 	itemInfo.Location = {BagIndex = bagIndex, BagSlotIndex = slotIndex}
@@ -85,7 +85,7 @@ function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
 end
 
 function Outfitter:GetBagItemLinkInfo(bagIndex, slotIndex)
-	local itemLink = OutfitterAPI:GetContainerItemLink(bagIndex, slotIndex)
+	local itemLink = C_Container.GetContainerItemLink(bagIndex, slotIndex)
 
 	if not itemLink then
 		return
@@ -95,7 +95,7 @@ function Outfitter:GetBagItemLinkInfo(bagIndex, slotIndex)
 end
 
 function Outfitter:GetBagItemInvType(bagIndex, slotIndex)
-	local itemLink = OutfitterAPI:GetContainerItemLink(bagIndex, slotIndex)
+	local itemLink = C_Container.GetContainerItemLink(bagIndex, slotIndex)
 
 	if not itemLink then
 		return
@@ -112,7 +112,7 @@ function Outfitter:GetItemLocationLink(pItemLocation)
 	end
 
 	if pItemLocation.BagIndex then
-		return OutfitterAPI:GetContainerItemLink(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
+		return C_Container.GetContainerItemLink(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 	elseif pItemLocation.SlotName then
 		return self:GetInventorySlotIDLink(pSlotID)
 	else
@@ -596,7 +596,7 @@ function Outfitter:Synchronize()
 			self.LinkCache.Bags[vBagIndex] = vBag
 		end
 
-		local vNumBagSlots = OutfitterAPI:GetContainerNumSlots(vBagIndex)
+		local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 
 		if #vBag ~= vNumBagSlots then
 			wipe(vBag)
@@ -604,7 +604,7 @@ function Outfitter:Synchronize()
 		end
 
 		for vSlotIndex = 1, vNumBagSlots do
-			local vItemLink = OutfitterAPI:GetContainerItemLink(vBagIndex, vSlotIndex) or ""
+			local vItemLink = C_Container.GetContainerItemLink(vBagIndex, vSlotIndex) or ""
 
 			if vBag[vSlotIndex] ~= vItemLink then
 				vBag[vSlotIndex] = vItemLink
@@ -770,7 +770,7 @@ function Outfitter._InventoryCache:Synchronize()
 		if not vBagItems then
 			self.BagItems[vBagIndex] = {}
 
-			local vNumBagSlots = OutfitterAPI:GetContainerNumSlots(vBagIndex)
+			local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 
 			if vNumBagSlots > 0 then
 				for vBagSlotIndex = 1, vNumBagSlots do
@@ -1162,7 +1162,7 @@ function Outfitter._InventoryCache:GetBoEItems()
 	-- Iterate the bags
 	local numBags, firstBagIndex = Outfitter:GetNumBags()
 	for bagIndex = firstBagIndex, numBags do
-		local numSlots = OutfitterAPI:GetContainerNumSlots(bagIndex)
+		local numSlots = C_Container.GetContainerNumSlots(bagIndex)
 
 		if numSlots > 0 then
 			for slotIndex = 1, numSlots do

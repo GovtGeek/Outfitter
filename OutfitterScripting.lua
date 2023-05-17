@@ -14,10 +14,10 @@
 		* Shaman: Ghost wolf
 		* Warrior: Stance
 		* Warlock: Metamorphosis
-		
+
 		* Tooltip has text/color
 		* Minimap tracking mode
-		
+
 		* In combat
 		* PvP flagged
 		* Health below/above
@@ -27,11 +27,11 @@
 		* Five-second rule
 		* Boss yell/emote
 		* Player whisper/say/yell
-		
+
 		* In party/raid/battleground
 		* In zone/city
 		* Resting
-		
+
 		* Mounted
 		* Falling
 		* Swimming
@@ -42,7 +42,7 @@
 	fragment will be inserted above the current script and the footer below.  This allows the script
 	to exit early, exit late, or enclose the current script in a block, which provides the flexibility
 	of controlling the operation of the script without knowing the contents of the current source.
-	
+
 	Scripts can support equip/unequip or disable or both.
 ]]
 
@@ -52,37 +52,37 @@ Outfitter.ScriptModules = {}
 
 function Outfitter:GenerateEquipModule(pModule, pSettings, pExistingScript)
 	local vScript = pExistingScript or ""
-	
+
 	if pModule.GetEquipHeader then
 		vScript = pModule:GetEquipHeader(pSettings).."\n"..vScript
 	end
-	
+
 	if pModule.EquipHeader then
 		vScript = pModule.EquipHeader.."\n"..vScript
 	end
-	
+
 	if pModule.GetEquipFooter then
 		vScript = vScript.."\n"..pModule:GetEquipFooter(pSettings)
 	end
-	
+
 	if pModule.EquipFooter then
 		vScript = vScript.."\n"..pModule.EquipFooter
 	end
-	
+
 	return vScript
 end
 
 function Outfitter:GenerateDisableModule(pModule, pSettings, pExistingScript)
 	local vScript = pExistingScript or ""
-	
+
 	if pModule.GetDisableHeader then
 		vScript = pModule:GetDisableHeader(pSettings)..vScript
 	end
-	
+
 	if pModule.GetDisableFooter then
 		vScript = vScript..pModule:GetDisableFooter(pSettings)
 	end
-	
+
 	return vScript
 end
 
@@ -100,7 +100,7 @@ Outfitter.ScriptModules.DruidShapeshift.Settings =
 	{id = "Travel", type = "boolean", label = "Travel form"},
 	{id = "Moonkin", type = "boolean", label = "Moonkin form"},
 	{id = "Tree", type = "boolean", label = "Tree form"},
-	{id = "Flight", type = "boolean", label = "Swift Flight form"},
+	{id = "Flight", type = "boolean", label = "Swift Flight form"}, --DAC
 }
 
 Outfitter.ScriptModules.DruidShapeshift.Events =
@@ -111,16 +111,16 @@ Outfitter.ScriptModules.DruidShapeshift.Events =
 	Travel = "TRAVEL_FORM",
 	Moonkin = "MOONKIN_FORM",
 	Tree = "TREE_FORM",
-	Flight = "SWIFT_FLIGHT_FORM"
+	Flight = "SWIFT_FLIGHT_FORM" --DAC
 }
 
 function Outfitter.ScriptModules.DruidShapeshift:GetEquipHeader(pSettings)
 	local vResult = ""
-	
+
 	for vSetting, vValue in pairs(pSettings) do
 		if vValue then
 			local vEvent = self.Events[vSetting]
-			
+
 			vResult = vResult..
 [[-- $EVENTS ]]..vEvent.." NOT_"..vEvent..[[
 
@@ -132,13 +132,13 @@ end
 ]]
 		end
 	end
-	
+
 	return vResult
 end
 
 function Outfitter.ScriptModules.DruidShapeshift:GetDisableHeader(pSettings)
 	local vResult = ""
-	
+
 	for vSetting, vValue in pairs(pSettings) do
 		if vValue then
 			vResult = vResult..
@@ -146,7 +146,7 @@ function Outfitter.ScriptModules.DruidShapeshift:GetDisableHeader(pSettings)
 ]]
 		end
 	end
-	
+
 	return vResult
 end
 
@@ -183,7 +183,7 @@ Outfitter.ScriptModules.AutoLootOnEquip =
 ----------------------------------------
 {
 	ModuleName = "Auto Loot",
-	
+
 	EquipFooter =
 [[
 -- $EVENTS OUTFIT_EQUIPPED OUTFIT_UNEQUIPPED
@@ -197,7 +197,7 @@ if event == "OUTFIT_EQUIPPED" then
         SetCVar("autoLootDefault", "1")
         setting.didSetAutoLoot = true
     end
-    
+
 -- Turn auto looting back off if the outfit is being unequipped and we turned it on
 
 elseif event == "OUTFIT_UNEQUIPPED" then
@@ -218,17 +218,17 @@ Outfitter.OutfitScriptEvents = {}
 
 function Outfitter:GenerateScriptHeader(pEventIDs, pDescription)
 	local vDescription
-	
+
 	if pDescription then
 		vDescription = '-- $DESC '..pDescription..'\n'
 	else
 		vDescription = ''
 	end
-	
+
 	if type(pEventIDs) == "table" then
 		pEventIDs = table.concat(pEventIDs, " ")
 	end
-	
+
 	return '-- $EVENTS '..pEventIDs..'\n'..vDescription..'\n'
 end
 
@@ -258,7 +258,7 @@ function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDe
 		vEventIDs = vEventIDs.." ACTIVE_TALENT_GROUP_CHANGED"
 	end
 	vScript = self:GenerateScriptHeader(vEventIDs, pDescription)
-	
+
 	if pIncludeSpecEnables then
 		vScript = vScript ..
 [[
@@ -278,7 +278,7 @@ or not setting.Tree4 and GetSpecialization() == 4 then
 end
 ]]
 	end
-	
+
 	vScript = vScript ..
 [[
 -- If the activation event fires, equip the outfit
@@ -300,7 +300,7 @@ elseif didEquip then
 ]]..((pUnequipDelay and ("    delay = "..pUnequipDelay)) or "")..[[
 end
 ]]
-	
+
 	return vScript
 end
 
@@ -412,7 +412,7 @@ elseif event == "NOT_]]..pEventID..[[" then
     if setting.UnequipComplete
     or outfit.CategoryID ~= "Complete" then
         equip = false
-        
+
         if Outfitter.InCombat then
             delay = 2
         end
@@ -557,9 +557,9 @@ end
 -- $SETTING EnableRaid={type="boolean", label="Equip in Raid instances", default=false}
 -- $SETTING EnableBG={type="boolean", label="Equip in Battleground instances", default=false}
 -- $SETTING EnableArena={type="boolean", label="Equip in Arena instances", default=false}
- 
+
 local inInstance, instanceType = IsInInstance()
- 
+
 if inInstance
 and ((setting.Enable5Man and instanceType == "party")
     or (setting.EnableRaid and instanceType == "raid")
@@ -575,7 +575,7 @@ end
 		Name = "Trinket Queue",
 		ID = "TRINKET_QUEUE",
 		Category = "GENERAL",
-		Script =
+		Script = --DAC (setting.Buffcheck)
 [[
 -- $EVENTS TIMER
 -- $DESC The highest trinket in the list that isn't on cooldown will automatically be equipped for you
@@ -697,7 +697,7 @@ end
 if didEquip and equip == nil then
    equip = false
 end
-]],
+]], --DAC
 	},
 	{
 		Name = Outfitter.cRidingOutfit,
@@ -808,7 +808,7 @@ end
 [[
 -- $SETTING EnableFishTracking={type="boolean", label="Select Track Fish while equipped", default=true}
 -- $SETTING EnableAutoLoot={type="boolean", label="Enable auto loot while equipped"}
--- $SETTING DisableClicktoMove={type="boolean", label="Disable Click-to-Move while equipped", default=true} 
+-- $SETTING DisableClicktoMove={type="boolean", label="Disable Click-to-Move while equipped", default=true}
 -- $SETTING ChangeActionBar={type="boolean", label="Switch action bars while equipped", default=false}
 -- $SETTING ActionBarNumber={type="number", label="Action bar (1 - 6)", default=1}
 -- Enable auto looting if the outfit is being equipped and EnableAutoLoot is on
@@ -819,19 +819,19 @@ if event == "OUTFIT_EQUIPPED" then
         SetCVar("autoLootDefault", "1")
         setting.didSetAutoLoot = true
     end
-    
+
     if setting.EnableFishTracking then
         setting.savedTracking = Outfitter:GetTrackingEnabled(133888)
         Outfitter:SetTrackingEnabled(133888, true)
         setting.didSetTracking = true
     end
-    
+
    if setting.DisableClicktoMove then
        setting.savedMove = GetCVar("autointeract")
        SetCVar("autointeract", "0")
        setting.didSetMove = true
    end
-   
+
    if setting.ChangeActionBar then
        setting.savedActionBar = GetActionBarPage()
        ChangeActionBarPage(setting.ActionBarNumber)
@@ -846,19 +846,19 @@ elseif event == "OUTFIT_UNEQUIPPED" then
        setting.didSetAutoLoot = nil
        setting.savedAutoLoot = nil
    end
- 
+
    if setting.EnableFishTracking and setting.didSetTracking then
        Outfitter:SetTrackingEnabled(133888, setting.savedTracking)
        setting.didSetTracking = nil
        setting.savedTracking = nil
    end
-   
+
   if setting.DisableClicktoMove and setting.didSetMove then
       SetCVar("autointeract", setting.savedMove)
       setting.didSetMove = nil
       setting.savedMove = nil
   end
-  
+
   if setting.didChangeActionBar then
       ChangeActionBarPage(setting.savedActionBar)
       setting.didChangeActionBar = nil
@@ -1041,7 +1041,7 @@ end
 		Script = Outfitter:GenerateDruidShapeshiftScript("TRAVEL_FORM", "This outfit will be worn whenever you're in Travel Form"),
 	},
 	{
-		Name = Outfitter.cDruidSwiftFlightForm,
+		Name = Outfitter.cDruidSwiftFlightForm, --DAC
 		ID = "Flight",
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
@@ -1176,7 +1176,7 @@ end
 
 if equip then
     local inInstance, instanceType = IsInInstance()
-    
+
     if (setting.DisableInstance and inInstance and (instanceType == "raid" or instanceType == "party"))
     or (setting.DisableBG and Outfitter:InBattlegroundZone())
     or (setting.DisablePVP and UnitIsPVP("player")) then
@@ -1208,7 +1208,7 @@ end
 
 if equip then
     local inInstance, instanceType = IsInInstance()
-    
+
     if (setting.DisableInstance and inInstance and (instanceType == "raid" or instanceType == "party"))
     or (setting.DisableBG and Outfitter:InBattlegroundZone())
     or (setting.DisablePVP and UnitIsPVP("player")) then
@@ -1268,17 +1268,17 @@ end
 [[
 if event == "GAMETOOLTIP_SHOW" or event == "UPDATE_MOUSEOVER_UNIT" then
     local unitGUID = UnitGUID("mouseover")
-    
+
     if not unitGUID then
         return
     end
-    
+
     local unitType, _, _, _, _, npcID = strsplit("-", unitGUID)
-    
+
     if unitType ~= "Vehicle" then
         return
     end
-    
+
     if not self.MountIDs then
         if UnitFactionGroup("player") == "Alliance" then
             self.MountIDs =
@@ -1303,11 +1303,11 @@ if event == "GAMETOOLTIP_SHOW" or event == "UPDATE_MOUSEOVER_UNIT" then
                 [36558] = "Argent Battleworg"
             }
         end
-        
+
         self.MountIDs[33870] = "Stabled Argent Warhorse"
         self.MountIDs[34125] = "Stabled Campaign Warhorse"
     end
-    
+
     if self.MountIDs[tonumber(npcID)] then
         equip = true
     end
@@ -1337,17 +1337,17 @@ end
 [[
 if event == "GAMETOOLTIP_SHOW" or event == "UPDATE_MOUSEOVER_UNIT" then
     local unitGUID = UnitGUID("mouseover")
-    
+
     if not unitGUID then
         return
     end
-    
+
     local unitType, _, _, _, _, npcID = strsplit("-", unitGUID)
-    
+
     if unitType ~= "Creature" then
         return
     end
-    
+
     if not self.MountIDs then
         self.MountIDs = {}
         self.MountIDs[39710] = "Aviana's Guardian"
@@ -1355,7 +1355,7 @@ if event == "GAMETOOLTIP_SHOW" or event == "UPDATE_MOUSEOVER_UNIT" then
         self.MountIDs[40720] = "Aviana's Guardian"
         self.MountIDs[40723] = "Aviana's Guardian"
     end
-    
+
     if self.MountIDs[tonumber(npcID)] then
         equip = true
     end
@@ -1385,17 +1385,17 @@ end
 [[
 if event == "GAMETOOLTIP_SHOW" or event == "UPDATE_MOUSEOVER_UNIT" then
     local unitGUID = UnitGUID("mouseover")
-    
+
     if not unitGUID then
         return
     end
-    
+
     local unitType, _, _, _, _, npcID = strsplit("-", unitGUID)
-    
+
     if unitType ~= "Vehicle" then
         return
     end
-    
+
     if not self.MountIDs then
         self.MountIDs = {
             [33060] = "Salvaged Siege Engine",
@@ -1403,7 +1403,7 @@ if event == "GAMETOOLTIP_SHOW" or event == "UPDATE_MOUSEOVER_UNIT" then
             [33062] = "Salvaged Chopper",
         }
     end
-    
+
     if self.MountIDs[tonumber(npcID)] then
         equip = true
     end
@@ -1441,7 +1441,7 @@ end
 local bestMapID = C_Map.GetBestMapForUnit("PLAYER")
 if bestMapID == 107 then -- Nagrand
     local vOnQuest, vCompleted = Outfitter:PlayerIsOnQuestID(11880)
-    
+
     if vOnQuest and not vCompleted then
         equip = true
         delay = 5
@@ -1501,20 +1501,20 @@ end
 if event == "OUTFIT_EQUIPPED" then
     DoEmote("DANCE")
 end
-]],
+]], --DAC
 	},
 	{
 		Name = Outfitter.LBI.Cooking,
 		ID = "COOKING",
 		Category = "TRADE",
-		Script =
+		Script = --DAC
 [[
 -- $DESC Equips the outfit whenever your Cooking window is open
 -- $SETTING Ragnaros = {type = "boolean", label = "Summon Lil' Ragnaros", default = false}
 -- $SETTING Pierre   = {type = "boolean", label = "Summon Pierre", default = false}
 -- $SETTING RandomCookFirePet = {type = "boolean", label = "Randomly summon a permitted cooking fire pet", default = false}
 -- $EVENTS TRADE_SKILL_SHOW TRADE_SKILL_CLOSE
-		
+
 if event == "TRADE_SKILL_SHOW" then
 	local skillLineID, _, _, _ = GetTradeSkillLine()
 	if skillLineID == "Cooking" then
@@ -1555,7 +1555,7 @@ if ( setting.Ragnaros or setting.Pierre ) and equip ~= nil then
         self.summonedPet = nil
     end
 end
-]],
+]], --DAC
 	}
 }
 
@@ -1579,7 +1579,7 @@ function Outfitter:SortScripts()
 			function (pItem1, pItem2)
 				local vCategory1 = pItem1.Category or (pItem1.Class and "CLASS") or "GENERAL"
 				local vCategory2 = pItem2.Category or (pItem2.Class and "CLASS") or "GENERAL"
-			
+
 				if vCategory1 ~= vCategory2 then
 					if not vCategory1 then
 						return true
@@ -1630,39 +1630,39 @@ Outfitter.cInputSuffix = "}"
 function Outfitter:ParseScriptFields(pScript)
 	local vSettings = {}
 	local vMessage
-	
+
 	for vSetting, vValue in string.gmatch(pScript, "--%s*$([%w_]+)([^\r\n]*)") do
 		vSetting = string.upper(vSetting)
-		
+
 		if vSetting == "EVENTS" then
 			if not vSettings.Events then
 				vSettings.Events = vValue
 			else
 				vSettings.Events = vSettings.Events.." "..vValue
 			end
-			
+
 		elseif vSetting == "DESC" then
 			vSettings.Description = vValue
-		
+
 		elseif vSetting == "SETTING" then
 			local vScript = Outfitter.cInputPrefix..vValue..Outfitter.cInputSuffix
-			
+
 			local vScriptInputs, vMessage = loadstring(vScript, vValue)
-			
+
 			if not vScriptInputs then
 				return nil, vMessage
 			end
-			
+
 			vScriptInputs = vScriptInputs()
-			
+
 			if not vSettings.Inputs then
 				vSettings.Inputs = {}
 			end
-			
+
 			for vKey, vValue in pairs(vScriptInputs) do
 				if type(vValue) == "string" then
 					vValue = {Type = vValue:lower(), Label = vKey}
-					
+
 					if vValue.Type ~= "boolean" then
 						vValue.Label = vValue.Label..":"
 					end
@@ -1672,7 +1672,7 @@ function Outfitter:ParseScriptFields(pScript)
 					vValue.Default = vValue.Default or vValue.default
 					vValue.ZoneType = vValue.ZoneType or vValue.zonetype
 				end
-				
+
 				vValue.Field = vKey
 				if vValue.Label then -- don't add fields with nil labels, this allows scripts like Primary Tree skip checkboxes for the fourth talent tree
 					table.insert(vSettings.Inputs, vValue)
@@ -1680,86 +1680,86 @@ function Outfitter:ParseScriptFields(pScript)
 			end
 		end
 	end
-	
+
 	return vSettings
 end
 
 function Outfitter:ActivateScript(pOutfit)
 	pOutfit.LastScriptTime = nil
 	pOutfit.ScriptLockupCount = 0
-	
+
 	local vScript = Outfitter:GetScript(pOutfit)
-	
+
 	if self.Settings.Options.DisableAutoSwitch
 	or pOutfit.Disabled
 	or not vScript then
 		return
 	end
-	
+
 	local vScriptFields = Outfitter:ParseScriptFields(vScript)
 	local vScriptSettings = {}
-	
+
 	if not vScriptFields then
 		return
 	end
-	
+
 	if not vScriptFields.Events then
 		Outfitter:ErrorMessage("The script for %s does not specify any events", pOutfit:GetName())
 		return
 	end
-	
+
 	-- Initialize the settings to their defaults
-	
+
 	if not pOutfit.ScriptSettings then
 		pOutfit.ScriptSettings = {}
 	end
-	
+
 	if vScriptFields.Inputs then
 		for _, vDescriptor in ipairs(vScriptFields.Inputs) do
 			local vDefault = vDescriptor.Default
-			
+
 			if vDefault == nil then
 				local vType = vDescriptor.Type:lower()
 				local vTypeInfo = Outfitter.SettingTypeInfo[vType]
-				
+
 				if not vTypeInfo then
 					Outfitter:ErrorMessage("Script for outfit %s has an unknown $SETTING type (%s)", pOutfit:GetName(), vDescriptor.Type or "nil")
 					return
 				end
-				
+
 				vDefault = vTypeInfo.Default -- Override the built-in default if the $SETTING specifies its own default
 			end
-			
+
 			-- Set to the default if the value is missing or if
 			-- it's the wrong type
-			
+
 			if pOutfit.ScriptSettings[vDescriptor.Field] == nil
-			or type(pOutfit.ScriptSettings[vDescriptor.Field]) ~= type(vDefault) then	
+			or type(pOutfit.ScriptSettings[vDescriptor.Field]) ~= type(vDefault) then
 				pOutfit.ScriptSettings[vDescriptor.Field] = vDefault
 			end
 		end
 	end
-	
+
 	local vScriptContext, vErrorMessage = Outfitter._ScriptContext:NewContext(pOutfit, vScript)
-	
+
 	if not vScriptContext then
 		Outfitter:ErrorMessage("Couldn't activate script for %s", pOutfit:GetName())
 		Outfitter:ErrorMessage(vErrorMessage)
 		return
 	end
-	
+
 	Outfitter.ScriptContexts[pOutfit] = vScriptContext
-	
+
 	for vEventID in string.gmatch(vScriptFields.Events, "([%w%d_]+)") do
 		vScriptContext:RegisterEvent(vEventID)
 	end
-	
+
 	self:DispatchOutfitEvent("INITIALIZE", pOutfit:GetName(), pOutfit)
 end
 
 function Outfitter:DeactivateScript(pOutfit)
 	self:DispatchOutfitEvent("TERMINATE", pOutfit:GetName(), pOutfit)
-	
+
 	if Outfitter.ScriptContexts[pOutfit] then
 		Outfitter.ScriptContexts[pOutfit]:UnregisterAllEvents()
 		Outfitter.ScriptContexts[pOutfit] = nil
@@ -1774,13 +1774,13 @@ function Outfitter:GetScriptDescription(pScript)
 	if not pScript then
 		return
 	end
-	
+
 	local vScriptFields = Outfitter:ParseScriptFields(pScript)
-	
+
 	if not vScriptFields then
 		return
 	end
-	
+
 	return vScriptFields.Description
 end
 
@@ -1788,13 +1788,13 @@ function Outfitter:ScriptHasSettings(pScript)
 	if not pScript then
 		return
 	end
-	
+
 	local vScriptFields = Outfitter:ParseScriptFields(pScript)
-	
+
 	if not vScriptFields then
 		return
 	end
-	
+
 	return vScriptFields.Inputs ~= nil and #vScriptFields.Inputs ~= 0
 end
 
@@ -1836,20 +1836,20 @@ Outfitter._ScriptContext = {}
 
 function Outfitter._ScriptContext:NewContext(pOutfit, pScript)
 	local vFunction, vMessage = loadstring(Outfitter.cScriptPrefix..pScript..Outfitter.cScriptSuffix, "Script for "..(pOutfit.Name or "untitled outfit"))
-	
+
 	if not vFunction then
 		return nil, vMessage
 	end
-	
+
 	vFunction = vFunction()
-	
+
 	return Outfitter:New(self, pOutfit, vFunction)
 end
 
 function Outfitter._ScriptContext:Construct(pOutfit, pFunction)
 	self.Outfit = pOutfit
 	self.Function = pFunction
-	
+
 	if not pFunction then
 		Outfitter:ErrorMessage("Internal error: Attempting to create a script context with a nil function")
 	end
@@ -1861,7 +1861,7 @@ function Outfitter._ScriptContext:RegisterEvent(pEventID)
 		if not Outfitter.OutfitScriptEvents[pEventID] then
 			Outfitter.OutfitScriptEvents[pEventID] = {}
 		end
-		
+
 		Outfitter.OutfitScriptEvents[pEventID][self.Outfit] = self
 	elseif Outfitter.BuiltinEvents[pEventID] then
 		Outfitter.EventLib:RegisterCustomEvent(pEventID, self.Function, self)
@@ -1885,7 +1885,7 @@ function Outfitter._ScriptContext:UnregisterAllEvents(pEventID)
 	for vEventID, vOutfits in pairs(Outfitter.OutfitScriptEvents) do
 		vOutfits[self.Outfit] = nil
 	end
-	
+
 	Outfitter.EventLib:UnregisterAllEvents(self.Function, self)
 end
 
@@ -1897,9 +1897,9 @@ function Outfitter._ScriptContext:PostProcess(pEquip, pImmediate, pLayer, pDelay
 	-- If the script took a long time to run and it hasn't been very long since
 	-- the last time we'll increment a counter.  If that counters gets too high
 	-- we can assume the script is misbehaving and shut it down
-	
+
 	local vTime = GetTime()
-	
+
 	if vTime - pStartTime > 0.1
 	and self.Outfit.LastScriptTime
 	and pStartTime - self.LastScriptTime < 0.5 then
@@ -1907,7 +1907,7 @@ function Outfitter._ScriptContext:PostProcess(pEquip, pImmediate, pLayer, pDelay
 			self.ScriptLockupCount = 1
 		else
 			self.ScriptLockupCount = self.ScriptLockupCount + 1
-			
+
 			if self.ScriptLockupCount > 20 then
 				Outfitter:ErrorMessage("Excessive CPU time in script for %s, script deactivated.", self.Outfit:GetName() or "<unnamed>")
 				Outfitter:DeactivateScript(self.Outfit)
@@ -1916,14 +1916,14 @@ function Outfitter._ScriptContext:PostProcess(pEquip, pImmediate, pLayer, pDelay
 	else
 		self.ScriptLockupCount = 0
 	end
-	
+
 	self.LastScriptTime = pStartTime
-	
+
 	--
-	
+
 	if pEquip ~= nil then
 		local vChanged
-		
+
 		Outfitter:BeginEquipmentUpdate()
 		local vWearing = Outfitter:WearingOutfit(self.Outfit)
 		if pEquip then
@@ -1938,19 +1938,19 @@ function Outfitter._ScriptContext:PostProcess(pEquip, pImmediate, pLayer, pDelay
 				vChanged = true
 			end
 		end
-		
+
 		-- Allow casting to be interrupted if requested
-		
+
 		if pInterrupt then
 			Outfitter.InterruptCasting = true
 		end
-		
+
 		-- Adjust the last equipped time to cause a delay if requested
-		
+
 		if vChanged and pDelay then
 			Outfitter:SetUpdateDelay(pStartTime, pDelay)
 		end
-		
+
 		Outfitter:EndEquipmentUpdate(nil, pImmediate)
 	elseif pLayer then
 		Outfitter:TagOutfitLayer(self.Outfit, pLayer)

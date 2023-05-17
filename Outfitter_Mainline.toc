@@ -1,10 +1,15 @@
-## Interface: 100100
+## Interface: 100105
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
 ## Version: 3.4.2.1
 ## Notes: Clothing and weapon management and automated equipment changes
+## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
+#### AddonCompartmentFuncOnEnter:
+#### AddonCompartmentFuncOnLeave:
+#### IconTexture: transmog-nav-slot-chest
+## IconTexture: Interface/Icons/INV_Chest_Cloth_21
 ## OptionalDeps:
 ## RequiredDeps:
 ## SavedVariablesPerCharacter: gOutfitter_Settings
@@ -12,7 +17,7 @@
 ## X-ReloadTag: 2
 ## X-Curse-Project-ID:
 
-Mainline/Compat.lua
+#Mainline/Compat.lua
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
