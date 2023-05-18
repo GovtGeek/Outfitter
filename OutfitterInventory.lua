@@ -4,30 +4,30 @@
 function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
 	local vInventoryCache = self:GetInventoryCache()
 	local vBestItem, vBestTime
-	
+
 	for _, vItemCode in ipairs(pItemCodes) do
 		if type(vItemCode) == "string" then
 			local vItemName, vItemLink = GetItemInfo(vItemCode)
-			
+
 			if vItemLink then
 				vItemCode = self:ParseItemLink2(vItemLink)[1]
 			end
 		end
-		
+
 		local vItems = vItemCode and vInventoryCache.ItemsByCode[vItemCode]
-		
+
 		if vItems then
 			for _, vItemInfo in ipairs(vItems) do
 				local vStart, vDuration, vEnabled
-				
+
 				if vItemInfo.Location.BagIndex then
 					vStart, vDuration, vEnabled = GetContainerItemCooldown(vItemInfo.Location.BagIndex, vItemInfo.Location.BagSlotIndex)
 				elseif vItemInfo.Location.SlotID then
 					vStart, vDuration, vEnabled = GetInventoryItemCooldown("player", vItemInfo.Location.SlotID)
 				end
-				
+
 				local vRemainingTime
-				
+
 				if vEnabled == 1 and vStart ~= 0 then
 					local vElapsed = GetTime() - vStart
 					vRemainingTime = vDuration - vElapsed
@@ -36,17 +36,17 @@ function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
 				else
 					vRemainingTime = 30 -- Items without a /use are just considered to be 30 secs so that they have lowest priority
 				end
-				
+
 				-- If it's in the bag then the minimum is 30 secs
-				
+
 				if vItemInfo.Location.BagIndex
 				and not pIgnoreSwapCooldown
 				and vRemainingTime < 30 then
 					vRemainingTime = 30
 				end
-				
+
 				-- Compare it to the current result
-				
+
 				if not vBestTime or vRemainingTime < vBestTime then
 					vBestItem = vItemInfo
 					vBestTime = vRemainingTime
@@ -54,7 +54,7 @@ function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
 			end
 		end
 	end
-	
+
 	return vBestItem, vBestTime
 end
 
@@ -77,7 +77,7 @@ function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
 
 	local containerItemInfo = C_Container.GetContainerItemInfo(bagIndex, slotIndex)
 	itemInfo.Texture = containerItemInfo.iconFileID
-	
+
 	local itemLinkInfo = self:ParseItemLink(itemLink)
 	_, _, itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = unpack(self:ParseItemLink(itemLink))
 
@@ -95,29 +95,29 @@ function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
 	end
 
 	itemInfo.Location = {BagIndex = bagIndex, BagSlotIndex = slotIndex}
-	
+
 	return itemInfo
 end
 
 function Outfitter:GetBagItemLinkInfo(bagIndex, slotIndex)
 	local itemLink = C_Container.GetContainerItemLink(bagIndex, slotIndex)
-	
+
 	if not itemLink then
 		return
 	end
-	
+
 	return self:ParseItemLink2(itemLink)
 end
 
 function Outfitter:GetBagItemInvType(bagIndex, slotIndex)
 	local itemLink = C_Container.GetContainerItemLink(bagIndex, slotIndex)
-	
+
 	if not itemLink then
 		return
 	end
-	
+
 	local _, _, _, _, _, _, _, _, itemInvType = GetItemInfo(itemLink)
-	
+
 	return itemInvType
 end
 
@@ -125,7 +125,7 @@ function Outfitter:GetItemLocationLink(pItemLocation)
 	if not pItemLocation then
 		return
 	end
-	
+
 	if pItemLocation.BagIndex then
 		return C_Container.GetContainerItemLink(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 	elseif pItemLocation.SlotName then
@@ -141,7 +141,7 @@ function Outfitter:GetItemLocationBagType(pItemLocation)
 	if not pItemLocation then
 		return
 	end
-	
+
 	if pItemLocation.BagIndex then
 		return self:GetBagItemBagType(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 	elseif pItemLocation.SlotName then
@@ -154,11 +154,11 @@ end
 
 function Outfitter:GetBagItemBagType(pBagIndex, pSlotIndex)
 	local vItemCodes = self:GetBagItemLinkInfo(pBagIndex, pSlotIndex)
-	
+
 	if not vItemCodes then
 		return
 	end
-	
+
 	return GetItemFamily(vItemCodes[1])
 end
 
@@ -168,11 +168,11 @@ end
 
 function Outfitter:GetSlotIDItemBagType(pSlotID)
 	local vItemCodes = self:GetSlotIDLinkInfo(pSlotID)
-	
+
 	if not vItemCodes then
 		return
 	end
-	
+
 	return GetItemFamily(vItemCodes[1])
 end
 
@@ -197,15 +197,15 @@ function Outfitter:ParseItemLink2(pItemLink)
 	if not pItemLink then
 		return
 	end
-	
+
 	local _, _, vLinkType = pItemLink:find("|H([^:]+):")
 	if vLinkType ~= "item" then
 		return
 	end
-	
+
 	local vStartIndex, vEndIndex, vCodeStrings, vName = pItemLink:find("|Hitem:([^|]*)|h%[([^%]]*)%]|h")
 	-- self:DebugMessage("start %s, end %s, codes %s, name %s", tostring(vStartIndex), tostring(vEndIndex), tostring(vCodeStrings), tostring(vName))
-	
+
 	if not vCodeStrings then
 		return
 	end
@@ -243,11 +243,11 @@ function Outfitter:GetBagSlotItemName(bag, slot)
 	local tooltip = self.TooltipLib:SharedTooltip()
 	tooltip:ClearLines()
 	tooltip:SetBagItem(bag, slot)
-	
+
 	if not tooltip:IsShown() then
 		return
 	end
-	
+
 	-- Find the first left text line
 	local tooltipName = tooltip:GetName()
 	local textLeft1Name = tooltipName.."TextLeft1"
@@ -281,43 +281,43 @@ function Outfitter._ItemInfo:GetItemInfoFromCode(itemCode)
 	      itemSubType,
 	      itemCount,
 	      itemInvType = GetItemInfo(itemCode)
-	
+
 	--
-	
+
 
 	self.Name = itemFamilyName
 	self.Link = ""
 	self.Code = itemCode
 	self.SubCode = 0
-		
+
 	self.Quality = itemQuality
 	self.Level = itemLevel
 	self.MinLevel = itemMinLevel
 	self.Type = itemType
 	self.SubType = itemSubType
-		
+
 	self.Count = itemCount
 	self.InvType = itemInvType
-		
+
 	self.EnchantCode = 0
-		
+
 	self.JewelCode1 = 0
 	self.JewelCode2 = 0
 	self.JewelCode3 = 0
 	self.JewelCode4 = 0
-		
+
 	self.UniqueID = 0
 	self.UpgradeTypeID = 0
 	self.InstanceDifficultyID = 0
 	self.BonusIDs = "::"
 	self.UpgradeID = 0
-	
+
 	-- Return if there's no inventory type
 	if not itemInvType
 	or itemInvType == "" then
 		return
 	end
-	
+
 	-- If it's a known inventory type add that knowledge to the item info
 	local invTypeInfo = Outfitter.cInvTypeToSlotName[itemInvType]
 	if invTypeInfo then
@@ -327,7 +327,7 @@ function Outfitter._ItemInfo:GetItemInfoFromCode(itemCode)
 			Outfitter:ErrorMessage("Unknown slot name for inventory type "..itemInvType)
 			return
 		end
-		
+
 		-- Save the slot info
 		self.ItemSlotName = invTypeInfo.SlotName
 		self.MetaSlotName = invTypeInfo.MetaSlotName
@@ -335,7 +335,7 @@ function Outfitter._ItemInfo:GetItemInfoFromCode(itemCode)
 		-- This function can be used to query non-equippable items, so it's not an error for
 		-- the inventory type to be unknown.  Should Blizzard ever add a new type though, this
 		-- debug message may be useful in figuring out its characteristics
-		
+
 		-- Outfitter:ErrorMessage("Unknown slot type "..itemInvType.." for item "..itemName)
 	end
 end
@@ -345,7 +345,7 @@ function Outfitter._ItemInfo:GetItemInfoFromLink(itemLink)
 	if not itemLink then
 		return
 	end
-	
+
 	-- Do nothing if the codes can't be extracted
 	local itemCodes, itemName = Outfitter:ParseItemLink2(itemLink)
 	if not itemCodes then
@@ -361,7 +361,7 @@ function Outfitter._ItemInfo:GetItemInfoFromLink(itemLink)
 	      itemQuality,
 	      itemLevel,
 	      itemMinLevel = GetItemInfo(itemLink)
-	
+
 	self.Name = itemName
 	self.Link = itemLink
 	self.Quality = itemQuality
@@ -418,7 +418,7 @@ function Outfitter._ItemInfo:ParseTooltip()
 	if not tooltip:IsShown() then
 		return
 	end
-	
+
 	-- Iterate the lines of the tooltip
 	for line in Outfitter.TooltipLib:TooltipLines(tooltip) do
 		self:ParseTooltipLine(line.leftText, line.leftColor)
@@ -533,19 +533,19 @@ end
 
 function Outfitter:GetInventoryItemInfo(pInventorySlot)
 	local vSlotID = self.cSlotIDs[pInventorySlot]
-	
+
 	if not vSlotID then
 		return
 	end
-	
+
 	local vItemInfo = self:GetSlotIDItemInfo(vSlotID)
-	
+
 	if not vItemInfo then
 		return
 	end
-	
+
 	vItemInfo.Location.SlotName = pInventorySlot
-	
+
 	return vItemInfo
 end
 
@@ -645,102 +645,102 @@ function Outfitter:Synchronize()
 	if self.Debug.InventoryCache then
 		self:DebugMessage("Synchronize()")
 	end
-	
+
 	-- Synchronize bag links
-	
+
 	local vNumBags, vFirstBagIndex = self:GetNumBags()
-	
+
 	if self.LinkCache.FirstBagIndex ~= vFirstBagIndex
 	or self.LinkCache.NumBags ~= vNumBags then
-		
+
 		self.LinkCache.FirstBagIndex = vFirstBagIndex
 		self.LinkCache.NumBags = vNumBags
-		
+
 		vBagsChanged = true
 	end
-	
+
 	for vBagIndex = vFirstBagIndex, vNumBags do
 		local vBag = self.LinkCache.Bags[vBagIndex]
 		local vBagChanged = false
-		
+
 		if not vBag then
 			vBag = {}
 			self.LinkCache.Bags[vBagIndex] = vBag
 		end
-		
+
 		local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
-		
+
 		if #vBag ~= vNumBagSlots then
 			wipe(vBag)
 			vBagChanged = true
 		end
-		
+
 		for vSlotIndex = 1, vNumBagSlots do
 			local vItemLink = C_Container.GetContainerItemLink(vBagIndex, vSlotIndex) or ""
-			
+
 			if vBag[vSlotIndex] ~= vItemLink then
 				vBag[vSlotIndex] = vItemLink
 				vBagChanged = true
 			end
 		end
-		
+
 		if vBagChanged then
 			if self.InventoryCache then
 				self.InventoryCache:FlushBag(vBagIndex)
 			end
-			
+
 			vBagsChanged = true
 		end
 	end
-	
+
 	-- Synchronize inventory links
-	
+
 	for _, vInventorySlot in ipairs(self.cSlotNames) do
 		local vItemLink
-		
+
 		vItemLink = GetInventoryItemLink("player", self.cSlotIDs[vInventorySlot])
-		
+
 		if self.Debug.InventoryCache then
 			self:DebugMessage("Synchronize: Slot %s contains %s", tostring(vInventorySlot), tostring(vItemLink))
 		end
-		
+
 		if self.LinkCache.Inventory[vInventorySlot] ~= vItemLink then
 			self.LinkCache.Inventory[vInventorySlot] = vItemLink
 			vInventoryChanged = true
 		end
 	end
-	
+
 	if vInventoryChanged then
 		if self.Debug.InventoryCache then
 			self:DebugMessage("Synchronize: InventoryChanged")
 		end
-		
+
 		if self.InventoryCache then
 			self.InventoryCache:FlushInventory()
 		end
-		
+
 		self.EventLib:DispatchEvent("OUTFITTER_INVENTORY_CHANGED")
 	end
-	
+
 	if vBagsChanged then
 		if self.Debug.InventoryCache then
 			self:DebugMessage("Synchronize: Bags changed")
 		end
-		
+
 		self.EventLib:DispatchEvent("OUTFITTER_BAGS_CHANGED")
 	end
-	
+
 	-- Done
-	
+
 	if vBagsChanged or vInventoryChanged then
 		self.DisplayIsDirty = true
 		self:Update(false)
 	end
-	
+
 	--
-	
+
 	self:RunThreads()
-	
+
 	return vBagsChanged or vInventoryChanged, vInventoryChanged, vBagsChanged
 end
 
@@ -751,14 +751,14 @@ end
 function Outfitter:GetInventoryCache()
 	if not self.InventoryCache then
 		self.InventoryCache = self:New(self._InventoryCache)
-		
+
 		if self.Debug.InventoryCache then
 			self:DebugTable(self.InventoryCache, "InventoryCache")
 		end
 	end
-	
+
 	self.InventoryCache:Synchronize()
-	
+
 	return self.InventoryCache
 end
 
@@ -778,7 +778,7 @@ function Outfitter._InventoryCache:Construct()
 	self.InventoryItems = nil
 	self.BagItems = {}
 	self.NeedsUpdate = true
-	
+
 	self.FirstBagIndex = 0
 	self.NumBags = 0
 
@@ -791,63 +791,63 @@ function Outfitter._InventoryCache:Flush()
 	self.InventoryItems = nil
 	wipe(self.BagItems)
 	self.NeedsUpdate = true
-	
+
 	self.FirstBagIndex = 0
 	self.NumBags = 0
 end
 
 function Outfitter._InventoryCache:Synchronize()
 	-- Check for a change in the number of bags
-	
+
 	local vNumBags, vFirstBagIndex = Outfitter:GetNumBags()
-	
+
 	if self.FirstBagIndex ~= vFirstBagIndex
 	or self.NumBags ~= vNumBags then
 		for vBagIndex = self.FirstBagIndex, vFirstBagIndex - 1 do
 			self:FlushBag(vBagIndex)
 		end
-		
+
 		for vBagIndex = vNumBags + 1, self.NumBags do
 			self:FlushBag(vBagIndex)
 		end
-		
+
 		self.NeedsUpdate = true
 	end
-	
+
 	-- If there's a cached copy just clear the IgnoreItem flags and return it
-	
+
 	if not self.NeedsUpdate then
 		return
 	end
-	
+
 	if not self.InventoryItems then
 		self.InventoryItems = {}
-		
+
 		for _, vInventorySlot in ipairs(Outfitter.cSlotNames) do
 			local vItemInfo = Outfitter:GetInventoryItemInfo(vInventorySlot)
-			
+
 			if vItemInfo
 			and vItemInfo.ItemSlotName
 			and vItemInfo.Code ~= 0 then
 				vItemInfo.SlotName = vInventorySlot
-				
+
 				self:AddItem(vItemInfo)
 			end
 		end
 	end
-	
+
 	for vBagIndex = vFirstBagIndex, vNumBags do
 		local vBagItems = self.BagItems[vBagIndex]
-		
+
 		if not vBagItems then
 			self.BagItems[vBagIndex] = {}
-			
+
 			local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
-			
+
 			if vNumBagSlots > 0 then
 				for vBagSlotIndex = 1, vNumBagSlots do
 					local vItemInfo = Outfitter:GetBagItemInfo(vBagIndex, vBagSlotIndex)
-					
+
 					if vItemInfo
 					and vItemInfo.Code ~= 0
 					and vItemInfo.ItemSlotName
@@ -859,50 +859,50 @@ function Outfitter._InventoryCache:Synchronize()
 			end -- if vNumBagSlots > 0
 		end -- if not BagItems
 	end -- for vBagIndex
-	
+
 	self.FirstBagIndex = vFirstBagIndex
 	self.NumBags = vNumBags
-	
+
 	self.NeedsUpdate = false
 end
 
 function Outfitter._InventoryCache:AddItem(pItem)
 	-- Add the item to the code list
-	
+
 	local vItemFamily = self.ItemsByCode[pItem.Code]
 
 	if not vItemFamily then
 		vItemFamily = {}
 		self.ItemsByCode[pItem.Code] = vItemFamily
 	end
-	
+
 	table.insert(vItemFamily, pItem)
-	
+
 	-- Add the item to the slot list
-	
+
 	local vItemSlot = self.ItemsBySlot[pItem.ItemSlotName]
-	
+
 	if not vItemSlot then
 		vItemSlot = {}
 		self.ItemsBySlot[pItem.ItemSlotName] = vItemSlot
 	end
-	
+
 	table.insert(vItemSlot, pItem)
-	
+
 	-- Add the item to the bags
-	
+
 	if pItem.Location.BagIndex then
 		local vBagItems = self.BagItems[pItem.Location.BagIndex]
-		
+
 		if not vBagItems then
 			vBagItems = {}
 			self.BagItems[pItem.Location.BagIndex] = vBagItems
 		end
-		
+
 		vBagItems[pItem.Location.BagSlotIndex] = pItem
-		
+
 	-- Add the item to the inventory
-	
+
 	elseif pItem.Location.SlotName then
 		self.InventoryItems[pItem.Location.SlotName] = pItem
 	end
@@ -910,9 +910,9 @@ end
 
 function Outfitter._InventoryCache:RemoveItem(pItem)
 	-- Remove the item from the code list
-	
+
 	local vItems = self.ItemsByCode[pItem.Code]
-	
+
 	for vIndex, vItem in ipairs(vItems) do
 		if vItem == pItem then
 			table.remove(vItems, vIndex)
@@ -921,9 +921,9 @@ function Outfitter._InventoryCache:RemoveItem(pItem)
 	end
 
 	-- Remove the item from the slot list
-	
+
 	local vItemSlot = self.ItemsBySlot[pItem.ItemSlotName]
-	
+
 	if vItemSlot then
 		for vIndex, vItem in ipairs(vItemSlot) do
 			if vItem == pItem then
@@ -932,18 +932,18 @@ function Outfitter._InventoryCache:RemoveItem(pItem)
 			end
 		end
 	end
-	
+
 	-- Remove the item from the bags list
-	
+
 	if pItem.Location.BagIndex then
 		local vBagItems = self.BagItems[pItem.Location.BagIndex]
-		
+
 		if vBagItems then
 			vBagItems[pItem.Location.BagSlotIndex] = nil
 		end
-		
+
 	-- Remove the item from the inventory list
-	
+
 	elseif pItem.Location.SlotName then
 		self.InventoryItems[pItem.Location.SlotName] = nil
 	end
@@ -976,13 +976,13 @@ end
 
 function Outfitter._InventoryCache:FindItemInfoByCode(pItemInfo)
 	local vItems = self.ItemsByCode[pItemInfo.Code]
-	
+
 	for _, vItemInfo in ipairs(vItems) do
 		if pItemInfo == vItemInfo then
 			return true
 		end
 	end
-	
+
 	return false
 end
 
@@ -994,31 +994,31 @@ function Outfitter._InventoryCache:FindItemInfoBySlot(pItemInfo)
 			return true
 		end
 	end
-	
+
 	return false
 end
 
 function Outfitter._InventoryCache:FindItem(pOutfitItem, pMarkAsInUse, pAllowSubCodeWildcard)
 	local vItem, vIndex, vItemFamily, vIgnoredItem = self:FindItemIndex(pOutfitItem, pAllowSubCodeWildcard)
-	
+
 	if not vItem then
 		return nil, vIgnoredItem
 	end
-	
+
 	if pMarkAsInUse then
 		vItem.IgnoreItem = true
 	end
-	
+
 	return vItem
 end
 
 function Outfitter._InventoryCache:FindItemIndex(pOutfitItem, pAllowSubCodeWildcard)
 	local vItemFamily = self.ItemsByCode[pOutfitItem.Code]
-	
+
 	if not vItemFamily then
 		return
 	end
-	
+
 	local vBestMatch = nil
 	local vBestMatchIndex = nil
 	local vNumItemsFound = 0
@@ -1026,7 +1026,7 @@ function Outfitter._InventoryCache:FindItemIndex(pOutfitItem, pAllowSubCodeWildc
 
 	for vIndex, vItem in ipairs(vItemFamily) do
 		-- All done if the caller doesn't care about the SubCode
-		
+
 		if pAllowSubCodeWildcard
 		and not pOutfitItem.SubCode then
 			if vItem.IgnoreItem then
@@ -1034,17 +1034,17 @@ function Outfitter._InventoryCache:FindItemIndex(pOutfitItem, pAllowSubCodeWildc
 			else
 				return vItem, vIndex, vItemFamily, nil
 			end
-		
+
 		-- If the subcode matches then check for an enchant match
-		
+
 		elseif vItem.SubCode == pOutfitItem.SubCode then
 			-- If the enchant matches then we're all done
-			
+
 			if vItem.InvType == "INVTYPE_AMMO"
-			or (vItem.EnchantCode == pOutfitItem.EnchantCode 
-			and vItem.JewelCode1 == pOutfitItem.JewelCode1 
+			or (vItem.EnchantCode == pOutfitItem.EnchantCode
+			and vItem.JewelCode1 == pOutfitItem.JewelCode1
 			and vItem.JewelCode2 == pOutfitItem.JewelCode2
-			and vItem.JewelCode3 == pOutfitItem.JewelCode3 
+			and vItem.JewelCode3 == pOutfitItem.JewelCode3
 			and vItem.JewelCode4 == pOutfitItem.JewelCode4
 			and vItem.UniqueID == pOutfitItem.UniqueID
 			and vItem.UpgradeTypeID == pOutfitItem.UpgradeTypeID
@@ -1056,10 +1056,10 @@ function Outfitter._InventoryCache:FindItemIndex(pOutfitItem, pAllowSubCodeWildc
 				else
 					return vItem, vIndex, vItemFamily
 				end
-			
+
 			-- Otherwise save the match in case a better one can
 			-- be found
-			
+
 			else
 				if vItem.IgnoreItem then
 					if not vFoundIgnoredItem then
@@ -1073,59 +1073,59 @@ function Outfitter._InventoryCache:FindItemIndex(pOutfitItem, pAllowSubCodeWildc
 			end
 		end
 	end
-	
+
 	-- Return the match if only one item was found
-	
+
 	if vNumItemsFound == 1
 	and not vBestMatch.IgnoreItem then
 		return vBestMatch, vBestMatchIndex, vItemFamily, nil
 	end
-	
+
 	--Outfitter:DebugMessage("Didn't find item:")
 	--Outfitter:DebugTable(pOutfitItem, "pOutfitItem")
 	--Outfitter:DebugTable(vItemFamily, "vItemFamily")
 
 	return nil, nil, nil, vFoundIgnoredItem
 end
-		
+
 function Outfitter._InventoryCache:FindItemOrAlt(pOutfitItem, pMarkAsInUse, pAllowSubCodeWildcard)
 	local vItem, vIgnoredItem = self:FindItem(pOutfitItem, pMarkAsInUse, pAllowSubCodeWildcard)
-	
+
 	if vItem then
 		return vItem
 	end
-	
+
 	-- See if there's an alias for the item if it wasn't found
-	
+
 	local vAltCode = Outfitter.cItemAliases[pOutfitItem.Code]
-	
+
 	if not vAltCode then
 		return nil, vIgnoredItem
 	end
-	
+
 	return self:FindItem({Code = vAltCode}, pMarkAsInUse, true)
 end
 
 function Outfitter._InventoryCache:FindAllItemsOrAlt(pOutfitItem, pAllowSubCodeWildcard, rItems)
 	local vNumItems = self:FindAllItems(pOutfitItem, pAllowSubCodeWildcard, rItems)
 	local vAltCode = Outfitter.cItemAliases[pOutfitItem.Code]
-	
+
 	if vAltCode then
 		vNumItems = vNumItems + self:FindAllItems({Code = vAltCode}, true, rItems)
 	end
-	
+
 	return vNumItems
 end
 
 function Outfitter._InventoryCache:FindAllItems(pOutfitItem, pAllowSubCodeWildcard, rItems)
 	local vItemFamily = self.ItemsByCode[pOutfitItem.Code]
-	
+
 	if not vItemFamily then
 		return 0
 	end
-	
+
 	local vNumItemsFound = 0
-	
+
 	for vIndex, vItem in ipairs(vItemFamily) do
 		if (pAllowSubCodeWildcard and not pOutfitItem.SubCode)
 		or vItem.SubCode == pOutfitItem.SubCode then
@@ -1133,7 +1133,7 @@ function Outfitter._InventoryCache:FindAllItems(pOutfitItem, pAllowSubCodeWildca
 			vNumItemsFound = vNumItemsFound + 1
 		end
 	end
-	
+
 	return vNumItemsFound
 end
 
@@ -1142,7 +1142,7 @@ function Outfitter._InventoryCache:FlushBag(pBagIndex)
 		for vBagSlotIndex, vItem in pairs(self.BagItems[pBagIndex]) do
 			self:RemoveItem(vItem)
 		end
-		
+
 		self.NeedsUpdate = true
 		self.BagItems[pBagIndex] = nil
 	end
@@ -1152,7 +1152,7 @@ function Outfitter._InventoryCache:FlushInventory()
 	if Outfitter.Debug.InventoryCache then
 		Outfitter:DebugMessage("Outfitter._InventoryCache:FlushInventory()")
 	end
-	
+
 	-- Do nothing if no items are cached yet
 	if not self.InventoryItems then
 		return
@@ -1162,7 +1162,7 @@ function Outfitter._InventoryCache:FlushInventory()
 	for vInventorySlot, vItem in pairs(self.InventoryItems) do
 		self:RemoveItem(vItem)
 	end
-	
+
 	self.NeedsUpdate = true
 	self.InventoryItems = nil
 end
@@ -1181,16 +1181,16 @@ function Outfitter._InventoryCache:GetMissingItems(pOutfit)
 		Outfitter:DebugStack()
 		return
 	end
-	
+
 	self:ResetIgnoreItemFlags()
-	
+
 	return pOutfit:GetMissingItems(self)
 end
 
 function Outfitter._InventoryCache:CompiledUnusedItemsList()
 	-- Reset all the in-use flags in the cache
 	self:ResetIgnoreItemFlags()
-	
+
 	-- Iterate the outfits and mark all their items as in-use
 	for vCategoryID, vOutfits in pairs(gOutfitter_Settings.Outfits) do
 		for vOutfitIndex, vOutfit in ipairs(vOutfits) do
@@ -1199,7 +1199,7 @@ function Outfitter._InventoryCache:CompiledUnusedItemsList()
 				for vInventorySlot, vOutfitItem in pairs(vItems) do
 					if vOutfitItem.Code ~= 0 then
 						local vItem = self:FindItemOrAlt(vOutfitItem, true)
-						
+
 						if vItem then
 							vItem.UsedInOutfit = true
 						end
@@ -1208,7 +1208,7 @@ function Outfitter._InventoryCache:CompiledUnusedItemsList()
 			end
 		end
 	end
-	
+
 	-- Look for items which aren't marked as in-use
 	local vUnusedItems = nil
 	for vCode, vFamilyItems in pairs(self.ItemsByCode) do
@@ -1223,7 +1223,7 @@ function Outfitter._InventoryCache:CompiledUnusedItemsList()
 			end
 		end
 	end
-	
+
 	-- Done
 	self.UnusedItems = vUnusedItems
 end
@@ -1235,11 +1235,11 @@ function Outfitter._InventoryCache:GetBoEItems()
 	local numBags, firstBagIndex = Outfitter:GetNumBags()
 	for bagIndex = firstBagIndex, numBags do
 		local numSlots = C_Container.GetContainerNumSlots(bagIndex)
-			
+
 		if numSlots > 0 then
 			for slotIndex = 1, numSlots do
 				local itemInfo = Outfitter:GetBagItemInfo(bagIndex, slotIndex)
-					
+
 				if itemInfo
 				and itemInfo.Code ~= 0
 				and itemInfo.ItemSlotName
@@ -1260,17 +1260,17 @@ function Outfitter._InventoryCache:ItemsAreSame(pItem1, pItem2)
 		and pItem2 ~= nil then
 			Outfitter:DebugMessage("ItemsAreSame(nil, %s): false", tostring(pItem2.Name))
 		end
-		
+
 		return pItem2 == nil
 	end
-	
+
 	if not pItem2 then
 		if Outfitter.Debug.TemporaryItems then
 			Outfitter:DebugMessage("ItemsAreSame(%s, nil): false", tostring(pItem1.Name))
 		end
 		return false
 	end
-	
+
 	if pItem1.Code == 0 then
 		if Outfitter.Debug.TemporaryItems
 		and pItem2.Code ~= 0 then
@@ -1278,7 +1278,7 @@ function Outfitter._InventoryCache:ItemsAreSame(pItem1, pItem2)
 		end
 		return pItem2.Code == 0
 	end
-	
+
 	if (pItem1.Code ~= pItem2.Code and Outfitter.cItemAliases[pItem1.Code] ~= pItem2.Code)
 	or (pItem1.Code == pItem2.Code and pItem1.SubCode ~= pItem2.SubCode) then
 		if Outfitter.Debug.TemporaryItems then
@@ -1286,26 +1286,26 @@ function Outfitter._InventoryCache:ItemsAreSame(pItem1, pItem2)
 		end
 		return false
 	end
-	
+
 	local vItems = {}
 	local vNumItems = self:FindAllItemsOrAlt(pItem1, nil, vItems)
-	
+
 	if vNumItems == 0 then
 		-- Shouldn't ever get here
-		
+
 		Outfitter:DebugMessage("Outfitter.ItemList_ItemsAreSame: Item not found")
 		Outfitter:DebugTable(pItem1, "Item")
-		
+
 		return false
 	elseif vNumItems == 1
 	or pItem1.InvType == "INVTYPE_AMMO"
 	or pItem2.InvType == "INVTYPE_AMMO" then
 		-- If there's only one of that item then the enchant code
 		-- is disregarded so just make sure it's the same
-		
+
 		-- Also don't bother comparing enchants on ammo or on items that
 		-- were found as alternate codes for the desired item (ie, Argent vs. Alliance/Horde Lance)
-		
+
 		return true
 	else
 		local vResult = Outfitter.cItemAliases[pItem1.Code] -- Aliasable item, don't compare sub-codes
@@ -1325,7 +1325,7 @@ function Outfitter._InventoryCache:ItemsAreSame(pItem1, pItem2)
 		and not vResult then
 			Outfitter:DebugMessage("ItemsAreSame(%s, %s): false", tostring(pItem1.Name), tostring(pItem2.Name))
 		end
-		
+
 		return vResult
 	end
 end
@@ -1338,11 +1338,11 @@ function Outfitter._InventoryCache:InventorySlotContainsItem(inventorySlot, outf
 	end
 
 	-- If the item specifies an empty slot check to see if the slot is actually empty
-	
+
 	if outfitItem.Code == 0 then
 		return self.InventoryItems[inventorySlot] == nil
 	end
-	
+
 	local items = {}
 	local numItems = self:FindAllItemsOrAlt(outfitItem, nil, items)
 
@@ -1353,28 +1353,28 @@ function Outfitter._InventoryCache:InventorySlotContainsItem(inventorySlot, outf
 	if numItems == 0 then
 --		Outfitter:DebugMessage("InventorySlotContainsItem: OutfitItem not found")
 --		Outfitter:DebugTable(outfitItem, "InventorySlotContainsItem: OutfitItem")
-		
+
 		return false
 	elseif numItems == 1 then
 		-- If there's only one of that item then the enchant code
 		-- is disregarded so just make sure it's in the slot
-		
+
 		local match = items[1].Location.SlotName == inventorySlot
-		
+
 --		if not match then
 --			Outfitter:DebugMessage("InventorySlotContainsItem: Slots don't match %s", tostring(inventorySlot))
 --			Outfitter:DebugTable(items[1], "InventorySlotContainsItem: Item")
 --		end
-		
+
 		return match, items[1]
 	else
 		-- See if one of the items is in the slot
-		
+
 		for _, item in ipairs(items) do
 			if item.Location.SlotName == inventorySlot then
 				-- Must match the enchant and jewel codes if there are multiple items
 				-- in order to be considered a perfect match
-				
+
 					-- note SubCode mismatch is not checked for; shouldn't it be?
 				local codesMatch = item.InvType == "INVTYPE_AMMO"
 				                or (item.EnchantCode == outfitItem.EnchantCode
@@ -1388,22 +1388,22 @@ function Outfitter._InventoryCache:InventorySlotContainsItem(inventorySlot, outf
 				                and item.BonusIDs == outfitItem.BonusIDs
 				                and item.UpgradeID == outfitItem.UpgradeID
 				                and Outfitter.AzeriteCodesMatch(item.AzeriteCodes, outfitItem.AzeriteCodes))
-				
+
 --				if not codesMatch then
 --					Outfitter:DebugMessage("InventorySlotContainsItem: Items don't match")
 --					Outfitter:DebugTable(outfitItem, "InventorySlotContainsItem: OutfitItem")
 --					Outfitter:DebugTable(item, "InventorySlotContainsItem: Item")
 --				end
-				
+
 				return codesMatch, item
 			end
 		end
-		
+
 		-- No items in the slot
-		
+
 --		Outfitter:DebugMessage("InventorySlotContainsItem: Items don't match -- no item")
 --		Outfitter:DebugTable(outfitItem, "InventorySlotContainsItem: OutfitItem")
-		
+
 		return false, nil
 	end
 end
