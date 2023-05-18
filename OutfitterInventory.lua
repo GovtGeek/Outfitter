@@ -564,9 +564,10 @@ function Outfitter:GetSlotIDItemInfo(slotID)
 
 	itemInfo.Quality = GetInventoryItemQuality("player", slotID)
 	itemInfo.Texture = GetInventoryItemTexture("player", slotID)
+	itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = GetInventoryItemGems(slotID)
 
 	if slotID then
-		_, _, itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = unpack(self:ParseItemLink(itemLink))
+		--_, _, itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = unpack(self:ParseItemLink(itemLink))
 		if itemInfo.Gem1 ~= nil then
 			itemInfo.Gem1Link = select(2, GetItemInfo(itemInfo.Gem1))
 		end
@@ -589,9 +590,24 @@ function Outfitter:GetSlotIDItemInfo(slotID)
 end
 
 function Outfitter:GetAzeriteCodesForLocation(location)
+	local success,isAzeriteItem  = pcall( function() return C_AzeriteEmpoweredItem.IsAzeriteEmpoweredItem(location) end );
+	if not (success and isAzeriteItem) then
+		return
+	end
 
-
-	return
+	local allTierInfo = C_AzeriteEmpoweredItem.GetAllTierInfo(location)
+	local powerIDs
+	for tierIndex, tierInfo in ipairs(allTierInfo) do
+		for _, powerID in ipairs(tierInfo.azeritePowerIDs) do
+			if C_AzeriteEmpoweredItem.IsPowerSelected(location, powerID) then
+				if not powerIDs then
+					powerIDs = {}
+				end
+				powerIDs[powerID] = true
+			end
+		end
+	end
+	return powerIDs
 end
 
 function Outfitter:GetNumBags()
