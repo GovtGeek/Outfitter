@@ -56,7 +56,7 @@ Mainline/Outfitter.lua
 Mainline/OutfitterOutfits.lua
 Mainline/OutfitterInventory.lua
 Mainline/OutfitterEquipment.lua
-Mainline/OutfitterItemStats.lua
+OutfitterItemStats.lua
 OutfitterOptimize.lua
 OutfitterUITools.lua
 OutfitterScripting.lua
