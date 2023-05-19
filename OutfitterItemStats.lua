@@ -338,7 +338,6 @@ do -- editor collapse hack
 		local markedForRemovalStat = {}
 		for stat = 1, #Outfitter.SimpleStatCategories[category].Stats do
 			local min, max = Outfitter.SimpleStatCategories[category].Stats[stat].ExpansionMin, Outfitter.SimpleStatCategories[category].Stats[stat].ExpansionMax
-			print(Outfitter.SimpleStatCategories[category].Stats[stat].Name, category, stat, LE_EXPANSION_LEVEL_CURRENT, min, max)
 			if (min ~= nil and max ~= nil and ((min > LE_EXPANSION_LEVEL_CURRENT) or (max < LE_EXPANSION_LEVEL_CURRENT))) -- num/num (we know when to start and stop
 			or (min == nil and max ~= nil and LE_EXPANSION_LEVEL_CURRENT > max) -- nil/num (we know when to stop and assume nil min means stat is from the start)
 			or (min ~= nil and max == nil and min > LE_EXPANSION_LEVEL_CURRENT) -- num/nil (we know when we can start, but not end)
