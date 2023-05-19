@@ -464,7 +464,6 @@ function Outfitter._EquipmentChanges:optimize()
 end
 
 function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCache)
-	--print(expectedInventoryCache)
 	-- Disable sound effects during the swap
 	local savedEnabledSFXValue
 	if not Outfitter.Settings.EnableEquipSounds then
