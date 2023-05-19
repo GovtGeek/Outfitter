@@ -1170,6 +1170,22 @@ Outfitter.cShapeshiftIDInfo = {
 	[1784] = {ID = "Stealth"},
 }
 
+function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
+	if CharacterFrame:IsShown() then
+		Outfitter:ToggleOutfitterFrame()
+	else
+		--[[-- Not sure why this is needed. Pulled from Blizzard forums --]]--
+		if not CharacterFrameTab3:GetRight() then
+			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
+		end
+		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
+		CharacterFrame_ShowSubFrame("PaperDollFrame")
+		CharacterFrame:Show()
+		OutfitterFrame:Show()
+	end
+end
+
+
 function Outfitter:ToggleOutfitterFrame()
 	if self:IsOpen() then
 		OutfitterFrame:Hide()
@@ -1789,7 +1805,7 @@ function Outfitter:UnequipItemByName(pItemName)
 	end
 
 	PickupInventoryItem(vInventoryID)
-	OutfitterAPI:PickupContainerItem(vEmptyBagSlot.BagIndex, vEmptyBagSlot.BagSlotIndex)
+	C_Container:PickupContainerItem(vEmptyBagSlot.BagIndex, vEmptyBagSlot.BagSlotIndex)
 end
 
 function Outfitter:AskRebuildOutfit(pOutfit)
@@ -3521,7 +3537,7 @@ function Outfitter._BagIterator:Reset(pStartIndex, pEndIndex)
 
 	if pStartIndex == pEndIndex
 	or Outfitter:GetBagType(self.BagIndex)== Outfitter.cGeneralBagType then
-		self.NumBagSlots = OutfitterAPI:GetContainerNumSlots(self.BagIndex)
+		self.NumBagSlots = C_Container:GetContainerNumSlots(self.BagIndex)
 	else
 		self.NumBagSlots = 0
 	end
@@ -3540,7 +3556,7 @@ function Outfitter._BagIterator:NextSlot()
 		self.BagSlotIndex = 1
 
 		if Outfitter:GetBagType(self.BagIndex) == Outfitter.cGeneralBagType then
-			self.NumBagSlots = OutfitterAPI:GetContainerNumSlots(self.BagIndex)
+			self.NumBagSlots = C_Container:GetContainerNumSlots(self.BagIndex)
 		else
 			self.NumBagSlots = 0
 		end
@@ -3656,7 +3672,7 @@ function Outfitter:GetBagType(pBagIndex)
 		pBagIndex = 4 - pBagIndex
 	end
 
-	local vItemLink = GetInventoryItemLink("player", OutfitterAPI:ContainerIDToInventoryID(pBagIndex))
+	local vItemLink = GetInventoryItemLink("player", C_Container:ContainerIDToInventoryID(pBagIndex))
 
 	if not vItemLink then
 		return nil
@@ -3684,13 +3700,13 @@ function Outfitter:GetEmptyBagSlot(pStartBagIndex, pStartBagSlotIndex, pIncludeB
 	end
 
 	for vBagIndex = vStartBagIndex, vEndBagIndex, -1 do
-		local vNumEmptySlots, vBagType = OutfitterAPI:GetContainerNumFreeSlots(vBagIndex)
+		local vNumEmptySlots, vBagType = C_Container:GetContainerNumFreeSlots(vBagIndex)
 
 		if vNumEmptySlots > 0 then
-			local vNumBagSlots = OutfitterAPI:GetContainerNumSlots(vBagIndex)
+			local vNumBagSlots = C_Container:GetContainerNumSlots(vBagIndex)
 
 			for vSlotIndex = vStartBagSlotIndex, vNumBagSlots do
-				if not OutfitterAPI:GetContainerItemLink(vBagIndex, vSlotIndex) then
+				if not C_Container:GetContainerItemLink(vBagIndex, vSlotIndex) then
 
 					return {BagIndex = vBagIndex, BagSlotIndex = vSlotIndex, BagType = vBagType}
 				end
@@ -3762,7 +3778,7 @@ function Outfitter:FindItemsInBagsForSlot(pSlotName, pIgnoreItems)
 	local vNumBags, vFirstBagIndex = self:GetNumBags()
 
 	for vBagIndex = vFirstBagIndex, vNumBags do
-		local vNumBagSlots = OutfitterAPI:GetContainerNumSlots(vBagIndex)
+		local vNumBagSlots = C_Container:GetContainerNumSlots(vBagIndex)
 
 		if vNumBagSlots > 0 then
 			for vSlotIndex = 1, vNumBagSlots do
@@ -7245,10 +7261,10 @@ function Outfitter:PlayerIsOnQuestID(pQuestID)
 end
 
 function Outfitter:GetTrackingEnabled(pTexture)
-	local vNumTypes = OutfitterAPI:GetNumTrackingTypes()
+	local vNumTypes = C_Minimap.GetNumTrackingTypes()
 
 	for vIndex = 1, vNumTypes do
-		local vName, vTexture, vActive = OutfitterAPI:GetTrackingInfo(vIndex)
+		local vName, vTexture, vActive = C_Minimap.GetTrackingInfo(vIndex)
 		if vTexture == pTexture then
 			return vActive, vIndex
 		end
@@ -7258,7 +7274,7 @@ end
 function Outfitter:SetTrackingEnabled(pTexture, pEnabled)
 	local vActive, vIndex = self:GetTrackingEnabled(pTexture)
 	if vActive ~= pEnabled then
-		OutfitterAPI:SetTracking(vIndex, pEnabled == true or pEnabled == 1)
+		C_Minimap.SetTracking(vIndex, pEnabled == true or pEnabled == 1)
 	end
 end
 
@@ -7269,7 +7285,8 @@ Outfitter._ExtendedCompareTooltip = {}
 function Outfitter._ExtendedCompareTooltip:Construct()
 	hooksecurefunc("GameTooltip_ShowCompareItem", function (pShift)
 		if not Outfitter.Settings.Options.DisableItemComparisons then
-			if OutfitterAPI.IsWoW1002 then
+			--if OutfitterAPI.IsWoW1002 then
+			if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 				if TooltipUtil.ShouldDoItemComparison() then
 					self:ShowCompareItem(pShift)
 				end
@@ -7279,7 +7296,8 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		end
 	end)
 
-	if not OutfitterAPI.IsWoW1002 then
+	--if not OutfitterAPI.IsWoW1002 then
+	if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 		GameTooltip:HookScript("OnHide", function ()
 			self:HideCompareItems()
 		end)
@@ -7339,7 +7357,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	self.AnchorToTooltip = nil
 
 	for vIndex, vShoppingTooltip in ipairs(GameTooltip.shoppingTooltips) do
-		if OutfitterAPI.IsWoW1002 then Mixin(vShoppingTooltip, GameTooltipDataMixin) end
+		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then Mixin(vShoppingTooltip, GameTooltipDataMixin) end
 		local _, vShoppingLink = vShoppingTooltip:GetItem()
 		local vShoppingItemInfo = Outfitter:GetItemInfoFromLink(vShoppingLink)
 
@@ -7463,7 +7481,7 @@ function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
 			break
 		end
 
-		if OutfitterAPI.IsWoW1002 then Mixin(vTooltip, GameTooltipDataMixin) end
+		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then Mixin(vTooltip, GameTooltipDataMixin) end
 
 		local _, vTooltipLink = vTooltip:GetItem()
 		local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
@@ -7501,7 +7519,7 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 
 	if not vTooltip then
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
-		if OutfitterAPI.IsWoW1002 then
+		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 		  Mixin(vTooltip, GameTooltipDataMixin)
 		  vTooltip:SetScript("OnUpdate", function ()
 			  if not TooltipUtil.ShouldDoItemComparison() then
@@ -8139,7 +8157,7 @@ function Outfitter._ListItem:OnClick(button, down)
 				return
 			else
 				if self.outfitItem.Location.BagIndex then
-					OutfitterAPI:UseContainerItem(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
+					C_Container:UseContainerItem(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
 					StackSplitFrame:Hide()
 				end
 			end
@@ -8201,7 +8219,7 @@ function Outfitter._ListItem:OnEnter()
 			GameTooltip:Show()
 		elseif MerchantFrame:IsShown() and MerchantFrame.selectedTab == 1 then
 			if self.outfitItem.Location.BagIndex then
-				OutfitterAPI:ShowContainerSellCursor(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
+				C_Container:ShowContainerSellCursor(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
 			end
 		else
 			ResetCursor()
