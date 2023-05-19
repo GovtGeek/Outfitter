@@ -1,4 +1,9 @@
 ----------------------------------------
+-- Constants
+----------------------------------------
+if _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] == nil then _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] = NUM_BAG_SLOTS end
+
+----------------------------------------
 -- General
 ----------------------------------------
 function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
@@ -79,6 +84,17 @@ function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
 	itemInfo.Texture = containerItemInfo.iconFileID
 
 	local itemLinkInfo = self:ParseItemLink(itemLink)
+
+		_, itemInfo.Gem1Link = GetItemGem(itemLink,1)
+	itemInfo.Gem1 = Outfitter:ParseItemLink(itemInfo.Gem1Link)
+	_, itemInfo.Gem2Link = GetItemGem(itemLink,2)
+	itemInfo.Gem2 = Outfitter:ParseItemLink(itemInfo.Gem2Link)
+	_, itemInfo.Gem3Link = GetItemGem(itemLink,3)
+	itemInfo.Gem3 = Outfitter:ParseItemLink(itemInfo.Gem3Link)
+	_, itemInfo.Gem4Link = GetItemGem(itemLink,4)
+	itemInfo.Gem4 = Outfitter:ParseItemLink(itemInfo.Gem4Link)
+
+	--[[-- These steps are recreated in Outfitter:GetSlotIDItemInfo and should get moved to their own function --]]--
 	_, _, itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = unpack(self:ParseItemLink(itemLink))
 
 	if itemInfo.Gem1 ~= nil then
@@ -564,8 +580,22 @@ function Outfitter:GetSlotIDItemInfo(slotID)
 
 	itemInfo.Quality = GetInventoryItemQuality("player", slotID)
 	itemInfo.Texture = GetInventoryItemTexture("player", slotID)
-	itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = GetInventoryItemGems(slotID)
 
+	--[[ Get itemInfo.GemX (ID) and itemInfo.GemXLink (gemLink)
+		This way allows all version since GetInventoryItemGems isn't in Vanilla or Retail
+		Same steps as Outfitter:GetBagItemInfo
+	--]]--
+	_, itemInfo.Gem1Link = GetItemGem(itemLink,1)
+	itemInfo.Gem1 = Outfitter:ParseItemLink(itemInfo.Gem1Link)
+	_, itemInfo.Gem2Link = GetItemGem(itemLink,2)
+	itemInfo.Gem2 = Outfitter:ParseItemLink(itemInfo.Gem2Link)
+	_, itemInfo.Gem3Link = GetItemGem(itemLink,3)
+	itemInfo.Gem3 = Outfitter:ParseItemLink(itemInfo.Gem3Link)
+	_, itemInfo.Gem4Link = GetItemGem(itemLink,4)
+	itemInfo.Gem4 = Outfitter:ParseItemLink(itemInfo.Gem4Link)
+
+	--[[--
+	itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = GetInventoryItemGems(slotID)
 	if slotID then
 		--_, _, itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = unpack(self:ParseItemLink(itemLink))
 		if itemInfo.Gem1 ~= nil then
@@ -581,6 +611,7 @@ function Outfitter:GetSlotIDItemInfo(slotID)
 			itemInfo.Gem4Link = select(2, GetItemInfo(itemInfo.Gem4))
 		end
 	end
+	--]]
 
 	itemInfo.Location = {SlotID = slotID}
 
