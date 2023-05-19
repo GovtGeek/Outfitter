@@ -8,7 +8,6 @@
 ## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
 #### AddonCompartmentFuncOnEnter:
 #### AddonCompartmentFuncOnLeave:
-#### IconTexture: transmog-nav-slot-chest
 ## IconTexture: Interface/Icons/INV_Chest_Cloth_21
 ## OptionalDeps:
 ## RequiredDeps:
@@ -16,8 +15,6 @@
 ## SavedVariables: gOutfitter_GlobalSettings
 ## X-ReloadTag: 2
 ## X-Curse-Project-ID:
-
-#Mainline/Compat.lua
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
@@ -54,7 +51,7 @@ OutfitterStrings_ru.lua
 Mainline/Outfitter.lua
 
 Mainline/OutfitterOutfits.lua
-Mainline/OutfitterInventory.lua
+OutfitterInventory.lua
 Mainline/OutfitterEquipment.lua
 OutfitterItemStats.lua
 OutfitterOptimize.lua
@@ -68,5 +65,6 @@ OutfitterAbout.lua
 
 OutfitterLDB.lua
 
+# Fundamental differences between UIs require these
 Mainline/Outfitter.xml
 Mainline/OutfitterBar.xml
