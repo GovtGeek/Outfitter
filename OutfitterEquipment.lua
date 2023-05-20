@@ -497,6 +497,7 @@ function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCac
 				emptyThenEquip = true
 			end
 		end
+
 		-- Swap the item in-place with the new item
 		if swapItems then
 			if emptyThenEquip then
@@ -873,9 +874,8 @@ function Outfitter:UpdateEquippedItems()
 		self:DebugOutfitTable(vCompiledOutfit, "CompiledOutfit0")
 	end
 
-	-- When in combat delay the outfit change until
-	-- combat ends
-
+	-- When in combat delay the outfit change until combat ends
+	-- TODO: A weapons only outfit should be able to be swapped - at least in Vanilla/Wrath
 	if self.InCombat or self.MaybeInCombat then
 		self.EquippedNeedsUpdate = true
 		self.MaybeInCombat = false
@@ -889,7 +889,8 @@ function Outfitter:UpdateEquippedItems()
 	vEquipmentChangeList:addChangesToEquipOutfit(vCompiledOutfit, vInventoryCache)
 
 	if vEquipmentChangeList then
-		 local vExpectedInventoryCache = self:New(self._InventoryCache)
+		-- Leave this for debugging later. Not sure why it was commented out. GovtGeek
+		-- local vExpectedInventoryCache = self:New(self._InventoryCache)
 
 		if self.Debug.EquipmentChanges then
 			self:DebugMessage("UpdateEquippedItems: Executing change list")
@@ -1020,11 +1021,13 @@ function Outfitter.OutfitStack:AddOutfit(pOutfit, pLayerID)
 
 	local vStackLength = #self.Outfits
 	local vInsertIndex = vStackLength + 1
-  local vPreventUnequip = false
-  while (vInsertIndex > 1) and self.Outfits[vInsertIndex-1] and self.Outfits[vInsertIndex-1].PreventUnequip do
-    vInsertIndex = vInsertIndex - 1
-    vPreventUnequip = true
-  end
+
+	-- This was removed for Retail, but not sure why. GovtGeek
+	local vPreventUnequip = false
+	while (vInsertIndex > 1) and self.Outfits[vInsertIndex-1] and self.Outfits[vInsertIndex-1].PreventUnequip do
+		vInsertIndex = vInsertIndex - 1
+		vPreventUnequip = true
+	end
 
 	local vLayerIndex = gOutfitter_Settings.LayerIndex[pLayerID]
 
@@ -1117,13 +1120,13 @@ function Outfitter.OutfitStack:FindOutfitByCategory(pCategoryID)
 end
 
 function Outfitter.OutfitStack:Clear()
-  -- Check for persistent outfits
-  for vIndex, vOutfit in ipairs(self.Outfits) do
-    if vOutfit.PreventUnequip then
-      return self:ClearNonPersistent();
-    end
-  end
-
+	--[[-- GovtGeek - not sure about this loop --]]--
+	-- Check for persistent outfits
+	for vIndex, vOutfit in ipairs(self.Outfits) do
+	  if vOutfit.PreventUnequip then
+		return self:ClearNonPersistent();
+	  end
+	end
 	for vIndex, vOutfit in ipairs(self.Outfits) do
 		Outfitter:DispatchOutfitEvent("UNWEAR_OUTFIT", vOutfit:GetName(), vOutfit)
 	end
