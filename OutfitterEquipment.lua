@@ -1307,16 +1307,19 @@ function Outfitter.OutfitStack:UpdateOutfitDisplay()
 		end
 	end -- for
 
-	if vShowHelm == true then
-		ShowHelm(true)
-	elseif vShowHelm == false then
-		ShowHelm(false)
-	end
+	--[[-- Helm and Cloak visibility only available in Vanilla and Wrath --]]--
+	if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
+		if vShowHelm == true then
+			ShowHelm(true)
+		elseif vShowHelm == false then
+			ShowHelm(false)
+		end
 
-	if vShowCloak == true then
-		ShowCloak(true)
-	elseif vShowCloak == false then
-		ShowCloak(false)
+		if vShowCloak == true then
+			ShowCloak(true)
+		elseif vShowCloak == false then
+			ShowCloak(false)
+		end
 	end
 
 	if vShowTitleID ~= nil
