@@ -52,7 +52,7 @@ Mainline/Outfitter.lua
 
 Mainline/OutfitterOutfits.lua
 OutfitterInventory.lua
-Mainline/OutfitterEquipment.lua
+OutfitterEquipment.lua
 OutfitterItemStats.lua
 OutfitterOptimize.lua
 OutfitterUITools.lua
