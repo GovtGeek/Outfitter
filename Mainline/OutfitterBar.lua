@@ -1,3 +1,13 @@
+-- Global Backdrops
+BACKDROP_OUTFITTER_DIALOG_32_32 = {
+	bgFile = "Interface\\Addons\\Outfitter\\Textures\\DialogBox-Background",
+	edgeFile = "Interface\\DialogFrame\\UI-DialogBox-Border",
+	tile = true,
+	tileSize = 32,
+	edgeSize = 32,
+	insets = { left = 11, right = 12, top = 12, bottom = 11 },
+}
+
 ----------------------------------------
 Outfitter.OutfitBar = {}
 ----------------------------------------
@@ -97,8 +107,10 @@ function Outfitter.OutfitBar:Construct()
 	Outfitter:RegisterOutfitEvent("ADD_OUTFIT", function () Outfitter.OutfitBar:ChangedOutfits() end)
 	Outfitter:RegisterOutfitEvent("DELETE_OUTFIT", function () Outfitter.OutfitBar:ChangedOutfits() end)
 	Outfitter:RegisterOutfitEvent("EDIT_OUTFIT", function () Outfitter.OutfitBar:ChangedOutfits() end)
-	Outfitter.EventLib:RegisterEvent("PET_BATTLE_OPENING_START", self.PetBattleStarted, self)
-	Outfitter.EventLib:RegisterEvent("PET_BATTLE_OVER", self.PetBattleFinished, self)
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+		Outfitter.EventLib:RegisterEvent("PET_BATTLE_OPENING_START", self.PetBattleStarted, self)
+		Outfitter.EventLib:RegisterEvent("PET_BATTLE_OVER", self.PetBattleFinished, self)
+	end
 	self.Initialized = true
 
 	self:Show()
@@ -431,9 +443,8 @@ function Outfitter.OutfitBar:GetCursorTexture()
 				local vItemLink = C_Container.GetContainerItemLink(vBagIndex, vBagSlotIndex)
 
 				if vItemLink == vParam2 then
-					local vTexture = C_Container.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
-
-					return vTexture
+					local itemInfo = C_Container.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
+					return (itemInfo and itemInfo.iconFileID) or nil
 				end
 			end
 		end
@@ -894,7 +905,7 @@ function Outfitter.OutfitBar._ChooseIconDialog:Construct()
 		end
 	end)
 
-	local info = {
+	self:SetBackdrop({
 		bgFile = "Interface\\Addons\\Outfitter\\Textures\\DialogBox-Background",
 		edgeFile ="Interface\\DialogFrame\\UI-DialogBox-Border",
 		tile = true,
@@ -902,8 +913,7 @@ function Outfitter.OutfitBar._ChooseIconDialog:Construct()
 		tileSize = 512,
 		edgeSize = 32,
 		insets = { left = 11, right = 12, top = 12, bottom = 11 },
-	};
-	self:SetBackdrop(info)
+	})
 
 	-- Icon sets
 	self.iconSets = {
@@ -1304,7 +1314,8 @@ function Outfitter.OutfitBar.TextureSets.Inventory:Activate()
 		local	vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 		if vNumBagSlots > 0 then
 			for vSlotIndex = 1, vNumBagSlots do
-				local vTexture = C_Container.GetContainerItemInfo(vBagIndex, vSlotIndex)
+				local itemInfo = C_Container.GetContainerItemInfo(vBagIndex, vSlotIndex)
+				local vTexture = (itemInfo and itemInfo.iconFileID) or nil
 				if vTexture and not vUsedTextures[vTexture] then
 					table.insert(self.TextureList, vTexture)
 					vUsedTextures[vTexture] = true
@@ -1382,15 +1393,12 @@ end
 
 function Outfitter.OutfitBar._SettingsDialog:Construct()
 	self:SetFrameStrata("DIALOG")
-	local backdropInfo = {
+	self:SetBackdrop({
 		bgFile = "Interface\\Tooltips\\UI-Tooltip-Background",
 		edgeFile = "Interface\\Tooltips\\UI-Tooltip-Border",
-		tile = true,
-		tileSize = 16,
-		edgeSize = 16,
+		tile = true, tileSize = 16, edgeSize = 16,
 		insets = {left = 3, right = 3, top = 3, bottom = 3}
-	}
-	self:SetBackdrop(backdropInfo)
+	})
 
 	self:SetBackdropBorderColor(0.75, 0.75, 0.75)
 	self:SetBackdropColor(0, 0, 0, 0.9)

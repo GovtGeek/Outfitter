@@ -1,6 +1,17 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
+	<Frame name="OutfitterDialogFrameTemplate" setAllPoints="true" virtual="true" inherits="BackdropTemplate">
+		<KeyValues>
+			<KeyValue key="backdropInfo" value="BACKDROP_OUTFITTER_DIALOG_32_32" type="global"/>
+		</KeyValues>
+		<Scripts>
+			<OnShow>
+				self:SetFrameLevel(self:GetParent():GetFrameLevel())
+			</OnShow>
+		</Scripts>
+	</Frame>
+
 	<Frame name="OutfitterChooseIconDialog" toplevel="true" frameStrata="DIALOG" movable="true" parent="UIParent" enableMouse="true" hidden="true" inherits="BackdropTemplate" mixin="BackdropTemplateMixin">
 		<Size>
 			<AbsDimension x="400" y="415"/>
@@ -28,6 +39,7 @@
 
 		</Layers>
 		<Frames>
+			<Frame inherits="OutfitterDialogFrameTemplate"/>
 			<Frame name="$parentIconSetMenu" hidden="false">
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
