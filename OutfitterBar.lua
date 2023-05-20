@@ -1313,8 +1313,8 @@ function Outfitter.OutfitBar.TextureSets.Inventory:Activate()
 
 		if vNumBagSlots > 0 then
 			for vSlotIndex = 1, vNumBagSlots do
-				local itemInfo = C_Containeer.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
-				local vTexture = itemInfo.iconFileID
+				local itemInfo = C_Container.GetContainerItemInfo(vBagIndex, vSlotIndex)
+				local vTexture = (itemInfo and itemInfo.iconFileID) or nil
 
 				if vTexture and not vUsedTextures[vTexture] then
 					table.insert(self.TextureList, vTexture)
