@@ -440,10 +440,12 @@ function Outfitter.OutfitBar:GetCursorTexture()
 				local vItemLink = C_Container.GetContainerItemLink(vBagIndex, vBagSlotIndex)
 
 				if vItemLink == vParam2 then
-					local itemInfo = C_Containeer.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
-					local vTexture = itemInfo.iconFileID
-
-					return vTexture
+					local itemInfo = C_Container.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
+					if itemInfo == nil then
+						return nil
+					else
+						return itemInfo.iconFileID
+					end
 				end
 			end
 		end
