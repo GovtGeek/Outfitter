@@ -425,13 +425,13 @@ function Outfitter.OutfitBar:GetCursorTexture()
 		local	vNumBags, vFirstBagIndex = Outfitter:GetNumBags()
 
 		for vBagIndex = vFirstBagIndex, vNumBags do
-			local vNumBagSlots = C_Container:GetContainerNumSlots(vBagIndex)
+			local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 
 			for vBagSlotIndex = 1, vNumBagSlots do
-				local vItemLink = C_Container:GetContainerItemLink(vBagIndex, vBagSlotIndex)
+				local vItemLink = C_Container.GetContainerItemLink(vBagIndex, vBagSlotIndex)
 
 				if vItemLink == vParam2 then
-					local vTexture = C_Container:GetContainerItemInfo(vBagIndex, vBagSlotIndex)
+					local vTexture = C_Container.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
 
 					return vTexture
 				end
@@ -1301,10 +1301,10 @@ function Outfitter.OutfitBar.TextureSets.Inventory:Activate()
 	local vNumBags, vFirstBagIndex = Outfitter:GetNumBags()
 
 	for vBagIndex = vFirstBagIndex, vNumBags do
-		local	vNumBagSlots = C_Container:GetContainerNumSlots(vBagIndex)
+		local	vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 		if vNumBagSlots > 0 then
 			for vSlotIndex = 1, vNumBagSlots do
-				local vTexture = C_Container:GetContainerItemInfo(vBagIndex, vSlotIndex)
+				local vTexture = C_Container.GetContainerItemInfo(vBagIndex, vSlotIndex)
 				if vTexture and not vUsedTextures[vTexture] then
 					table.insert(self.TextureList, vTexture)
 					vUsedTextures[vTexture] = true

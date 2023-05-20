@@ -1805,7 +1805,7 @@ function Outfitter:UnequipItemByName(pItemName)
 	end
 
 	PickupInventoryItem(vInventoryID)
-	C_Container:PickupContainerItem(vEmptyBagSlot.BagIndex, vEmptyBagSlot.BagSlotIndex)
+	C_Container.PickupContainerItem(vEmptyBagSlot.BagIndex, vEmptyBagSlot.BagSlotIndex)
 end
 
 function Outfitter:AskRebuildOutfit(pOutfit)
@@ -3537,7 +3537,7 @@ function Outfitter._BagIterator:Reset(pStartIndex, pEndIndex)
 
 	if pStartIndex == pEndIndex
 	or Outfitter:GetBagType(self.BagIndex)== Outfitter.cGeneralBagType then
-		self.NumBagSlots = C_Container:GetContainerNumSlots(self.BagIndex)
+		self.NumBagSlots = C_Container.GetContainerNumSlots(self.BagIndex)
 	else
 		self.NumBagSlots = 0
 	end
@@ -3556,7 +3556,7 @@ function Outfitter._BagIterator:NextSlot()
 		self.BagSlotIndex = 1
 
 		if Outfitter:GetBagType(self.BagIndex) == Outfitter.cGeneralBagType then
-			self.NumBagSlots = C_Container:GetContainerNumSlots(self.BagIndex)
+			self.NumBagSlots = C_Container.GetContainerNumSlots(self.BagIndex)
 		else
 			self.NumBagSlots = 0
 		end
@@ -3672,7 +3672,7 @@ function Outfitter:GetBagType(pBagIndex)
 		pBagIndex = 4 - pBagIndex
 	end
 
-	local vItemLink = GetInventoryItemLink("player", C_Container:ContainerIDToInventoryID(pBagIndex))
+	local vItemLink = GetInventoryItemLink("player", C_Container.ContainerIDToInventoryID(pBagIndex))
 
 	if not vItemLink then
 		return nil
@@ -3700,13 +3700,13 @@ function Outfitter:GetEmptyBagSlot(pStartBagIndex, pStartBagSlotIndex, pIncludeB
 	end
 
 	for vBagIndex = vStartBagIndex, vEndBagIndex, -1 do
-		local vNumEmptySlots, vBagType = C_Container:GetContainerNumFreeSlots(vBagIndex)
+		local vNumEmptySlots, vBagType = C_Container.GetContainerNumFreeSlots(vBagIndex)
 
 		if vNumEmptySlots > 0 then
-			local vNumBagSlots = C_Container:GetContainerNumSlots(vBagIndex)
+			local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 
 			for vSlotIndex = vStartBagSlotIndex, vNumBagSlots do
-				if not C_Container:GetContainerItemLink(vBagIndex, vSlotIndex) then
+				if not C_Container.GetContainerItemLink(vBagIndex, vSlotIndex) then
 
 					return {BagIndex = vBagIndex, BagSlotIndex = vSlotIndex, BagType = vBagType}
 				end
@@ -3778,7 +3778,7 @@ function Outfitter:FindItemsInBagsForSlot(pSlotName, pIgnoreItems)
 	local vNumBags, vFirstBagIndex = self:GetNumBags()
 
 	for vBagIndex = vFirstBagIndex, vNumBags do
-		local vNumBagSlots = C_Container:GetContainerNumSlots(vBagIndex)
+		local vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 
 		if vNumBagSlots > 0 then
 			for vSlotIndex = 1, vNumBagSlots do
@@ -8157,7 +8157,7 @@ function Outfitter._ListItem:OnClick(button, down)
 				return
 			else
 				if self.outfitItem.Location.BagIndex then
-					C_Container:UseContainerItem(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
+					C_Container.UseContainerItem(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
 					StackSplitFrame:Hide()
 				end
 			end
@@ -8219,7 +8219,7 @@ function Outfitter._ListItem:OnEnter()
 			GameTooltip:Show()
 		elseif MerchantFrame:IsShown() and MerchantFrame.selectedTab == 1 then
 			if self.outfitItem.Location.BagIndex then
-				C_Container:ShowContainerSellCursor(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
+				C_Container.ShowContainerSellCursor(self.outfitItem.Location.BagIndex, self.outfitItem.Location.BagSlotIndex)
 			end
 		else
 			ResetCursor()
