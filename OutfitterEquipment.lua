@@ -482,10 +482,11 @@ function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCac
 			-- If the items are for different bag types, check to see if we need to
 			-- separate the swap operation into Empty then Equip
 			local equippedItemBagType = Outfitter:GetSlotIDItemBagType(equipmentChange.SlotID)
-			local newItemBagType = Outfitter:GetItemLocationBagType(equipmentChange.ItemLocation)
 
 			-- If the item being equipped is in a specialty bag already and the
 			-- current item can't go in that bag then we have to EmptyThenEquip
+			local newItemInBagType = equipmentChange.ItemLocation.BagIndex and Outfitter:GetBagType(equipmentChange.ItemLocation.BagIndex)
+
 			if equippedItemBagType
 			and newItemInBagType
 			and newItemInBagType ~= 0
@@ -496,7 +497,6 @@ function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCac
 				emptyThenEquip = true
 			end
 		end
-
 		-- Swap the item in-place with the new item
 		if swapItems then
 			if emptyThenEquip then
