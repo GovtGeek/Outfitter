@@ -336,7 +336,7 @@ function Outfitter.OutfitBar:NewBar(pNumColumns, pNumRows)
 
 	self.UniqueNameIndex = self.UniqueNameIndex + 1
 
-	local vBar = CreateFrame("Frame", vName)
+	local vBar = CreateFrame("Frame", vName, nil, "BackdropTemplate")
 
 	Outfitter.InitializeFrame(vBar, Outfitter._ButtonBar, self._Bar)
 	vBar:Construct(vName, pNumColumns, pNumRows)
@@ -872,7 +872,7 @@ function Outfitter.OutfitBar._ChooseIconDialog:Construct()
 	-- Create a button to determine what the column and row counts *should* be
 	-- The frame should be reused in other functions
 	local vButtonName = "OutfitterChooseIconDialogButton"..#self.IconButtons
-	local vButton = _G[vButtonName] or CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate")
+	local vButton = _G[vButtonName] or CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate,BackdropTemplate")
 
 	-- Get the ScrollFrame width and make sure the ScrollChild is set to the same width (maybe a tad smaller?)
 	local sChild = OutfitterChooseIconDialogScrollFrame:GetScrollChild()
@@ -924,6 +924,16 @@ function Outfitter.OutfitBar._ChooseIconDialog:Construct()
 			self:Close()
 		end
 	end)
+
+	self:SetBackdrop({
+		bgFile = "Interface\\Addons\\Outfitter\\Textures\\DialogBox-Background",
+		edgeFile ="Interface\\DialogFrame\\UI-DialogBox-Border",
+		tile = true,
+		tileEdge = true,
+		tileSize = 512,
+		edgeSize = 32,
+		insets = { left = 11, right = 12, top = 12, bottom = 11 },
+	})
 
 	-- Icon sets
 	self.iconSets = {
@@ -1060,7 +1070,7 @@ end
 function Outfitter.OutfitBar._ChooseIconDialog:NewIconButton()
 	local vButtonName = "OutfitterChooseIconDialogButton"..#self.IconButtons
 	-- Reuse icon button frames when possible
-	local vButton = _G["OutfitterChooseIconDialogButton"..#self.IconButtons] or CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate")
+	local vButton = _G["OutfitterChooseIconDialogButton"..#self.IconButtons] or CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate,BackdropTemplate")
 
 	Outfitter.InitializeFrame(vButton, Outfitter.OutfitBar._IconButton)
 	vButton:Construct()

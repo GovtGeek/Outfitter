@@ -12,7 +12,7 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="OutfitterChooseIconDialog" toplevel="true" frameStrata="DIALOG" parent="UIParent" movable="true" enableMouse="true" hidden="true">
+	<Frame name="OutfitterChooseIconDialog" toplevel="true" frameStrata="DIALOG" parent="UIParent" movable="true" enableMouse="true" hidden="true" inherits="BackdropTemplate">
 		<Size>
 			<AbsDimension x="340" y="415"/>
 		</Size>
