@@ -50,7 +50,7 @@ OutfitterStrings_ru.lua
 
 Mainline/Outfitter.lua
 
-Mainline/OutfitterOutfits.lua
+OutfitterOutfits.lua
 OutfitterInventory.lua
 OutfitterEquipment.lua
 OutfitterItemStats.lua
@@ -61,7 +61,6 @@ OutfitterScriptDialog.lua
 OutfitterQuickSlots.lua
 OutfitterMinimapButton.lua
 OutfitterBar.lua
-#Mainline/OutfitterBar.lua
 OutfitterAbout.lua
 
 OutfitterLDB.lua
@@ -69,4 +68,3 @@ OutfitterLDB.lua
 # Fundamental differences between UIs require these
 Mainline/Outfitter.xml
 OutfitterBar.xml
-#Mainline/OutfitterBar.xml
