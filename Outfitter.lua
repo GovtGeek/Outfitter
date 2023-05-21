@@ -20,8 +20,7 @@ Outfitter.CreditPlayersByRealm =
 -- 3 Donor
 ----------------------------------------
 {
-	{
-		[Outfitter.cDragonFlightCompatiblity] = {
+	[Outfitter.cDragonFlightCompatiblity] = {
 		["GovtGeek\nVersion Unifier"] = 1,
 		["Nulian.. We applaude you!"] = 1,
 		["Coremeeko2"] = 1,
