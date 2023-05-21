@@ -60,11 +60,13 @@ OutfitterScripting.lua
 OutfitterScriptDialog.lua
 OutfitterQuickSlots.lua
 OutfitterMinimapButton.lua
-Mainline/OutfitterBar.lua
+OutfitterBar.lua
+#Mainline/OutfitterBar.lua
 OutfitterAbout.lua
 
 OutfitterLDB.lua
 
 # Fundamental differences between UIs require these
 Mainline/Outfitter.xml
-Mainline/OutfitterBar.xml
+OutfitterBar.xml
+#Mainline/OutfitterBar.xml

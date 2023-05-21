@@ -335,7 +335,9 @@ function Outfitter.OutfitBar:NewBar(pNumColumns, pNumRows)
 	local vBar = CreateFrame("Frame", vName)
 
 	Outfitter.InitializeFrame(vBar, Outfitter._ButtonBar, self._Bar)
-
+print("Created "..vBar:GetName()) --DAC
+--local bdinfo = vBar:GetBackdrop()
+--for k,v in pairs(bdinfo) do print(k, v) end
 	vBar:Construct(vName, pNumColumns, pNumRows)
 	vBar:SetScale(self.Settings.OutfitBar.Scale or 1)
 	vBar:ShowBackground(not self.Settings.OutfitBar.HideBackground)
@@ -709,9 +711,10 @@ Outfitter.OutfitBar._Button.Widgets =
 	"Icon",
 }
 
+-- Is this where we need to set border? DAC
 function Outfitter.OutfitBar._Button:Construct()
-	self:SetWidth(Outfitter.Style.ButtonBar.ButtonWidth)
-	self:SetHeight(Outfitter.Style.ButtonBar.ButtonHeight)
+	self:SetWidth(Outfitter.Style.ButtonBar.ButtonWidth+10)
+	self:SetHeight(Outfitter.Style.ButtonBar.ButtonHeight+10)
 
 	self:SetScript("OnClick", function (button, ...) button:OnClick(...) end)
 	self:SetScript("OnEnter", function (button, ...) button:OnEnter(...) end)
@@ -861,19 +864,34 @@ Outfitter.OutfitBar._ChooseIconDialog.Widgets =
 
 function Outfitter.OutfitBar._ChooseIconDialog:Construct()
 	-- Create the icon buttons
-
 	self.IconButtons = {}
 	self.NumRows = 5
 	self.NumColumns = 6
 
-	local vPrevRowFirstButton
+	-- Create a button to determine what the column and row counts *should* be
+	-- The frame should be reused in other functions
+	local vButtonName = "OutfitterChooseIconDialogButton"..#self.IconButtons
+	local vButton = _G[vButtonName] or CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate")
 
+	-- Get the ScrollFrame width and make sure the ScrollChild is set to the same width (maybe a tad smaller?)
+	local sChild = OutfitterChooseIconDialogScrollFrame:GetScrollChild()
+	sChild:SetWidth(OutfitterChooseIconDialogScrollFrame:GetWidth())
+	sChild:SetHeight(OutfitterChooseIconDialogScrollFrame:GetHeight())
+
+	-- Adjust the button width/height (there's a difference between retail and vanill/wrath?)
+	offset = 0
+	if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then offset = 5 end
+
+	local h, w = vButton:GetHeight() + offset, vButton:GetWidth() + offset
+	self.NumRows = math.floor(sChild:GetHeight() / (h or 1))
+	self.NumColumns = math.floor(sChild:GetWidth() / (w or 1))
+
+	local vPrevRowFirstButton
 	for vRow = 1, self.NumRows do
 		local vPrevButton
 
 		for vColumn = 1, self.NumColumns do
 			local vButton = self:NewIconButton()
-
 			table.insert(self.IconButtons, vButton)
 
 			if vPrevButton then
@@ -1040,7 +1058,8 @@ end
 
 function Outfitter.OutfitBar._ChooseIconDialog:NewIconButton()
 	local vButtonName = "OutfitterChooseIconDialogButton"..#self.IconButtons
-	local vButton = CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate")
+	-- Reuse icon button frames when possible
+	local vButton = _G["OutfitterChooseIconDialogButton"..#self.IconButtons] or CreateFrame("CheckButton", vButtonName, self, "ActionButtonTemplate")
 
 	Outfitter.InitializeFrame(vButton, Outfitter.OutfitBar._IconButton)
 	vButton:Construct()
@@ -1220,9 +1239,21 @@ function Outfitter.OutfitBar.TextureSets.Spellbook:Activate()
 	local usedIconIDs = {}
 
 	-- Insert the profession icons
-	if GetNumPrimaryProfessions() then
-		local professions = {GetNumPrimaryProfessions()}
-
+	if _G["GetNumPrimaryProfessions"] then -- Vanilla/Wrath
+		for i = 1, GetNumSkillLines() do
+			local skillName, header = GetSkillLineInfo(i)
+			if not header then
+				local name, rank, iconID = GetSpellInfo(skillName)
+				if iconID ~= nil then
+					if not usedIconIDs[iconID] then
+						table.insert(self.TextureList, iconID)
+						usedIconIDs[iconID] = true
+					end
+				end
+			end
+		end
+	else
+		local professions = {GetProfessions()}
 		for _, professionID in ipairs(professions) do
 			local name, iconID = GetProfessionInfo(professionID)
 			if not usedIconIDs[iconID] then

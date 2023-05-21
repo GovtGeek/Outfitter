@@ -63,3 +63,4 @@ OutfitterLDB.lua
 
 Outfitter.xml
 OutfitterBar.xml
+#Mainline/OutfitterBar.xml

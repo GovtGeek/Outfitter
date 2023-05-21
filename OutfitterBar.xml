@@ -1,7 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
-	
-	<Frame name="OutfitterDialogFrameTemplate" setAllPoints="true" virtual="true" inherits="BackdropTemplate" inherit="prepend">
+
+	<Frame name="OutfitterDialogFrameTemplate" setAllPoints="true" virtual="true" inherits="BackdropTemplate">
 		<KeyValues>
 			<KeyValue key="backdropInfo" value="BACKDROP_OUTFITTER_DIALOG_32_32" type="global"/>
 		</KeyValues>
@@ -11,7 +11,7 @@
 			</OnShow>
 		</Scripts>
 	</Frame>
-	
+
 	<Frame name="OutfitterChooseIconDialog" toplevel="true" frameStrata="DIALOG" parent="UIParent" movable="true" enableMouse="true" hidden="true">
 		<Size>
 			<AbsDimension x="340" y="415"/>
@@ -114,7 +114,7 @@
 
 			<ScrollFrame name="$parentScrollFrame" inherits="ListScrollFrameTemplate">
 				<Size>
-					<AbsDimension x="263" y="212"/>
+					<AbsDimension x="270" y="260"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentFilterEditBox" relativePoint="BOTTOMLEFT">
@@ -136,7 +136,7 @@
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset>
-							<AbsDimension x="-23" y="25"/>
+							<AbsDimension x="-23" y="15"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
