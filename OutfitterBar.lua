@@ -58,9 +58,13 @@ Outfitter.OutfitBar.cDefaultScriptIcons =
 	SKINNING = 134366,
 	LOCKPICKING = 136058,
 	COOKING = 133971,
-
-	[Outfitter.cNakedOutfit] = 237360,
 }
+-- Give the birthday suit a special icon (no birthday cake icon in Vanilla)
+if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+	Outfitter.OutfitBar.cDefaultScriptIcons[Outfitter.cNakedOutfit] = 237360
+else
+	Outfitter.OutfitBar.cDefaultScriptIcons[Outfitter.cNakedOutfit] = 134140
+end
 
 function Outfitter.OutfitBar:Construct()
 	self.Settings = Outfitter.Settings
@@ -335,9 +339,6 @@ function Outfitter.OutfitBar:NewBar(pNumColumns, pNumRows)
 	local vBar = CreateFrame("Frame", vName)
 
 	Outfitter.InitializeFrame(vBar, Outfitter._ButtonBar, self._Bar)
-print("Created "..vBar:GetName()) --DAC
---local bdinfo = vBar:GetBackdrop()
---for k,v in pairs(bdinfo) do print(k, v) end
 	vBar:Construct(vName, pNumColumns, pNumRows)
 	vBar:SetScale(self.Settings.OutfitBar.Scale or 1)
 	vBar:ShowBackground(not self.Settings.OutfitBar.HideBackground)
