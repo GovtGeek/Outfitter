@@ -1185,6 +1185,21 @@ Outfitter.cShapeshiftIDInfo = {
 	[1787] = {ID = "Stealth"}
 }
 
+function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
+	if CharacterFrame:IsShown() then
+		Outfitter:ToggleOutfitterFrame()
+	else
+		--[[-- Not sure why this is needed. Pulled from Blizzard forums --]]--
+		if not CharacterFrameTab3:GetRight() then
+			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
+		end
+		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
+		CharacterFrame_ShowSubFrame("PaperDollFrame")
+		CharacterFrame:Show()
+		OutfitterFrame:Show()
+	end
+end
+
 function Outfitter:ToggleOutfitterFrame()
 	if Outfitter:IsOpen() then
 		OutfitterFrame:Hide()
