@@ -1,8 +1,6 @@
 ----------------------------------------
 -- Outfitter Copyright 2006-2018 John Stephen
--- All rights reserved, unauthorized redistribution is prohibited
 ----------------------------------------
-
 Outfitter.Debug =
 {
 	InventoryCache = false,
@@ -23,6 +21,7 @@ Outfitter.CreditPlayersByRealm =
 ----------------------------------------
 {
 	[Outfitter.cDragonFlightCompatiblity] = {
+		["GovtGeek\nVersion Unifier"] = 1,
 		["Nulian.. We applaude you!"] = 1,
 		["Coremeeko2"] = 1,
 	},
@@ -68,7 +67,9 @@ Outfitter.CreditPlayersByRealm =
 	},
 	[Outfitter.cContributingDeveloper] =
 	{
+		["GovtGeek"] = 1,
 		["Nulian"] = 1,
+		["Miv\n\"Restoshaman\"\n<Onslaught>"] = 1,
 		["Dridzt"] = 1,
 		["Bruce Quinton"] = 1,
 		["Kal_Zakath13"] = 1,
@@ -1184,7 +1185,6 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 		OutfitterFrame:Show()
 	end
 end
-
 
 function Outfitter:ToggleOutfitterFrame()
 	if self:IsOpen() then
@@ -8070,7 +8070,10 @@ function Outfitter._ListItem:SetToItem(pOutfitItem)
 	end
 
 	if pOutfitItem.Texture then
-		vItemIcon:SetTexture(pOutfitItem.Texture)
+		local texture = pOutfitItem.Texture	-- because some outfits are actually deeper tables
+		if type(pOutfitItem.Texture) == "table" then texture = pOutfitItem.Texture.iconFileID end
+		--vItemIcon:SetTexture(pOutfitItem.Texture)
+		vItemIcon:SetTexture(texture)
 		vItemIcon:Show()
 	else
 		vItemIcon:Hide()
