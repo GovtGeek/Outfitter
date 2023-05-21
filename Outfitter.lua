@@ -25,7 +25,6 @@ Outfitter.CreditPlayersByRealm =
 		["Nulian.. We applaude you!"] = 1,
 		["Coremeeko2"] = 1,
 	},
-
 	["Ace Library"] = {
 		["LibBabble"] = 2,
 		["LibBabble-Zone"] = 2,
@@ -4763,12 +4762,14 @@ function Outfitter:Initialize()
 	end
 
 	-- Make sure they're not upgrading with a reloadui when there are new files
+	--[[-- GovtGeek Left here just in case, but Blizzard changes to addon loading should make this unnecessary
 	if tonumber(C_AddOns.GetAddOnMetadata("Outfitter", "X-ReloadTag")) ~= 2 then
 		OutfitterMinimapButton:Hide() -- Remove access to Outfitter so more errors don't start coming up
 		OutfitterButtonFrame:Hide()
 		StaticPopup_Show("OUTFITTER_CANT_RELOADUI")
 		return
 	end
+	--]]--
 
 	-- Get the basic player info
 	self.PlayerName = UnitName("player")
