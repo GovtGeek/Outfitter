@@ -7460,7 +7460,7 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		self:HideCompareItems()
 	end)
 
-	if GetServerExpansionLevel() == WOW_PROJECT_MAINLINE then
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
