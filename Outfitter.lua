@@ -1930,7 +1930,11 @@ function Outfitter:DeleteSelectedOutfit()
 end
 
 function Outfitter:TalentsChanged()
-	self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+	if _G["GetSpecialization"] then
+		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
+	else
+		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+	end
 end
 
 function Outfitter:SetScript(pOutfit, pScript)
@@ -2291,13 +2295,13 @@ function Outfitter:GetSortedTitles()
 	local titles = {}
 
 	-- Gather the list of known titles
---[[	local numTitles = 0
+	local numTitles = GetNumTitles()
 	for titleIndex = 1, numTitles do
 		if IsTitleKnown(titleIndex) then
 			local titleName = GetTitleName(titleIndex)
 			table.insert(titles, {name = titleName, index = titleIndex})
 		end
-	end--]] --Miv
+	end
 
 	-- Sort the list
 	table.sort(titles, function (a, b)
@@ -4238,7 +4242,8 @@ function Outfitter:GetPlayerAuraStates()
 	end
 
 	while true do
-		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex) --local vName, _, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		--local vName, _, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
 
 		if not vName then
 			return self.AuraStates
@@ -4360,12 +4365,13 @@ function Outfitter:UpdateAuraStates()
 	self:EndEquipmentUpdate()
 
 	-- Update shapeshift state on aura change too
-	-- NOTE: Currently (WoW client 2.3) the shapeshift info isn't
+	-- NOTE: WoW client 2.3 - the shapeshift info isn't
 	-- always up-to-date when the AURA event comes in, so update
 	-- the shapeshift state after about 1 frame to allow the state to
-	-- synch (Changed to .5 sec)
+	-- sync (Changed to .5 sec)
 
-	self.SchedulerLib:ScheduleUniqueTask(0.5, self.UpdateShapeshiftState, self)
+	self.SchedulerLib:ScheduleUniqueTask(0.5, self.UpdateShapeshiftState, self) -- using the retail delay
+	--self.SchedulerLib:ScheduleUniqueTask(0.01, self.UpdateShapeshiftState, self) -- using the classic delay
 end
 
 function Outfitter:UpdateMountedState()
@@ -5008,8 +5014,11 @@ function Outfitter:Initialize()
 
 	--
 
-	self.EventLib:RegisterEvent("CHARACTER_POINTS_CHANGED", self.TalentsChanged, self)
-	--self.EventLib:RegisterEvent("PLAYER_TALENT_UPDATE", self.TalentsChanged, self)
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		self.EventLib:RegisterEvent("CHARACTER_POINTS_CHANGED", self.TalentsChanged, self) -- Classic
+	else
+		self.EventLib:RegisterEvent("PLAYER_TALENT_UPDATE", self.TalentsChanged, self) -- Wrath/Retail
+	end
 
 	self:TalentsChanged()
 
@@ -5060,11 +5069,11 @@ function Outfitter:Initialize()
 end
 
 function Outfitter:StartMonitoringEM()
-	--self.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
+	self.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
 end
 
 function Outfitter:StopMonitoringEM()
-	--self.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self) --Miv
+	self.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self) --Miv
 end
 
 -- Blizzard added icon numbers in patch 6 but no API for mapping between the number and the path, so create a texture to use for doing the mapping
@@ -5132,7 +5141,7 @@ function Outfitter:AttachOutfitMethods()
 end
 
 function Outfitter:SynchronizeEM()
-	local equipmentSetIDs = "0"
+	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 
 	-- Mark all the EM outfits as unused
 	for vCategoryID, outfits in pairs(self.Settings.Outfits) do
@@ -5163,7 +5172,7 @@ function Outfitter:SynchronizeEM()
 
 	-- Scan the EM outfits
 
-	--[[for _, equipmentSetID in ipairs(equipmentSetIDs) do
+	for _, equipmentSetID in ipairs(equipmentSetIDs) do
 		local name = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID)
 		local outfit = self:FindEMOutfitByName(name)
 
@@ -5205,7 +5214,7 @@ function Outfitter:SynchronizeEM()
 		else
 			outfit.Unused = nil
 		end
-	end--]] --Miv
+	end
 
 	-- Delete unused outfits
 
@@ -5325,10 +5334,14 @@ function Outfitter:InitializeSpecialOccasionOutfits()
 end
 
 function Outfitter:InstallDefaultSpecializationIcons() --miv
-	local numSpecs = 1 --GetNumSpecializations()
-	for specIndex = 1, numSpecs do
-		--local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
-		--local scriptID = "SPECIALIZATION_"..specIndex
+	if _G["GetNumSpecializations"] then
+		local numSpecs = GetNumSpecializations()
+		for specIndex = 1, numSpecs do
+			local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
+			local scriptID = "SPECIALIZATION_"..specIndex
+			Outfitter.OutfitBar.cDefaultScriptIcons[scriptID] = specIconID
+		end
+	else
 		Outfitter.OutfitBar.cDefaultScriptIcons["SPECIALIZATION_" .. 1] = "Interface\\ICONS\\INV_Misc_QuestionMark"
 	end
 end
@@ -7447,7 +7460,7 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		self:HideCompareItems()
 	end)
 
-	if GetServerExpansionLevel() > 0 then
+	if GetServerExpansionLevel() == WOW_PROJECT_MAINLINE then
 		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
