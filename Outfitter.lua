@@ -1179,7 +1179,7 @@ Outfitter.cShapeshiftIDInfo = {
 --[[--
 	Modify entries for a specific version (i.e. Add RangedSlot for non-retail)
 --]]--
-if GetExpansionLevel() <= WOW_PROJECT_MAINLINE then
+if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
 	Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
 	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
@@ -3819,7 +3819,7 @@ end
 function Outfitter:GetEmptyBankSlotList()
 	local vEmptyBagSlots = {}
 
-	local vBagIndex = NUM_BAG_SLOTS + NUM_BANKBAGSLOTS
+	local vBagIndex = NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
 	local vBagSlotIndex = 1
 
 	while true do
@@ -3828,7 +3828,7 @@ function Outfitter:GetEmptyBankSlotList()
 		if not vBagSlotInfo then
 			return vEmptyBagSlots
 
-		elseif vBagSlotInfo.BagIndex > NUM_BAG_SLOTS
+		elseif vBagSlotInfo.BagIndex > NUM_TOTAL_EQUIPPED_BAG_SLOTS
 		or vBagSlotInfo.BagIndex < 0 then
 			table.insert(vEmptyBagSlots, vBagSlotInfo)
 		end
@@ -4243,7 +4243,6 @@ function Outfitter:GetPlayerAuraStates()
 
 	while true do
 		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
-		--local vName, _, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
 
 		if not vName then
 			return self.AuraStates
@@ -7529,9 +7528,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 
 		if vShoppingItemInfo then
 			Outfitter:AddOutfitsUsingItemToTooltip(vShoppingTooltip, vShoppingItemInfo)
-			vShoppingTooltip:Show() --orig
-			--print("Showing "..vShoppingTooltip:GetName()) --DAC
-			--self.NumTooltipsShown = self.NumTooltipsShown + 1 --DAC
+			vShoppingTooltip:Show()
 		end
 
 		-- Keep the first shopping tooltip for an anchor since it's the one Blizzard positions at the end
