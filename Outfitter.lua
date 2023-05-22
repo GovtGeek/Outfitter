@@ -530,8 +530,8 @@ Outfitter.BuiltinEvents = {
 	["TRAVEL_FORM"] = true,
 	["NOT_TRAVEL_FORM"] = true,
 
-	["SWIFT_FLIGHT_FORM"] = true,
-	["NOT_SWIFT_FLIGHT_FORM"] = true,
+	--["SWIFT_FLIGHT_FORM"] = true,
+	--["NOT_SWIFT_FLIGHT_FORM"] = true,
 
 	["MOONKIN_FORM"] = true,
 	["NOT_MOONKIN_FORM"] = true,
@@ -571,7 +571,6 @@ Outfitter.BANKED_FONT_COLOR = CreateColor(0.25, 0.2, 1.0)
 Outfitter.BANKED_FONT_COLOR_CODE = "|cff4033ff"
 Outfitter.OUTFIT_MESSAGE_COLOR = CreateColor(0.2, 0.75, 0.3)
 
-Outfitter.IsWoW4 = true
 Outfitter.cItemLinkFormat = "|Hitem:(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+)|h%[([^%]]*)%]|h"
 
 -- Phantom items are items which appear to be in a slot but which are actually the by-product of some other item being equipped in a different slot. This is being used in Patch 7 (Legion) for the artifact weapons which occupy both weapon slots.
@@ -801,7 +800,6 @@ Outfitter.cCategoryDescriptions =
 Outfitter.cSlotNames =
 {
 	-- First priority goes to armor
-
 	"HeadSlot",
 	"ShoulderSlot",
 	"ChestSlot",
@@ -812,13 +810,11 @@ Outfitter.cSlotNames =
 	"FeetSlot",
 
 	-- Second priority goes to weapons
-
 	"MainHandSlot",
 	"SecondaryHandSlot",
-	"RangedSlot",
+	--"RangedSlot", -- added later if we're not in retail
 
 	-- Last priority goes to items with no durability
-
 	"BackSlot",
 	"NeckSlot",
 	"ShirtSlot",
@@ -829,11 +825,7 @@ Outfitter.cSlotNames =
 	"Trinket1Slot",
 }
 
-Outfitter.cSlotOrder = {}
-
-for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
-	Outfitter.cSlotOrder[vSlotName] = vIndex
-end
+Outfitter.cSlotOrder = {} -- Defined after we do our vanilla/wrath/retail fixes to our tables
 
 Outfitter.cSlotDisplayNames =
 {
@@ -855,7 +847,7 @@ Outfitter.cSlotDisplayNames =
 	Trinket1Slot = Outfitter.cTrinket1SlotName,
 	MainHandSlot = MAINHANDSLOT,
 	SecondaryHandSlot = SECONDARYHANDSLOT,
-	RangedSlot = RANGEDSLOT,
+	--RangedSlot = RANGEDSLOT,
 }
 
 Outfitter.cInvTypeToSlotName =
@@ -952,7 +944,7 @@ Outfitter.cSpecialIDEvents =
 	Bear = {Equip = "BEAR_FORM", Unequip = "NOT_BEAR_FORM"},
 	Cat = {Equip = "CAT_FORM", Unequip = "NOT_CAT_FORM"},
 	Travel = {Equip = "TRAVEL_FORM", Unequip = "NOT_TRAVEL_FORM"},
-	Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"},
+	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"},
 	Moonkin = {Equip = "MOONKIN_FORM", Unequip = "NOT_MOONKIN_FORM"},
 	Tree = {Equip = "TREE_FORM", Unequip = "NOT_TREE_FORM"},
 	Prowl = {Equip = "STEALTH", Unequip = "NOT_STEALTH"},
@@ -1174,7 +1166,7 @@ Outfitter.cShapeshiftIDInfo = {
 	[768] = {ID = "Cat"},
 	[783] = {ID = "Travel"},
 	[24858] = {ID = "Moonkin"},
-	[40120] = {ID = "Flight"},
+	--[40120] = {ID = "Flight"},
 	CasterForm = {ID = "Caster"}, -- this is a psuedo-form which is active when no other druid form is
 
 	-- Rogue
@@ -1183,6 +1175,30 @@ Outfitter.cShapeshiftIDInfo = {
 	[1786] = {ID = "Stealth"},
 	[1787] = {ID = "Stealth"}
 }
+
+--[[--
+	Modify entries for a specific version (i.e. Add RangedSlot for non-retail)
+--]]--
+if GetExpansionLevel() <= WOW_PROJECT_MAINLINE then
+	table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
+	Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
+	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
+	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
+	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
+	table.insert(Outfitter.cShapeshiftIDInfo, 40120, {ID = "Flight"})
+	table.insert(Outfitter.cShapeshiftIDInfo, 1785, {ID = "Stealth"})
+	table.insert(Outfitter.cShapeshiftIDInfo, 1786, {ID = "Stealth"})
+	table.insert(Outfitter.cShapeshiftIDInfo, 1787, {ID = "Stealth"})
+else
+	Outfitter.cInvTypeToSlotName.INVTYPE_RANGED = {SlotName = "MainHandSlot"}
+	Outfitter.cInvTypeToSlotName.INVTYPE_RANGEDRIGHT = {SlotName = "MainHandSlot"}
+	Outfitter.cInvTypeToSlotName.INVTYPE_THROWN = {SlotName = "MainHandSlot"}
+	Outfitter.cInvTypeToSlotName.INVTYPE_RELIC = {SlotName = "MainHandSlot"}
+end
+
+for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
+	Outfitter.cSlotOrder[vSlotName] = vIndex
+end
 
 function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 	if CharacterFrame:IsShown() then
@@ -7431,11 +7447,21 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		self:HideCompareItems()
 	end)
 
-	GameTooltip:HookScript("OnTooltipSetItem", function ()
-		if not IsModifiedClick("COMPAREITEMS") then
-			self:HideCompareItems()
-		end
-	end)
+	if GetServerExpansionLevel() > 0 then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
+			if not IsModifiedClick("COMPAREITEMS") then
+				self:HideCompareItems()
+			end
+		end)
+	else
+		----[[-- Old way of hooking tooltip
+		GameTooltip:HookScript("OnTooltipSetItem", function ()
+			if not IsModifiedClick("COMPAREITEMS") then
+				self:HideCompareItems()
+			end
+		end)
+		--]]--
+	end
 
 	self.Tooltips = {}
 	self.NumTooltipsShown = 0
@@ -7445,8 +7471,8 @@ end
 function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	self:HideCompareItems()
 
-	local _, vLink = GameTooltip:GetItem()
-
+	--local _, vLink = GameTooltip:GetItem()
+	local vLink = Outfitter:GetLinkFromTooltip(GameTooltip)
 	if not vLink then
 		return
 	end
@@ -7484,12 +7510,15 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	self.AnchorToTooltip = nil
 
 	for vIndex, vShoppingTooltip in ipairs(GameTooltip.shoppingTooltips) do
-		local _, vShoppingLink = vShoppingTooltip:GetItem()
+		--local _, vShoppingLink = vShoppingTooltip:GetItem() -- orig
+		local vShoppingLink = Outfitter:GetLinkFromTooltip(vShoppingTooltip)
 		local vShoppingItemInfo = Outfitter:GetItemInfoFromLink(vShoppingLink)
 
 		if vShoppingItemInfo then
 			Outfitter:AddOutfitsUsingItemToTooltip(vShoppingTooltip, vShoppingItemInfo)
-			vShoppingTooltip:Show()
+			vShoppingTooltip:Show() --orig
+			--print("Showing "..vShoppingTooltip:GetName()) --DAC
+			--self.NumTooltipsShown = self.NumTooltipsShown + 1 --DAC
 		end
 
 		-- Keep the first shopping tooltip for an anchor since it's the one Blizzard positions at the end
@@ -7533,7 +7562,6 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 			if not vOutfit.IgnoreComparisons then
 				for _, vInventorySlot in ipairs(vInventorySlots) do
 					local vItem = vOutfit:GetItem(vInventorySlot)
-
 					if vItem then
 						local vItemLink, vItemQuality = Outfitter:GenerateItemLink(vItem)
 
@@ -7550,12 +7578,10 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	table.sort(vShoppingItems, function (pItem1, pItem2)
 		return (pItem1.Item.Level or 0) > (pItem2.Item.Level or 0)
 	end)
-
 	for _, vItem in ipairs(vShoppingItems) do
 		if self.NumTooltipsShown >= self.MaxTooltipsShown then
 			break
 		end
-
 		if not self:ShoppingItemIsShown(vItem.Item) then
 			self:AddShoppingLink(vItem.OutfitName, vItem.Item.Name, vItem.Link)
 		end
@@ -7583,13 +7609,13 @@ function Outfitter._ExtendedCompareTooltip:ItemsAreEquivalent(pItemInfo1, pItemI
 end
 
 function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
-	local _, vTooltipLink = GameTooltip:GetItem()
+	--local _, vTooltipLink = GameTooltip:GetItem()
+	local vTooltipLink = Outfitter:GetLinkFromTooltip(GameTooltip)
 	local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
 
 	if not vTooltipItemInfo then
 		return false
 	end
-
 	--Outfitter:DebugMessage("ShoppingLinkIsShown: Comparing GameTooltip %s to %s", tostring(vTooltipLink):gsub("|", "||"), tostring(vLink):gsub("|", "||"))
 
 	if self:ItemsAreEquivalent(pItemInfo, vTooltipItemInfo) then
@@ -7607,7 +7633,8 @@ function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
 			break
 		end
 
-		local _, vTooltipLink = vTooltip:GetItem()
+		--local _, vTooltipLink = vTooltip:GetItem()
+		local vTooltipLink = Outfitter:GetLinkFromTooltip(vTooltip)
 		local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
 
 		--Outfitter:DebugMessage("ShoppingLinkIsShown: Comparing ShoppingTooltip%d %s to %s", vIndex, tostring(vTooltipLink):gsub("|", "||"), tostring(vLink):gsub("|", "||"))
@@ -7623,7 +7650,8 @@ function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
 			break
 		end
 
-		local _, vTooltipLink = vTooltip:GetItem()
+		--local _, vTooltipLink = vTooltip:GetItem()
+		local vTooltipLink = Outfitter:GetLinkFromTooltip(vTooltip)
 		local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
 
 		--Outfitter:DebugMessage("ShoppingLinkIsShown: Comparing OutfitterShoppingTooltip%d %s to %s", vIndex, tostring(vTooltipLink):gsub("|", "||"), tostring(vLink):gsub("|", "||"))
@@ -7643,6 +7671,17 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 
 	if not vTooltip then
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
+
+		vTooltip:SetScript("OnUpdate", function ()
+			if Outfitter.Settings.Options.DisableItemComparisons then
+				self:HideCompareItems()
+			end
+		end)
+
+		vTooltip:SetScript("OnHide", function ()
+			self:HideCompareItems()
+		end)
+
 		vTooltip:SetOwner(UIParent, "ANCHOR_NONE")
 		vTooltip:Hide()
 
@@ -8389,4 +8428,19 @@ function Outfitter._ListItem:GetOutfit()
 	end
 
 	return Outfitter:GetIndexedOutfit(self.categoryID, self.outfitIndex)
+end
+
+function Outfitter:GetLinkFromTooltip(vTooltip)
+	-- Classic version
+	if vTooltip.GetItem then
+		local _, vLink = GameTooltip:GetItem()
+		return vLink
+	end
+	-- Wrath/Retail version
+	local tooltipData = vTooltip:GetTooltipData()
+	if tooltipData ~= nil and tooltipData.id then
+		_, itemLink = GetItemInfo(tooltipData.id)
+		return itemLink
+	end
+	return nil -- nothing found at all
 end
