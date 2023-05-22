@@ -667,6 +667,9 @@ function Outfitter._OutfitMethodsEM:GetItem(pSlotName)
 end
 
 function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
+	if not _G["EquipmentManager_UnpackLocation"] then
+		return nil, nil, nil, nil, nil
+	end
 	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
 
 	if vInBags
