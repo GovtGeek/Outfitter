@@ -48,7 +48,7 @@ OutfitterStrings_kr.lua
 OutfitterStrings_ru.lua
 OutfitterStrings_ru.lua
 
-Mainline/Outfitter.lua
+Outfitter.lua
 
 OutfitterOutfits.lua
 OutfitterInventory.lua
