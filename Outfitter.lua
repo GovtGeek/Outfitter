@@ -2105,57 +2105,59 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 	end)
 
 	-- Outfit Display
-	menu:AddChildMenu(self.cOutfitDisplay, function (submenu)
+	if _G["ShowHelm"] and _G["ShowCloak"] then
+		menu:AddChildMenu(self.cOutfitDisplay, function (submenu)
 
-		-- Helm
-		submenu:AddCategoryTitle(self.cHelm)
-		submenu:AddToggle(self.cDontChange,
-			function ()
-				return outfit.ShowHelm == nil
-			end,
-			function ()
-				self:PerformAction("IGNOREHELM", outfit)
-			end)
-		submenu:AddToggle(self.cShow,
-			function ()
-				return outfit.ShowHelm == true
-			end,
-			function ()
-				self:PerformAction("SHOWHELM", outfit)
-			end)
-		submenu:AddToggle(self.cHide,
-			function ()
-				return outfit.ShowHelm == false
-			end,
-			function ()
-				self:PerformAction("HIDEHELM", outfit)
-			end)
+			-- Helm
+			submenu:AddCategoryTitle(self.cHelm)
+			submenu:AddToggle(self.cDontChange,
+				function ()
+					return outfit.ShowHelm == nil
+				end,
+				function ()
+					self:PerformAction("IGNOREHELM", outfit)
+				end)
+			submenu:AddToggle(self.cShow,
+				function ()
+					return outfit.ShowHelm == true
+				end,
+				function ()
+					self:PerformAction("SHOWHELM", outfit)
+				end)
+			submenu:AddToggle(self.cHide,
+				function ()
+					return outfit.ShowHelm == false
+				end,
+				function ()
+					self:PerformAction("HIDEHELM", outfit)
+				end)
 
-		-- Cloak
-		submenu:AddCategoryTitle(self.cCloak)
-		submenu:AddToggle(self.cDontChange,
-			function ()
-				return outfit.ShowCloak == nil
-			end,
-			function ()
-				self:PerformAction("IGNORECLOAK", outfit)
-			end)
-		submenu:AddToggle(self.cShow,
-			function ()
-				return outfit.ShowCloak == true
-			end,
-			function ()
-				self:PerformAction("SHOWCLOAK", outfit)
-			end)
-		submenu:AddToggle(self.cHide,
-			function ()
-				return outfit.ShowCloak == false
-			end,
-			function ()
-				self:PerformAction("HIDECLOAK", outfit)
-			end)
+			-- Cloak
+			submenu:AddCategoryTitle(self.cCloak)
+			submenu:AddToggle(self.cDontChange,
+				function ()
+					return outfit.ShowCloak == nil
+				end,
+				function ()
+					self:PerformAction("IGNORECLOAK", outfit)
+				end)
+			submenu:AddToggle(self.cShow,
+				function ()
+					return outfit.ShowCloak == true
+				end,
+				function ()
+					self:PerformAction("SHOWCLOAK", outfit)
+				end)
+			submenu:AddToggle(self.cHide,
+				function ()
+					return outfit.ShowCloak == false
+				end,
+				function ()
+					self:PerformAction("HIDECLOAK", outfit)
+				end)
 
-	end)
+		end)
+	end
 
 	menu:AddChildMenu(self.cBankCategoryTitle, function (submenu)
 		submenu:AddFunction(self.cDepositToBank, function () self:PerformAction("DEPOSIT", outfit) end, not self.BankFrameIsOpen)
@@ -2172,12 +2174,12 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 			outfit.UnequipOthers = value or nil
 			self:OutfitSettingsChanged(outfit)
 		end)
-    menu:AddToggle(self.cPreventUnequip, function()
-      return outfit.PreventUnequip
-    end, function (menu, value)
-      outfit.PreventUnequip = value or nil
-      self:OutfitSettingsChanged(outfit)
-    end)
+		menu:AddToggle(self.cPreventUnequip, function()
+		  return outfit.PreventUnequip
+		end, function (menu, value)
+		  outfit.PreventUnequip = value or nil
+		  self:OutfitSettingsChanged(outfit)
+		end)
 	end
 	menu:AddToggle(self.cIgnoreComparisons, function ()
 		return outfit.IgnoreComparisons
@@ -7451,7 +7453,11 @@ Outfitter._ExtendedCompareTooltip = {}
 function Outfitter._ExtendedCompareTooltip:Construct()
 	hooksecurefunc("GameTooltip_ShowCompareItem", function (pShift)
 		if not Outfitter.Settings.Options.DisableItemComparisons then
-			self:ShowCompareItem(pShift)
+			if TooltipUtil and TooltipUtil.ShouldDoItemComparison() then
+				self:ShowCompareItem(pShift)
+			else
+				self:ShowCompareItem(pShift)
+			end
 		end
 	end)
 
@@ -7466,7 +7472,7 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 			end
 		end)
 	else
-		----[[-- Old way of hooking tooltip
+		----[[-- Old way of hooking tooltip when an item is assigned
 		GameTooltip:HookScript("OnTooltipSetItem", function ()
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
@@ -7505,7 +7511,8 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	      vTooltipItemCount,
 	      vTooltipItemInvType = GetItemInfo(vTooltipItemCodes[1])
 
-	if not vTooltipItemInvType then
+	--if not vTooltipItemInvType or vTooltipItemType ~= "Armor" then -- retail (why do we only check armor? why not weapons?)
+	if not vTooltipItemInvType then -- classic/wrath
 		return
 	end
 
@@ -7520,7 +7527,6 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	-- append the 'used by' info on shopping tooltips
 
 	self.AnchorToTooltip = nil
-
 	for vIndex, vShoppingTooltip in ipairs(GameTooltip.shoppingTooltips) do
 		--local _, vShoppingLink = vShoppingTooltip:GetItem() -- orig
 		local vShoppingLink = Outfitter:GetLinkFromTooltip(vShoppingTooltip)
