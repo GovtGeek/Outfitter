@@ -2378,7 +2378,7 @@ function Outfitter.ItemDropDownMenuFunc(dropdown, menu)
 	local outfit = listItem:GetOutfit()
 	if outfit then
 		Outfitter:AddOutfitMenu(menu, outfit)
-	  	Outfitter.SchedulerLib:ScheduleTask(1.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) --DAC
+	  	--Outfitter.SchedulerLib:ScheduleTask(1.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) --DAC
 	end
 end
 
@@ -7962,28 +7962,33 @@ function Outfitter:SynchronizeCompanionState()
 end
 
 function Outfitter:GetTalentTreeName(pIndex)
-	--local _, vName = GetSpecializationInfo(pIndex)
+	-- Retail shortcut
+	if _G["GetSpecializationInfo"] then
+		local _, vName = GetSpecializationInfo(pIndex)
+		return vName
+	end
+
+	if pIndex then
+		return GetTalentTabInfo(pIndex)
+	end
+	-- The function name isn't right for what is returned,
+	-- but it's used in OutitterScripting
 	local vName1, _, vTab1 = GetTalentTabInfo(1)
 	local vName2, _, vTab2 = GetTalentTabInfo(2)
 	local vName3, _, vTab3 = GetTalentTabInfo(3)
 	if vTab1 >= vTab2 and vTab1 >= vTab3 then
-
-		--print("vTab1")
-		return "1"
+		return vName1
+		--return "1"
 	elseif vTab2 >= vTab1 and vTab2 >= vTab3 then
-
-		--print("vTab2")
-		return "2"
+		return vName2
+		--return "2"
 	elseif vTab3 >= vTab1 and vTab3 >= vTab2 then
-
-		--print("vTab3")
-		return "3"
+		return vName3
+		--return "3"
 	else
-
-		--print("vTab4")
-		return "4"
+		return "Unknown"
+		--return "4"
 	end
-	--return vName
 end
 
 function Outfitter:Run(pText)
