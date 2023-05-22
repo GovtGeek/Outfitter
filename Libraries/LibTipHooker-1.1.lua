@@ -172,9 +172,13 @@ local HandlerList = TipHooker.HandlerList or {}
 TipHooker.HandlerList = HandlerList
 local Set = {
   item = function(tooltip, ...)
-    if not tooltip.GetItem then return end
-    local name, link = tooltip:GetItem()
-    if not name then return end -- Check if tooltip really has an item
+    if tooltip.GetItem then
+      local name, link = tooltip:GetItem()
+      if not name then return end -- Check if tooltip really has an item
+    end
+    if not tooltip.GetTooltipData then return end
+    local tooltipData = tooltip:GetTooltipData()
+    if tooltipData == nil or tooltipData.id == nil then return end -- Check if tooltip really has an item
     for handler in pairs(HandlerList.item) do
       handler(tooltip, name, link, ...)
     end
