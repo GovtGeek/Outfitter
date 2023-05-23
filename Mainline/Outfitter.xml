@@ -1023,17 +1023,17 @@
 							</Layer>
 						</Layers>
 					</Frame>
-					<Button name="OutfitterFrameTab3" inherits="OutfitterTabTemplate" id="1" text="Outfitter_cAboutTabTitle">
+					<Button name="OutfitterFrameTab1" inherits="OutfitterTabTemplate" id="1" text="Outfitter_cOutfitterTabTitle">
 						<Anchors>
 							<Anchor point="BOTTOMLEFT"  relativePoint="BOTTOMLEFT" x="16" y="-31"/>
 						</Anchors>
 					</Button>
 					<Button name="OutfitterFrameTab2" inherits="OutfitterTabTemplate" id="2" text="Outfitter_cOptionsTabTitle">
 						<Anchors>
-							<Anchor point="LEFT" relativeTo="OutfitterFrameTab3" relativePoint="LEFT" x="16" y="0"/>
+							<Anchor point="LEFT" relativeTo="OutfitterFrameTab1" relativePoint="LEFT" x="16" y="0"/>
 						</Anchors>
 					</Button>
-					<Button name="OutfitterFrameTab1" inherits="OutfitterTabTemplate" id="3" text="Outfitter_cOutfitterTabTitle">
+					<Button name="OutfitterFrameTab3" inherits="OutfitterTabTemplate" id="3" text="Outfitter_cAboutTabTitle">
 						<Anchors>
 							<Anchor point="BOTTOMLEFT" relativeTo="OutfitterFrameTab2" relativePoint="BOTTOMLEFT" x="16" y="0" />
 						</Anchors>
