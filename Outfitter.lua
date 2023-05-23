@@ -1425,6 +1425,30 @@ function Outfitter:UpdateCurrentOutfitIcon()
 	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
 end
 
+function Outfitter:PlayerInteractionManagerFrameShow(event, interactionType)
+	if not interactionType then
+		if event == "BANKFRAME_OPENED" then
+			self:BankFrameOpened()
+		end
+	elseif interactionType == Enum.PlayerInteractionType.VoidStorageBanker then
+		self:VoidStorageFrameOpened()
+	elseif interactionType == Enum.PlayerInteractionType.Banker then
+		self:BankFrameOpened()
+	end
+end
+
+function Outfitter:PlayerInteractionManagerFrameHide(event, interactionType)
+	if not interactionType then
+		if event == "BANKFRAME_CLOSED" then
+			self:BankFrameClosed()
+		end
+	elseif interactionType == Enum.PlayerInteractionType.VoidStorageBanker then
+		self:VoidStorageFrameClosed()
+	elseif interactionType == Enum.PlayerInteractionType.Banker then
+		self:BankFrameClosed()
+	end
+end
+
 function Outfitter:BankFrameOpened()
 	self.BankFrameIsOpen = true
 	self:BankSlotsChanged()
@@ -1436,11 +1460,15 @@ function Outfitter:BankFrameClosed()
 end
 
 function Outfitter:VoidStorageFrameOpened()
-	self.VoidStorageIsOpen = true
+	if Enum.PlayerInteractionType.VoidStorageBanker then
+		self.VoidStorageIsOpen = true
+	end
 end
 
 function Outfitter:VoidStorageFrameClosed()
-	self.VoidStorageIsOpen = false
+	if Enum.PlayerInteractionType.VoidStorageBanker then
+		self.VoidStorageIsOpen = false
+	end
 end
 
 function Outfitter:RegenDisabled(pEvent)
@@ -3027,7 +3055,7 @@ function Outfitter:UpdateSlotEnables(pOutfit, pInventoryCache)
 				vCheckbox:SetCheckedTexture("Interface\\Addons\\Outfitter\\Textures\\CheckboxUnknown")
 				vCheckbox.IsUnknown = true
 			end
-
+			vCheckbox:GetCheckedTexture():Show() -- Grabbed from retail (not sure if it's needed)
 			vCheckbox:SetChecked(true)
 		end
 	end
@@ -4944,10 +4972,10 @@ function Outfitter:Initialize()
 	end
 
 	-- Move the Blizzard UI over a bit
-	--PaperDollItemsFrame:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1) --Miv
-	--OutfitterMainFrame:SetPoint("TOPRIGHT", PaperDollItemsFrame, "TOPRIGHT", -20, -1)
-	--OutfitterFrame:SetPoint("TOPRIGHT", PaperDollItemsFrame, "TOPRIGHT", -20, -1)
-	--OutfitterButtonFrame:SetPoint("TOPRIGHT", OutfitterMainFrame, "TOPRIGHT", 1000, 0)
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
+	end
+
 	-- Initialize player state
 
 	self.SpiritRegenEnabled = true
@@ -5000,13 +5028,14 @@ function Outfitter:Initialize()
 
 	-- For monitoring bank bags
 
-	self.EventLib:RegisterEvent("BANKFRAME_OPENED", self.BankFrameOpened, self)
-	self.EventLib:RegisterEvent("BANKFRAME_CLOSED", self.BankFrameClosed, self)
+	self.EventLib:RegisterEvent("BANKFRAME_OPENED", self.PlayerInteractionManagerFrameShow, self)
+	self.EventLib:RegisterEvent("BANKFRAME_CLOSED", self.PlayerInteractionManagerFrameHide, self)
 
 	-- For monitoring void storage
-
-	--self.EventLib:RegisterEvent("VOID_STORAGE_OPEN", self.VoidStorageFrameOpened, self)
-	--self.EventLib:RegisterEvent("VOID_STORAGE_CLOSE", self.VoidStorageFrameClosed, self)
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+		self.EventLib:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", self.PlayerInteractionManagerFrameShow, self)
+		self.EventLib:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", self.PlayerInteractionManagerFrameHide, self)
+	end
 
 	-- For unequipping the dining outfit
 
@@ -5048,9 +5077,8 @@ function Outfitter:Initialize()
 
 	--
 
-	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		self.EventLib:RegisterEvent("CHARACTER_POINTS_CHANGED", self.TalentsChanged, self) -- Classic
-	else
+	self.EventLib:RegisterEvent("CHARACTER_POINTS_CHANGED", self.TalentsChanged, self) -- Classic
+	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
 		self.EventLib:RegisterEvent("PLAYER_TALENT_UPDATE", self.TalentsChanged, self) -- Wrath/Retail
 	end
 
