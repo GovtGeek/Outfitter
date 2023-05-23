@@ -4153,8 +4153,8 @@ function Outfitter:GetNewItemsOutfit(pPreviousOutfit)
 		local vSkipSlot = false
 
 		if vInventorySlot == "SecondaryHandSlot" then
-			--local vMainHandItem = pPreviousOutfit:GetItem("MainHandSlot") xysis00
-			local vMainHandItem = self.CurrentInventoryOutfit:GetItem("MainHandSlot")
+			--local vMainHandItem = pPreviousOutfit:GetItem("MainHandSlot") -- retail? xysis00
+			local vMainHandItem = self.CurrentInventoryOutfit:GetItem("MainHandSlot") -- classic/wrath?
 
 			if not vMainHandItem then
 				--self:DebugMessage("MainHandItem is nil")
@@ -4883,8 +4883,12 @@ function Outfitter:Initialize()
 	end
 
 	-- Hook onto C_PetJournal.SummonPetByGUID so that the cooldown can be monitored
-	--hooksecurefunc(C_PetJournal, "SummonPetByGUID", function () self.SummonPetByGUIDTime = GetTime() end)
-	self.SummonPetByGUIDTime = 100
+	if C_PetJournal then
+		hooksecurefunc(C_PetJournal, "SummonPetByGUID", function () self.SummonPetByGUIDTime = GetTime() end)
+		self.SummonPetByGUIDTime = GetTime()
+	else
+		self.SummonPetByGUIDTime = 100
+	end
 
 	-- Initialize the main UI tabs
 	self._SidebarWindowFrame.Construct(OutfitterFrame)
@@ -7949,8 +7953,8 @@ function Outfitter:GetMountIDByName(name)
 end
 
 function Outfitter:GetCompanionIDByName(nameToFind)
-	return
---[[	local numPets = C_PetJournal.GetNumPets(false)
+	if not C_PetJournal then return end
+	local numPets = C_PetJournal.GetNumPets(false)
 	local lowerName = nameToFind:lower()
 	for index = 1, numPets do
 		local petID, speciesID, isOwned, customName, level, favorite, isRevoked, name = C_PetJournal.GetPetInfoByIndex(index, false)
@@ -7958,7 +7962,7 @@ function Outfitter:GetCompanionIDByName(nameToFind)
 			return petID
 		end
 	end
-	Outfitter:DebugMessage("GetCompanionByName(%s): Not found", tostring(nameToFind))--]]
+	Outfitter:DebugMessage("GetCompanionByName(%s): Not found", tostring(nameToFind))
 end
 
 function Outfitter:GetSummonedCompanionID()
