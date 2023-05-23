@@ -23,20 +23,8 @@ function Outfitter._AboutView:Construct(pParent)
 	self.AuthorText:SetJustifyH("CENTER")
 	self.AuthorText:SetText(Outfitter.cAboutAuthor)
 
-	self.AuthorText = self:CreateFontString(nil, "OVERLAY", "GameFontGreen")
-	self.AuthorText:SetPoint("TOP", self.Title, "BOTTOM", 0, -27)
-	self.AuthorText:SetWidth(250)
-	self.AuthorText:SetJustifyH("CENTER")
-	self.AuthorText:SetText("Ported to Classic by Restoshaman/Miv")
-
-	self.AuthorText = self:CreateFontString(nil, "OVERLAY", "GameFontRed")
-	self.AuthorText:SetPoint("TOP", self.Title, "BOTTOM", 0, -41)
-	self.AuthorText:SetWidth(250)
-	self.AuthorText:SetJustifyH("CENTER")
-	self.AuthorText:SetText("Refactored by GovtGeek")
-
 	self.ThanksText = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
-	self.ThanksText:SetPoint("TOP", self.Title, "BOTTOM", 0, -58)
+	self.ThanksText:SetPoint("TOP", self.AuthorText, "BOTTOM", 0, 0)
 	self.ThanksText:SetWidth(230)
 	self.ThanksText:SetJustifyH("CENTER")
 	self.ThanksText:SetText(Outfitter.cAboutThanks)
@@ -44,17 +32,14 @@ function Outfitter._AboutView:Construct(pParent)
 	self.Credits = Outfitter:New(Outfitter._Credits, self)
 	self.Credits:SetPoint("TOP", self.ThanksText, "BOTTOM", 0, -10)
 	self.Credits:SetWidth(230)
-	self.Credits:SetHeight(200)
+	self.Credits:SetHeight(220) -- GovtGeek This should be calculated
 
 	self.CopyrightText = self:CreateFontString(nil, "OVERLAY", "GameFontHighlight")
-	self.CopyrightText:SetPoint("TOP", self.ThanksText, "BOTTOM", 0, -200)
+	self.CopyrightText:SetPoint("BOTTOM", self.Credits, "BOTTOM", 0, 0)
 	self.CopyrightText:SetWidth(230)
 	self.CopyrightText:SetJustifyH("CENTER")
 	self.CopyrightText:SetText(Outfitter.cAboutCopyright)
 
-	--self.TestTexture = self.Credits:CreateTexture(nil, "OVERLAY")
-	--self.TestTexture:SetAllPoints()
-	--self.TestTexture:SetTexture(1, 0, 0, 0.5)
 end
 
 ----------------------------------------
