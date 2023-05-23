@@ -2729,7 +2729,40 @@ function Outfitter:Item_CheckboxClicked(pItem)
 end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
-	return
+	--return -- uncomment if we want to disable storage
+	if pItem.isCategory then
+		return
+	end
+
+	local vOutfits = self.Settings.Outfits[pItem.categoryID]
+
+	if not vOutfits then
+		-- Error: outfit category not found
+		return
+	end
+
+	local vOutfit = vOutfits[pItem.outfitIndex]
+
+	if not vOutfit then
+		-- Error: outfit not found
+		return
+	end
+
+	local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
+
+	if vCheckbox:GetChecked() then
+		if vOutfit ~= self.SelectedOutfit then
+			self:WearOutfit(vOutfit)
+			self:SelectOutfit(vOutfit)
+		else
+			vOutfit:StoreOnServer()
+		end
+	else
+		vOutfit:StoreLocally()
+	end
+
+	self.DisplayIsDirty = true
+	self:Update(true)
 end
 
 function Outfitter:AddOutfitsToList(pOutfits, pCategoryID, pItemIndex, pFirstItemIndex, pInventoryCache)
@@ -5070,11 +5103,15 @@ function Outfitter:Initialize()
 end
 
 function Outfitter:StartMonitoringEM()
-	self.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
+	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+		self.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
+	end
 end
 
 function Outfitter:StopMonitoringEM()
-	self.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self) --Miv
+	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+		self.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
+	end
 end
 
 -- Blizzard added icon numbers in patch 6 but no API for mapping between the number and the path, so create a texture to use for doing the mapping
@@ -5142,6 +5179,7 @@ function Outfitter:AttachOutfitMethods()
 end
 
 function Outfitter:SynchronizeEM()
+	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 
 	-- Mark all the EM outfits as unused
@@ -8207,8 +8245,28 @@ function Outfitter._ListItem:SetToOutfit(pOutfit, pCategoryID, pOutfitIndex, pIn
 
 	self:Show()
 
-	-- Show the script icon if there's one attached
+	-- Turn off the server storage icon for classic
+	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+		----[[--
+		local vScriptIcon = _G[vOutfitFrameName.."ScriptIcon"]
+		local vServerButton = _G[vOutfitFrameName.."ServerButton"]
+		local vMenuButton = _G[vOutfitFrameName.."Menu"]
 
+		-- Clear the dependencies
+		vServerButton:ClearAllPoints()
+		vMenuButton:ClearAllPoints()
+		vScriptIcon:ClearAllPoints()
+		-- Hide the server button
+		vServerButton:Hide()
+
+		-- Make sure the menu button isn't dependent on the server button
+		vMenuButton:SetPoint("RIGHT", vOutfitFrame, "RIGHT")
+
+		-- Move the script icon to be relative to the outfit name
+		vScriptIcon:SetPoint("RIGHT", vMenuButton, "LEFT", vMenuButton:GetWidth())
+	end
+
+	-- Show the script icon if there's one attached
 	local vScriptIcon = _G[vOutfitFrameName.."ScriptIcon"]
 
 	if pOutfit.ScriptID or pOutfit.Script then
