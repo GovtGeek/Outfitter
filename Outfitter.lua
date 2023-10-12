@@ -4809,7 +4809,7 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	if value == "1" then -- cvar values are strings
+	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" then -- cvar values are strings
 		-- Hook the GearManagerDialog for open/close
 		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
 		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
