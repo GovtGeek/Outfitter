@@ -68,6 +68,10 @@ function Outfitter:InventorySlotIsEmpty(pInventorySlot)
 end
 
 function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
+	--print(bagIndex, slotIndex)
+	if not bagIndex or not slotIndex then
+		return
+	end
 	local itemLink = C_Container.GetContainerItemLink(bagIndex, slotIndex)
 	if not itemLink then
 		return
