@@ -1234,6 +1234,11 @@ function Outfitter:OnLoad()
 end
 
 function Outfitter:OnShow()
+	local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
+	if EngravingFrame ~= nil and EngravingFrame:IsVisible() then
+		_G["RuneFrameControlButton"]:Click()	-- Need to hide EngravingFrame - just click it off!
+	end
+
 	self.SetFrameLevel(OutfitterFrame, PaperDollFrame:GetFrameLevel() - 1)
 
 	self:ShowPanel(1) -- Always switch to the main view when showing the window

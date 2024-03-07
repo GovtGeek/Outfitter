@@ -1,9 +1,9 @@
-## Interface: 11403
+## Interface: 11500
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 3.4.2.1
+## Version: 3.4.2.2
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps:
 ## RequiredDeps:
@@ -67,5 +67,6 @@ OutfitterAbout.lua
 
 OutfitterLDB.lua
 
-Outfitter.xml
+#Outfitter.xml
+Vanilla/Outfitter.xml
 OutfitterBar.xml
