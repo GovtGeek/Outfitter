@@ -530,6 +530,7 @@ Outfitter.BuiltinEvents = {
 	["TRAVEL_FORM"] = true,
 	["NOT_TRAVEL_FORM"] = true,
 
+	-- Special handling later
 	--["SWIFT_FLIGHT_FORM"] = true,
 	--["NOT_SWIFT_FLIGHT_FORM"] = true,
 
@@ -1234,6 +1235,7 @@ function Outfitter:OnLoad()
 end
 
 function Outfitter:OnShow()
+	-- Season of Discovery frame issue
 	local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
 	if EngravingFrame ~= nil and EngravingFrame:IsVisible() then
 		_G["RuneFrameControlButton"]:Click()	-- Need to hide EngravingFrame - just click it off!
@@ -1703,7 +1705,11 @@ function Outfitter:InventoryChanged()
 
 	self:Update(true)
 end
-
+function Outfitter:EngravingModeChanged(pEvent, pState)
+	if pState then
+		OutfitterFrame:Hide()
+	end
+end
 function Outfitter:ExecuteCommand(pCommand)
 	local vCommands =
 	{
@@ -5114,6 +5120,12 @@ function Outfitter:Initialize()
 	-- Synchronize with the Equipment Manager
 	self:StartMonitoringEM()
 
+	-- Season of Discovery handling
+	if C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
+		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
+		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
+		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
+	end
 	--
 
 	self:DispatchOutfitEvent("OUTFITTER_INIT")
