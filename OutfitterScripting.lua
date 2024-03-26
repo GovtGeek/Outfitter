@@ -808,6 +808,7 @@ end
 [[
 -- $SETTING EnableFishTracking={type="boolean", label="Select Track Fish while equipped", default=true}
 -- $SETTING EnableAutoLoot={type="boolean", label="Enable auto loot while equipped"}
+-- $SETTING DisableEnemyNamePlates={type="boolean", label="Disable enemy name bars while equiped", default=false}
 -- $SETTING DisableClicktoMove={type="boolean", label="Disable Click-to-Move while equipped", default=true}
 -- $SETTING ChangeActionBar={type="boolean", label="Switch action bars while equipped", default=false}
 -- $SETTING ActionBarNumber={type="number", label="Action bar (1 - 6)", default=1}
@@ -821,22 +822,29 @@ if event == "OUTFIT_EQUIPPED" then
     end
 
     if setting.EnableFishTracking then
+        setting.savedCurrentTracking = Outfitter:GetTrackingEnabled()
         setting.savedTracking = Outfitter:GetTrackingEnabled(133888)
         Outfitter:SetTrackingEnabled(133888, true)
         setting.didSetTracking = true
     end
 
-   if setting.DisableClicktoMove then
-       setting.savedMove = GetCVar("autointeract")
-       SetCVar("autointeract", "0")
-       setting.didSetMove = true
-   end
+	if setting.DisableEnemyNamePlates then
+        setting.savedShowEnemies = GetCVar("nameplateShowEnemies")
+        SetCVar("nameplateShowEnemies", 0)
+        setting.didChangeShowEnemies = true
+    end
 
-   if setting.ChangeActionBar then
-       setting.savedActionBar = GetActionBarPage()
-       ChangeActionBarPage(setting.ActionBarNumber)
-       setting.didChangeActionBar = true
-   end
+	if setting.DisableClicktoMove then
+		setting.savedMove = GetCVar("autointeract")
+		SetCVar("autointeract", "0")
+		setting.didSetMove = true
+	end
+
+	if setting.ChangeActionBar then
+		setting.savedActionBar = GetActionBarPage()
+		ChangeActionBarPage(setting.ActionBarNumber)
+		setting.didChangeActionBar = true
+	end
 
 -- Turn auto looting back off if the outfit is being unequipped and we turned it on
 
@@ -849,9 +857,16 @@ elseif event == "OUTFIT_UNEQUIPPED" then
 
    if setting.EnableFishTracking and setting.didSetTracking then
        Outfitter:SetTrackingEnabled(133888, setting.savedTracking)
+       Outfitter:SetTrackingEnabled(setting.savedCurrentTracking, true)
        setting.didSetTracking = nil
        setting.savedTracking = nil
    end
+
+	if setting.didChangeShowEnemies then
+        SetCVar("nameplateShowEnemies", setting.savedShowEnemies)
+        setting.didChangeShowEnemies = nil
+        setting.savedShowEnemies = nil
+    end
 
   if setting.DisableClicktoMove and setting.didSetMove then
       SetCVar("autointeract", setting.savedMove)

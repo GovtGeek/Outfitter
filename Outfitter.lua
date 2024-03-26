@@ -7513,8 +7513,19 @@ function Outfitter:PlayerIsOnQuestID(pQuestID)
 	return false
 end
 
+-- Overloaded this function
 function Outfitter:GetTrackingEnabled(pTexture)
 	local vNumTypes = C_Minimap.GetNumTrackingTypes()
+
+	-- A nil texture means we want to know what spell we're tracking and just return the texture
+	if not pTexture then
+		for vIndex = 1, vNumTypes do
+			local vName, vTexture, vActive, vType = C_Minimap.GetTrackingInfo(vIndex);
+			if vActive and vType == "spell" then
+				return vTexture;
+			end
+		end
+	end
 
 	for vIndex = 1, vNumTypes do
 		local vName, vTexture, vActive = C_Minimap.GetTrackingInfo(vIndex)
@@ -7526,10 +7537,11 @@ function Outfitter:GetTrackingEnabled(pTexture)
 end
 
 function Outfitter:SetTrackingEnabled(pTexture, pEnabled)
+	if not pTexture then return end
 	local vActive, vIndex = self:GetTrackingEnabled(pTexture)
-	if pEnabled == 1 then pEnabled = true else pEnabled = false end
+	if pEnabled == 1 or pEnabled then pEnabled = true else pEnabled = false end
 	if vActive ~= pEnabled then
-		C_Minimap.SetTracking(vIndex, pEnabled == true or pEnabled == 1)
+		C_Minimap.SetTracking(vIndex, pEnabled)
 	end
 end
 
