@@ -1354,8 +1354,8 @@ function Outfitter.OutfitBar.TextureSets.Inventory:Activate()
 		local	vNumBagSlots = C_Container.GetContainerNumSlots(vBagIndex)
 
 		if vNumBagSlots > 0 then
-			for vSlotIndex = 1, vNumBagSlots do
-				local itemInfo = C_Container.GetContainerItemInfo(vBagIndex, vSlotIndex)
+			for vBagSlotIndex = 1, vNumBagSlots do
+				local itemInfo = C_Container.GetContainerItemInfo(vBagIndex, vBagSlotIndex)
 				local vTexture = (itemInfo and itemInfo.iconFileID) or nil
 
 				if vTexture and not vUsedTextures[vTexture] then
