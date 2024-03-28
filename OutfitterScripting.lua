@@ -822,13 +822,15 @@ if event == "OUTFIT_EQUIPPED" then
     end
 
     if setting.EnableFishTracking then
-        setting.savedCurrentTracking = Outfitter:GetTrackingEnabled()
+        if Outfitter:IsClassicWrath() then
+            setting.savedCurrentTracking = Outfitter:GetTrackingEnabled()
+        end
         setting.savedTracking = Outfitter:GetTrackingEnabled(133888)
         Outfitter:SetTrackingEnabled(133888, true)
         setting.didSetTracking = true
     end
 
-	if setting.DisableEnemyNamePlates then
+    if setting.DisableEnemyNamePlates then
         setting.savedShowEnemies = GetCVar("nameplateShowEnemies")
         SetCVar("nameplateShowEnemies", 0)
         setting.didChangeShowEnemies = true
@@ -849,20 +851,22 @@ if event == "OUTFIT_EQUIPPED" then
 -- Turn auto looting back off if the outfit is being unequipped and we turned it on
 
 elseif event == "OUTFIT_UNEQUIPPED" then
-   if setting.EnableAutoLoot and setting.didSetAutoLoot then
-       SetCVar("autoLootDefault", setting.savedAutoLoot)
-       setting.didSetAutoLoot = nil
-       setting.savedAutoLoot = nil
-   end
+    if setting.EnableAutoLoot and setting.didSetAutoLoot then
+        SetCVar("autoLootDefault", setting.savedAutoLoot)
+        setting.didSetAutoLoot = nil
+        setting.savedAutoLoot = nil
+    end
 
-   if setting.EnableFishTracking and setting.didSetTracking then
-       Outfitter:SetTrackingEnabled(133888, setting.savedTracking)
-       Outfitter:SetTrackingEnabled(setting.savedCurrentTracking, true)
-       setting.didSetTracking = nil
-       setting.savedTracking = nil
-   end
+    if setting.EnableFishTracking and setting.didSetTracking then
+        Outfitter:SetTrackingEnabled(133888, setting.savedTracking)
+        if Outfitter:IsClassicWrath() then
+            Outfitter:SetTrackingEnabled(setting.savedCurrentTracking, true)
+        end
+        setting.didSetTracking = nil
+        setting.savedTracking = nil
+    end
 
-	if setting.didChangeShowEnemies then
+    if setting.didChangeShowEnemies then
         SetCVar("nameplateShowEnemies", setting.savedShowEnemies)
         setting.didChangeShowEnemies = nil
         setting.savedShowEnemies = nil
