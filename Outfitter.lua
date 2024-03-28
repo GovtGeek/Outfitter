@@ -10,7 +10,21 @@ Outfitter.Debug =
 	TemporaryItems = false,
 	Optimize = false,
 }
-
+----------------------------------------
+function Outfitter:IsMainline()
+	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+end
+--[[--
+function Outfitter:IsClassicCataclysm()
+	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+end
+]]--
+function Outfitter:IsClassicWrath()
+	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+end
+function Outfitter:IsClassicEra()
+	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+end
 ----------------------------------------
 Outfitter.CreditPlayersByRealm =
 --
@@ -5121,7 +5135,7 @@ function Outfitter:Initialize()
 	self:StartMonitoringEM()
 
 	-- Season of Discovery handling
-	if C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
+	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
 		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
 		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
 		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
@@ -7785,6 +7799,7 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
+		print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
 
 		vTooltip:SetScript("OnUpdate", function ()
@@ -7826,12 +7841,15 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 
 	local vTooltipName = vTooltip:GetName()
 
-	vTooltip:SetOwner(self.AnchorToTooltip, "ANCHOR_NONE")
+	-- Fix an issue with flyout item selection
+	if vTooltip ~= self.AnchorToTooltip then
+		vTooltip:SetOwner(self.AnchorToTooltip, "ANCHOR_NONE")
 
-	if self.LeftToRight then
-		vTooltip:SetPoint("TOPLEFT", self.AnchorToTooltip, "TOPRIGHT", 0, 0)
-	else
-		vTooltip:SetPoint("TOPRIGHT", self.AnchorToTooltip, "TOPLEFT", 0, 0)
+		if self.LeftToRight then
+			vTooltip:SetPoint("TOPLEFT", self.AnchorToTooltip, "TOPRIGHT", 0, 0)
+		else
+			vTooltip:SetPoint("TOPRIGHT", self.AnchorToTooltip, "TOPLEFT", 0, 0)
+		end
 	end
 
 	vTooltip:SetHyperlink(pLink)
