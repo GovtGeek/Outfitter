@@ -1,4 +1,4 @@
-Outfitter.cVersion = GetAddOnMetadata("Outfitter", "Version")
+Outfitter.cVersion = C_AddOns.GetAddOnMetadata("Outfitter", "Version")
 
 Outfitter.cTitle = "Outfitter"
 Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
@@ -182,7 +182,7 @@ Outfitter.cEquipOutfitMessageFormat = "Outfitter: %s equipped"
 Outfitter.cUnequipOutfitMessageFormat = "Outfitter: %s unequipped"
 
 Outfitter.cAboutTitle = "About Outfitter %s"
-Outfitter.cAboutAuthor = "Designed and written by John Stephen"
+Outfitter.cAboutAuthor = "Unified by GovtGeek"
 Outfitter.cAboutCopyright = "Copyright 2006 - 2018 John Stephen"
 Outfitter.cAboutThanks = "Many thanks to all fans and supporters."
 
@@ -195,6 +195,7 @@ Outfitter.cKoreanLocalization = "Korean Localization"
 Outfitter.cContributingDeveloper = "Contributing Developer"
 Outfitter.cTester = "Tester"
 Outfitter.cGuildCreditFormat = "The guild of %s"
+Outfitter.cDragonFlightCompatiblity = "People that REALLY want to see this addon continued"
 
 Outfitter.cOpenOutfitter = "Open Outfitter"
 
@@ -416,9 +417,9 @@ Outfitter.cFuHideMinimapButton = "Hide minimap button"
 Outfitter.cFuHideMinimapButtonDesc = "Hide Outfitter's minimap button."
 Outfitter.cFuInitializing = "Initializing"
 
-Outfitter.cStoreOnServer = "Retail Feature"
-Outfitter.cStoreOnServerOnDescription = "Retail Feature"
-Outfitter.cStoreOnServerOffDescription = "Retail Feature"
+Outfitter.cStoreOnServer = "Store outfit on server"
+Outfitter.cStoreOnServerOnDescription = "Turn off to remove this outfit from the server and store it locally instead.  It will no longer be available from other computers."
+Outfitter.cStoreOnServerOffDescription = "Turn on to store this outfit on the server so that it's available from any computer.  You may only store 10 outfits on the server."
 Outfitter.cTooManyServerOutfits = "You cannot store more than %d outfits on the server."
 
 Outfitter.cCantSetIcon = "Equipment Manager doesn't have the ability to change an icon without also updating the gear.  You should equip this outfit first before changing its icon.  If you continue anyhow, some of your item selections for this outfit will be changed to your currently equipped gear."

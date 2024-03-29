@@ -338,10 +338,14 @@ do -- editor collapse hack
 		local markedForRemovalStat = {}
 		for stat = 1, #Outfitter.SimpleStatCategories[category].Stats do
 			local min, max = Outfitter.SimpleStatCategories[category].Stats[stat].ExpansionMin, Outfitter.SimpleStatCategories[category].Stats[stat].ExpansionMax
-			if (min ~= nil and max ~= nil and ((min > LE_EXPANSION_LEVEL_CURRENT) or (max < LE_EXPANSION_LEVEL_CURRENT))) -- num/num (we know when to start and stop
-			or (min == nil and max ~= nil and LE_EXPANSION_LEVEL_CURRENT > max) -- nil/num (we know when to stop and assume nil min means stat is from the start)
-			or (min ~= nil and max == nil and min > LE_EXPANSION_LEVEL_CURRENT) -- num/nil (we know when we can start, but not end)
-			or (min == nil and max == nil) then -- nil/nil (no min/max known, don't use it - we didn't add a value or the constant isn't defined)
+			-- nil/num (we know when to stop and assume nil min means stat is from the start)
+			if min == nil and max and LE_EXPANSION_LEVEL_CURRENT > max then
+				table.insert(markedForRemovalStat, 1, stat)
+			-- num/nil (we know when we can start, but not end)
+			elseif min and min > LE_EXPANSION_LEVEL_CURRENT then --and max ~= nil then
+				table.insert(markedForRemovalStat, 1, stat)
+			-- nil/nil (no min/max known, don't use it - we didn't add a value or the constant isn't defined)
+			elseif min == nil and max == nil then
 				table.insert(markedForRemovalStat, 1, stat)
 			end
 		end

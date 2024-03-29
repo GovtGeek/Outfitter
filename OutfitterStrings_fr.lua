@@ -5,7 +5,7 @@ if GetLocale() == "frFR" then
 	Outfitter.cSingleItemFormat = "%s"
 	Outfitter.cTwoItemFormat = "%s et %s"
 	Outfitter.cMultiItemFormat = "%s{{, %s}} et %s"
-	
+
 	Outfitter.cNameLabel = "Nom:"
 	Outfitter.cCreateUsingTitle = "Optimiser pour:"
 	Outfitter.cUseCurrentOutfit = "Utiliser la tenue actuelle"
@@ -91,21 +91,21 @@ if GetLocale() == "frFR" then
 	Outfitter.cRuneOfTheDawn = "Rune de l'Aube"
 
 	Outfitter.cCarrotOnAStick = "Carotte et bâton"
-	
+
 	Outfitter.cItemStatFormats =
 	{
 		{Format = "Augmentation mineure de la vitesse de monture", Value = 3, Types = {"Riding"}},
 		{Format = "Eperons en mithril", Value = 3, Types = {"Riding"}},
-		
+
 		"%+(%d+) aux dégâts des sorts (.+)",
 		"Augmente les points de dégâts infligé par les (.+) de (%d+) au maximum",
 		"Augmente les dégâts et les soins produits par les (.+) de (%d+) au maximum",
-		
+
 		"Augmente de (%d+) %(.+%) (.+)%.",
 		"Augmente (.+) de %+?(%d+)",
-		
+
 		"Rend (%d+) (.+)",
-		
+
 		"%+(%d+) à (.+)",
 		"(.+) %+(%d+)",
 		"%+(%d+) (.+)",
@@ -121,17 +121,17 @@ if GetLocale() == "frFR" then
 		armure = "Armor",
 		mana = "Mana",
 		vie = "Health",
-		
+
 		["la puissance d'attaque"] = {"Attack", "RangedAttack"},
 		["toutes les caractéristiques"] = {"Stamina", "Intellect", "Agility", "Strength", "Spirit"},
-		
+
 		["sorts et effets magiques"] = {"SpellDmg", "FireDmg", "ShadowDmg", "FrostDmg", "ArcaneDmg", "NatureDmg"},
 		["sorts et effets de feu"] = "FireDmg",
 		["sorts et effets d'ombre"] = "ShadowDmg",
 		["sorts et effets de givre"] = "FrostDmg",
 		["sorts et effets d'arcane"] = "ArcaneDmg",
 		["sorts et effets de nature"] = "NatureDmg",
-		
+
 		["la résistance feu"] = "FireResist",
 		["la résistance nature"] = "NatureResist",
 		["la résistance givre"] = "FrostResist",
@@ -154,22 +154,22 @@ if GetLocale() == "frFR" then
 		["damage"] = "MeleeDmg",
 		["le score de hâte"] = {"MeleeHasteRating", "SpellHasteRating"},
 		["votre score d'expertise"] = "ExpertiseRating",
-		
+
 		["spell penetration"] = "SpellPen",
 		["la puissance des sorts"] = {"SpellDmg", "ShadowDmg", "FireDmg", "FrostDmg", "ArcaneDmg", "NatureDmg", "Healing"},
-		
+
 		["la pèche"] = "Fishing",
 		["pèche"] = "Fishing",
 		herborisme = "Herbalism",
 		minage = "Mining",
 		["dépecage"] = "Skinning",
-		
+
 		["points de mana toutes les 5 sec"] = {"ManaRegen", "CombatManaRegen"},
 		["mana regen"] = {"ManaRegen", "CombatManaRegen"},
 		["health per 5 sec"] = {"HealthRegen", "CombatHealthRegen"},
 		["health regen"] = {"HealthRegen", "CombatHealthRegen"},
 	}
-	
+
 	Outfitter.cAgilityStatName = "Agilité"
 	Outfitter.cArmorStatName = "Armure"
 	Outfitter.cDefenseStatName = "Défense"
@@ -216,15 +216,15 @@ if GetLocale() == "frFR" then
 	Outfitter.cTooltipInfoOnDescription = "Désactivez cette option si vous ne souhaitez pas afficher les informations 'Utilisé par :' dans l'info-bulle (cela améliore la fréquence d'images lorsque vous passez la souris sur l'équipement)"
 	Outfitter.cTooltipInfoOffDescription = "Activez cette option si vous souhaitez afficher les informations 'Utilisé par :' dans l'info-bulle"
 	Outfitter.cOutfitDisplay = "Outfit Affichage"
-	
+
 	Outfitter.cAboutTitle = "A propos d'Outfitter"
-	Outfitter.cAuthor = "Designed et écrit par  John Stephen avec les contributions de %s"
+	Outfitter.cAuthor = "Designed et écrit par John Stephen avec les contributions de %s"
 	Outfitter.cTestersTitle = "Outfitter testers"
 	Outfitter.cTestersNames = "%s"
 	Outfitter.cSpecialThanksTitle = "Special remerciements à "
 	Outfitter.cSpecialThanksNames = "%s"
 	Outfitter.cTranslationCredit = "Traduction: %s"
-	
+
 	Outfitter.cOpenOutfitter = "Ouvrir Outfitter"
 
 	Outfitter.cArgentDawnOutfitDescription = "Cette tenue sera automatiquement équipée quand vous serez dans les Maleterres"
@@ -250,7 +250,7 @@ if GetLocale() == "frFR" then
 	BINDING_NAME_OUTFITTER_OUTFIT8  = "Tenue 8"
 	BINDING_NAME_OUTFITTER_OUTFIT9  = "Tenue 9"
 	BINDING_NAME_OUTFITTER_OUTFIT10 = "Tenue 10"
-	
+
 	Outfitter.cShow = "Show"
 	Outfitter.cHide = "Hide"
 	Outfitter.cDontChange = "Don't change"
@@ -260,7 +260,7 @@ if GetLocale() == "frFR" then
 	Outfitter.cMore = "More"
 
 	Outfitter.cAutomation = "Automation"
-	
+
 	Outfitter.cDisableOutfit = "Désactiver la tenue"
 	Outfitter.cDisableOutfitInBG = "Désactiver la tenue dans les Champs de Bataille"
 	Outfitter.cDisabledOutfitName = "%s (Désactivé)"
@@ -296,7 +296,7 @@ if GetLocale() == "frFR" then
 	Outfitter.cRogueStealth = "Voleur: Camouflage"
 
 	Outfitter.cShamanGhostWolf = "Chaman: Loup fantôme"
-    
+
 	Outfitter.cHunterMonkey = "Chasseur: Singe"
 	Outfitter.cHunterHawk =  "Chasseur: Faucon"
 	Outfitter.cHunterCheetah =  "Chasseur: Guépard"
@@ -323,16 +323,16 @@ if GetLocale() == "frFR" then
 	Outfitter.cOddsNEndsCategoryDescription = "Les Odds 'n ends sont des objets que vous n'utilisez dans aucune tenue. Ceci peut être utile pour vérifier que vous utilisez tous les objets que vous avez dans l'inventaire."
 
 	Outfitter.cRebuildOutfitFormat = "Reconstruire pour %s"
-	
+
 	Outfitter.cSlotEnableTitle = "Activer l'emplacement"
 	Outfitter.cSlotEnableDescription = "Cochez la case si vous voulez que l'objet de cet emplacement soit automatiquement équipé lors du changement de tenue. Si la case n'est pas cochée, l'objet ne sera pas modifié lors du changement de tenue."
-	
+
 	Outfitter.cFinger0SlotName = "Premier doigt"
 	Outfitter.cFinger1SlotName = "Second doigt"
-	
+
 	Outfitter.cTrinket0SlotName = "Premier bijou"
 	Outfitter.cTrinket1SlotName = "Second bijou"
-	
+
 	Outfitter.cOutfitCategoryTitle = "Catégorie"
 	Outfitter.cBankCategoryTitle = "Banque"
 	Outfitter.cDepositToBank = "Déposer les objets à la banque."
@@ -340,13 +340,13 @@ if GetLocale() == "frFR" then
 	Outfitter.cDepositOthersToBank = "Deposit other outfits to bank"
 	Outfitter.cWithdrawFromBank = "Récupérer les objets de la banque."
 	Outfitter.cWithdrawOthersFromBank = "Withdraw other outfits from bank"
-	
+
 	Outfitter.cMissingItemsLabel = "Objets manquants: "
 	Outfitter.cBankedItemsLabel = "Objets à la banque: "
 
 	Outfitter.cResistCategory = "Résistances"
 	Outfitter.cTradeCategory = "Professions"
-	
+
 	Outfitter.cScript = "Scripte"
 	Outfitter.cDisableScript = "Désactiver Scripte"
 	Outfitter.cEditScript = "Editer Scripte"
@@ -357,12 +357,12 @@ if GetLocale() == "frFR" then
 	Outfitter.cUseTooltipLineFormat = "^Utiliser : .*"
 	Outfitter.cUseDurationTooltipLineFormat = "^Utiliser : .*pendant (%d+) sec"
 	Outfitter.cUseDurationTooltipLineFormat2 = "^Utiliser : .*Dure (%d+) sec"
-	
+
 	Outfitter.cAutoChangesDisabled = "Les modifications automatiques sont maintenant désactivées"
 	Outfitter.cAutoChangesEnabled = "Les modifications automatiques sont maintenant activées"
-	
+
 	-- OutfitterFu strings
-	
+
 	Outfitter.cFuHint = "Cliquez avec le bouton gauche pour basculer la fenêtre Outfitter."
 	Outfitter.cFuHideMissing = "Masquer les items manquants"
 	Outfitter.cFuHideMissingDesc = "Cachez les tenues avec des objets manquants."
@@ -378,6 +378,6 @@ if GetLocale() == "frFR" then
 	Outfitter.cStoreOnServerOnDescription = "Désactivez-la pour supprimer cette tenue du serveur et la stocker localement à la place. Il ne sera plus disponible à partir d'autres ordinateurs."
 	Outfitter.cStoreOnServerOffDescription = "Activez pour stocker cette tenue sur le serveur afin qu'elle soit disponible depuis n'importe quel ordinateur. Vous ne pouvez stocker que 10 tenues sur le serveur."
 	Outfitter.cTooManyServerOutfits = "Vous ne pouvez pas stocker plus de %d tenues sur le serveur."
-	
+
 	Outfitter.cNoItemsWithStat = "Impossible de générer une tenue car aucun élément avec cette catactéristique n'a été trouvé"
 end

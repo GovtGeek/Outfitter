@@ -1,5 +1,3 @@
-WoW Classic Wrath of the Lich King
+Outfitter for Classic (Vanilla), Wrath of the Lich King, and Retail
 
 Forked from https://github.com/cdmichaelb/Outfitter
-
-THIS FORK IS POORLY MAINTAINED, BUT I'LL TRY TO HELP.

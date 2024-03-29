@@ -23,15 +23,15 @@ Addon.ItemStatsLib = {
 }
 
 Addon.ItemStatsLib.strings = {}
-Addon.ItemStatsLib.strings.Stamina = stripColonFromBlizzardLabel(STAMINA_COLON)
-Addon.ItemStatsLib.strings.Strength = stripColonFromBlizzardLabel(STRENGTH_COLON) 
-Addon.ItemStatsLib.strings.Intellect = stripColonFromBlizzardLabel(INTELLECT_COLON)
-Addon.ItemStatsLib.strings.Agility = stripColonFromBlizzardLabel(AGILITY_COLON)
-Addon.ItemStatsLib.strings.Spirit = stripColonFromBlizzardLabel(SPIRIT_COLON)
+Addon.ItemStatsLib.strings.Stamina = ITEM_MOD_STAMINA_SHORT
+Addon.ItemStatsLib.strings.Strength = ITEM_MOD_STRENGTH_SHORT
+Addon.ItemStatsLib.strings.Intellect = ITEM_MOD_INTELLECT_SHORT
+Addon.ItemStatsLib.strings.Agility = ITEM_MOD_AGILITY_SHORT
+Addon.ItemStatsLib.strings.Spirit = ITEM_MOD_SPIRIT_SHORT
 Addon.ItemStatsLib.strings.Haste = STAT_HASTE
-Addon.ItemStatsLib.strings.Versatility = "Versatility"
+Addon.ItemStatsLib.strings.Versatility = STAT_VERSATILITY
 Addon.ItemStatsLib.strings.Mastery = STAT_MASTERY
-Addon.ItemStatsLib.strings.CriticalStrike = "Critical Strike"
+Addon.ItemStatsLib.strings.CriticalStrike = STAT_CRITICAL_STRIKE
 Addon.ItemStatsLib.strings.Power = ATTACK_POWER
 Addon.ItemStatsLib.strings.Dodge = STAT_DODGE
 Addon.ItemStatsLib.strings.ItemLevel = "Item Level"
@@ -45,15 +45,18 @@ Addon.ItemStatsLib.strings.ShadowResist = RESISTANCE5_NAME --Miv
 Addon.ItemStatsLib.strings.ArcaneResist = RESISTANCE6_NAME
 
 Addon.ItemStatsLib.statNormalization = {}
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Stamina] = "STA"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Strength] = "STR"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Intellect] = "INT"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Agility] = "AGI"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Spirit] = "SPI"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Haste] = "HAS"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Versatility] = "VER"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Mastery] = "MAS"
-Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.CriticalStrike] = "CRI"
+----[[
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Stamina] = ITEM_MOD_STAMINA_SHORT
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Strength] = ITEM_MOD_STRENGTH_SHORT
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Intellect] = ITEM_MOD_INTELLECT_SHORT
+--Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Agility] = "AGI"
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Agility] = ITEM_MOD_AGILITY_SHORT
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Spirit] = ITEM_MOD_SPIRIT_SHORT
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Haste] = STAT_HASTE
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Versatility] = STAT_VERSATILITY
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.Mastery] = STAT_MASTERY
+Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.CriticalStrike] = STAT_CRITICAL_STRIKE
+--]]
 Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.ItemLevel] = "ITEM_LEVEL"
 Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.FireResist] = RESISTANCE2_NAME
 Addon.ItemStatsLib.statNormalization[Addon.ItemStatsLib.strings.NatureResist] = RESISTANCE3_NAME
@@ -92,16 +95,12 @@ function Addon.ItemStatsLib._Stats:setToBagItem(bag, slot)
 	local stats = Addon.TooltipLib:StatsForBagItem(bag, slot)
 	self:setTooltipStats(stats)
 
-	local link = GetContainerItemLink(bag, slot)
+	local link = C_Container.GetContainerItemLink(bag, slot)
 	self:setInfoFromLink(link)
 end
 
 function Addon.ItemStatsLib._Stats:setToLink(link)
 	local stats = Addon.TooltipLib:StatsForLink(link)
-	--print(stats[0])
-	--print(stats[1])
-	--print(stats[2])
-	--print(stats[3])
 	self:setTooltipStats(stats)
 	self:setInfoFromLink(link)
 end
@@ -109,9 +108,7 @@ end
 function Addon.ItemStatsLib._Stats:setTooltipStats(tooltipStats)
 	self.values = {}
 	for key, value in pairs(Addon.ItemStatsLib.statNormalization) do
-		--print("Key: " .. key .. " Value: " .. value)
 		if tooltipStats[key] then
-			--print("Value: " .. value .. " " .. tooltipStats[key])
 			self.values[value] = tooltipStats[key]
 		end
 	end

@@ -1,44 +1,44 @@
 <Bindings>
-	<Binding name="OUTFITTER_OUTFIT1" header="OUTFITTER_TITLE">
+	<Binding name="OUTFITTER_OUTFIT1" category="Outfitter!" header="OUTFITTER_TITLE">
 		Outfitter:WearBoundOutfit(1)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT2">
+	<Binding name="OUTFITTER_OUTFIT2" category="Outfitter!">
 		Outfitter:WearBoundOutfit(2)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT3">
+	<Binding name="OUTFITTER_OUTFIT3" category="Outfitter!">
 		Outfitter:WearBoundOutfit(3)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT4">
+	<Binding name="OUTFITTER_OUTFIT4" category="Outfitter!">
 		Outfitter:WearBoundOutfit(4)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT5">
+	<Binding name="OUTFITTER_OUTFIT5" category="Outfitter!">
 		Outfitter:WearBoundOutfit(5)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT6">
+	<Binding name="OUTFITTER_OUTFIT6" category="Outfitter!">
 		Outfitter:WearBoundOutfit(6)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT7">
+	<Binding name="OUTFITTER_OUTFIT7" category="Outfitter!">
 		Outfitter:WearBoundOutfit(7)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT8">
+	<Binding name="OUTFITTER_OUTFIT8" category="Outfitter!">
 		Outfitter:WearBoundOutfit(8)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT9">
+	<Binding name="OUTFITTER_OUTFIT9" category="Outfitter!">
 		Outfitter:WearBoundOutfit(9)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT10">
+	<Binding name="OUTFITTER_OUTFIT10" category="Outfitter!">
 		Outfitter:WearBoundOutfit(10)
 	</Binding>
-	<Binding name="OUTFITTER_OUTFIT">
+	<Binding name="OUTFITTER_OUTFIT" category="Outfitter!">
 		Outfitter:OpenUI()
 	</Binding>
-	<Binding name="OUTFITTER_ENABLEAUTOMATION">
+	<Binding name="OUTFITTER_ENABLEAUTOMATION" category="Outfitter!">
 		Outfitter:EnableAutoChanges()
 	</Binding>
-	<Binding name="OUTFITTER_DISABLEAUTOMATION">
+	<Binding name="OUTFITTER_DISABLEAUTOMATION" category="Outfitter!">
 		Outfitter:DisableAutoChanges()
 	</Binding>
-	<Binding name="OUTFITTER_UPDATEOUTFIT">
+	<Binding name="OUTFITTER_UPDATEOUTFIT" category="Outfitter!">
 		Outfitter:SetOutfitToCurrent(Outfitter:GetCurrentCompleteOutfit())
 	</Binding>
 </Bindings>

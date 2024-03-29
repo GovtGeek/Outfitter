@@ -10,21 +10,7 @@ Outfitter.Debug =
 	TemporaryItems = false,
 	Optimize = false,
 }
-----------------------------------------
-function Outfitter:IsMainline()
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-end
---[[--
-function Outfitter:IsClassicCataclysm()
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-end
-]]--
-function Outfitter:IsClassicWrath()
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
-end
-function Outfitter:IsClassicEra()
-	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
-end
+
 ----------------------------------------
 Outfitter.CreditPlayersByRealm =
 --
@@ -82,6 +68,7 @@ Outfitter.CreditPlayersByRealm =
 	[Outfitter.cContributingDeveloper] =
 	{
 		["GovtGeek"] = 1,
+		["Nulian"] = 1,
 		["Miv\n\"Restoshaman\"\n<Onslaught>"] = 1,
 		["Dridzt"] = 1,
 		["Bruce Quinton"] = 1,
@@ -346,7 +333,7 @@ Outfitter.Style.ButtonBar =
 
 -- UI
 
-Outfitter.CurrentPanel = 0
+Outfitter.CurrentPanel = 3
 Outfitter.Collapsed = {}
 Outfitter.SelectedOutfit = nil
 Outfitter.DisplayIsDirty = true
@@ -544,10 +531,6 @@ Outfitter.BuiltinEvents = {
 	["TRAVEL_FORM"] = true,
 	["NOT_TRAVEL_FORM"] = true,
 
-	-- Special handling later
-	--["SWIFT_FLIGHT_FORM"] = true,
-	--["NOT_SWIFT_FLIGHT_FORM"] = true,
-
 	["MOONKIN_FORM"] = true,
 	["NOT_MOONKIN_FORM"] = true,
 
@@ -586,6 +569,7 @@ Outfitter.BANKED_FONT_COLOR = CreateColor(0.25, 0.2, 1.0)
 Outfitter.BANKED_FONT_COLOR_CODE = "|cff4033ff"
 Outfitter.OUTFIT_MESSAGE_COLOR = CreateColor(0.2, 0.75, 0.3)
 
+Outfitter.IsWoW4 = true
 Outfitter.cItemLinkFormat = "|Hitem:(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+):(-?%d+)|h%[([^%]]*)%]|h"
 
 -- Phantom items are items which appear to be in a slot but which are actually the by-product of some other item being equipped in a different slot. This is being used in Patch 7 (Legion) for the artifact weapons which occupy both weapon slots.
@@ -815,6 +799,7 @@ Outfitter.cCategoryDescriptions =
 Outfitter.cSlotNames =
 {
 	-- First priority goes to armor
+
 	"HeadSlot",
 	"ShoulderSlot",
 	"ChestSlot",
@@ -825,11 +810,12 @@ Outfitter.cSlotNames =
 	"FeetSlot",
 
 	-- Second priority goes to weapons
+
 	"MainHandSlot",
 	"SecondaryHandSlot",
-	--"RangedSlot", -- added later if we're not in retail
 
 	-- Last priority goes to items with no durability
+
 	"BackSlot",
 	"NeckSlot",
 	"ShirtSlot",
@@ -840,7 +826,11 @@ Outfitter.cSlotNames =
 	"Trinket1Slot",
 }
 
-Outfitter.cSlotOrder = {} -- Defined after we do our vanilla/wrath/retail fixes to our tables
+Outfitter.cSlotOrder = {}
+
+for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
+	Outfitter.cSlotOrder[vSlotName] = vIndex
+end
 
 Outfitter.cSlotDisplayNames =
 {
@@ -862,7 +852,6 @@ Outfitter.cSlotDisplayNames =
 	Trinket1Slot = Outfitter.cTrinket1SlotName,
 	MainHandSlot = MAINHANDSLOT,
 	SecondaryHandSlot = SECONDARYHANDSLOT,
-	--RangedSlot = RANGEDSLOT,
 }
 
 Outfitter.cInvTypeToSlotName =
@@ -888,11 +877,10 @@ Outfitter.cInvTypeToSlotName =
 	INVTYPE_WEAPONMAINHAND = {SlotName = "MainHandSlot"},
 	INVTYPE_WEAPONOFFHAND = {SlotName = "SecondaryHandSlot"},
 	INVTYPE_WRIST = {SlotName = "WristSlot"},
-	INVTYPE_RANGED = {SlotName = "RangedSlot"},
-	INVTYPE_RANGEDRIGHT = {SlotName = "RangedSlot"},
-	INVTYPE_THROWN = {SlotName = "RangedSlot"},
-	INVTYPE_RELIC = {SlotName = "RangedSlot"},
-
+	INVTYPE_RANGED = {SlotName = "MainHandSlot"},
+	INVTYPE_RANGEDRIGHT = {SlotName = "MainHandSlot"},
+	INVTYPE_THROWN = {SlotName = "MainHandSlot"},
+	INVTYPE_RELIC = {SlotName = "MainHandSlot"},
 }
 
 Outfitter.cHalfAlternateStatSlot =
@@ -959,7 +947,6 @@ Outfitter.cSpecialIDEvents =
 	Bear = {Equip = "BEAR_FORM", Unequip = "NOT_BEAR_FORM"},
 	Cat = {Equip = "CAT_FORM", Unequip = "NOT_CAT_FORM"},
 	Travel = {Equip = "TRAVEL_FORM", Unequip = "NOT_TRAVEL_FORM"},
-	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"},
 	Moonkin = {Equip = "MOONKIN_FORM", Unequip = "NOT_MOONKIN_FORM"},
 	Tree = {Equip = "TREE_FORM", Unequip = "NOT_TREE_FORM"},
 	Prowl = {Equip = "STEALTH", Unequip = "NOT_STEALTH"},
@@ -970,7 +957,6 @@ Outfitter.cSpecialIDEvents =
 	GhostWolf = {Equip = "GHOST_WOLF", Unequip = "NOT_GHOST_WOLF"},
 
 	Feigning = {Equip = "FEIGN_DEATH", Unequip = "NOT_FEIGN_DEATH"},
-	Hawk = {Equip = "HAWK", Unequip = "NOT_HAWK"},
 
 	Evocate = {Equip = "EVOCATE", Unequip = "NOT_EVOCATE"},
 
@@ -1011,7 +997,6 @@ Outfitter.cClassSpecialOutfits =
 		{Name = Outfitter.cDruidBearForm, ScriptID = "Bear"},
 		{Name = Outfitter.cDruidCatForm, ScriptID = "Cat"},
 		{Name = Outfitter.cDruidTravelForm, ScriptID = "Travel"},
-		{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"},
 		{Name = Outfitter.cDruidMoonkinForm, ScriptID = "Moonkin"},
 		{Name = Outfitter.cDruidTreeOfLifeForm, ScriptID = "Tree"},
 		{Name = Outfitter.cDruidProwl, ScriptID = "Prowl"},
@@ -1169,51 +1154,22 @@ Outfitter.cMaxDisplayedItems = 14
 
 Outfitter.cPanelFrames =
 {
-	"OutfitterMainFrame",
-	"OutfitterOptionsFrame",
 	"OutfitterAboutFrame",
+	"OutfitterOptionsFrame",
+	"OutfitterMainFrame",
 }
 
 Outfitter.cShapeshiftIDInfo = {
 	-- Druid
 	[5487] = {ID = "Bear", MaybeInCombat = true},
-	[9634] = {ID = "Bear", MaybeInCombat = true},
 	[768] = {ID = "Cat"},
 	[783] = {ID = "Travel"},
 	[24858] = {ID = "Moonkin"},
-	--[40120] = {ID = "Flight"},
 	CasterForm = {ID = "Caster"}, -- this is a psuedo-form which is active when no other druid form is
 
 	-- Rogue
 	[1784] = {ID = "Stealth"},
-	[1785] = {ID = "Stealth"},
-	[1786] = {ID = "Stealth"},
-	[1787] = {ID = "Stealth"}
 }
-
---[[--
-	Modify entries for a specific version (i.e. Add RangedSlot for non-retail)
---]]--
-if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-	table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
-	Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
-	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
-	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
-	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
-	table.insert(Outfitter.cShapeshiftIDInfo, 40120, {ID = "Flight"})
-	table.insert(Outfitter.cShapeshiftIDInfo, 1785, {ID = "Stealth"})
-	table.insert(Outfitter.cShapeshiftIDInfo, 1786, {ID = "Stealth"})
-	table.insert(Outfitter.cShapeshiftIDInfo, 1787, {ID = "Stealth"})
-else
-	Outfitter.cInvTypeToSlotName.INVTYPE_RANGED = {SlotName = "MainHandSlot"}
-	Outfitter.cInvTypeToSlotName.INVTYPE_RANGEDRIGHT = {SlotName = "MainHandSlot"}
-	Outfitter.cInvTypeToSlotName.INVTYPE_THROWN = {SlotName = "MainHandSlot"}
-	Outfitter.cInvTypeToSlotName.INVTYPE_RELIC = {SlotName = "MainHandSlot"}
-end
-
-for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
-	Outfitter.cSlotOrder[vSlotName] = vIndex
-end
 
 function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 	if CharacterFrame:IsShown() then
@@ -1231,7 +1187,7 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 end
 
 function Outfitter:ToggleOutfitterFrame()
-	if Outfitter:IsOpen() then
+	if self:IsOpen() then
 		OutfitterFrame:Hide()
 	else
 		OutfitterFrame:Show()
@@ -1249,15 +1205,9 @@ function Outfitter:OnLoad()
 end
 
 function Outfitter:OnShow()
-	-- Season of Discovery frame issue
-	local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
-	if EngravingFrame ~= nil and EngravingFrame:IsVisible() then
-		_G["RuneFrameControlButton"]:Click()	-- Need to hide EngravingFrame - just click it off!
-	end
-
 	self.SetFrameLevel(OutfitterFrame, PaperDollFrame:GetFrameLevel() - 1)
 
-	self:ShowPanel(1) -- Always switch to the main view when showing the window
+	self:ShowPanel(3) -- Always switch to the main view when showing the window
 end
 
 function Outfitter:OnHide()
@@ -1446,30 +1396,6 @@ function Outfitter:UpdateCurrentOutfitIcon()
 	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
 end
 
-function Outfitter:PlayerInteractionManagerFrameShow(event, interactionType)
-	if not interactionType then
-		if event == "BANKFRAME_OPENED" then
-			self:BankFrameOpened()
-		end
-	elseif interactionType == Enum.PlayerInteractionType.VoidStorageBanker then
-		self:VoidStorageFrameOpened()
-	elseif interactionType == Enum.PlayerInteractionType.Banker then
-		self:BankFrameOpened()
-	end
-end
-
-function Outfitter:PlayerInteractionManagerFrameHide(event, interactionType)
-	if not interactionType then
-		if event == "BANKFRAME_CLOSED" then
-			self:BankFrameClosed()
-		end
-	elseif interactionType == Enum.PlayerInteractionType.VoidStorageBanker then
-		self:VoidStorageFrameClosed()
-	elseif interactionType == Enum.PlayerInteractionType.Banker then
-		self:BankFrameClosed()
-	end
-end
-
 function Outfitter:BankFrameOpened()
 	self.BankFrameIsOpen = true
 	self:BankSlotsChanged()
@@ -1480,15 +1406,15 @@ function Outfitter:BankFrameClosed()
 	self:BankSlotsChanged()
 end
 
-function Outfitter:VoidStorageFrameOpened()
-	if Enum.PlayerInteractionType.VoidStorageBanker then
-		self.VoidStorageIsOpen = true
+function Outfitter:VoidStorageFrameOpened(type)
+	if type == 26 then
+	  self.VoidStorageIsOpen = true
 	end
 end
 
-function Outfitter:VoidStorageFrameClosed()
-	if Enum.PlayerInteractionType.VoidStorageBanker then
-		self.VoidStorageIsOpen = false
+function Outfitter:VoidStorageFrameClosed(type)
+	if type == 26 then
+	  self.VoidStorageIsOpen = false
 	end
 end
 
@@ -1719,11 +1645,7 @@ function Outfitter:InventoryChanged()
 
 	self:Update(true)
 end
-function Outfitter:EngravingModeChanged(pEvent, pState)
-	if pState then
-		OutfitterFrame:Hide()
-	end
-end
+
 function Outfitter:ExecuteCommand(pCommand)
 	local vCommands =
 	{
@@ -1983,11 +1905,7 @@ function Outfitter:DeleteSelectedOutfit()
 end
 
 function Outfitter:TalentsChanged()
-	if _G["GetSpecialization"] then
-		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
-	else
-		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
-	end
+	self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
 end
 
 function Outfitter:SetScript(pOutfit, pScript)
@@ -2054,13 +1972,13 @@ function Outfitter:ShowPanel(pPanelIndex)
 
 	-- Update the control values
 
-	if pPanelIndex == 1 then
+	if pPanelIndex == 3 then
 		-- Main panel
 
 	elseif pPanelIndex == 2 then
 		-- Options panel
 
-	elseif pPanelIndex == 3 then
+	elseif pPanelIndex == 1 then
 		-- About panel
 
 		if not self.AboutView then
@@ -2156,62 +2074,6 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 			startIndex = endIndex + 1
 		end
 	end)
-
-	-- Outfit Display
-	if _G["ShowHelm"] and _G["ShowCloak"] then
-		menu:AddChildMenu(self.cOutfitDisplay, function (submenu)
-
-			-- Helm
-			submenu:AddCategoryTitle(self.cHelm)
-			submenu:AddToggle(self.cDontChange,
-				function ()
-					return outfit.ShowHelm == nil
-				end,
-				function ()
-					self:PerformAction("IGNOREHELM", outfit)
-				end)
-			submenu:AddToggle(self.cShow,
-				function ()
-					return outfit.ShowHelm == true
-				end,
-				function ()
-					self:PerformAction("SHOWHELM", outfit)
-				end)
-			submenu:AddToggle(self.cHide,
-				function ()
-					return outfit.ShowHelm == false
-				end,
-				function ()
-					self:PerformAction("HIDEHELM", outfit)
-				end)
-
-			-- Cloak
-			submenu:AddCategoryTitle(self.cCloak)
-			submenu:AddToggle(self.cDontChange,
-				function ()
-					return outfit.ShowCloak == nil
-				end,
-				function ()
-					self:PerformAction("IGNORECLOAK", outfit)
-				end)
-			submenu:AddToggle(self.cShow,
-				function ()
-					return outfit.ShowCloak == true
-				end,
-				function ()
-					self:PerformAction("SHOWCLOAK", outfit)
-				end)
-			submenu:AddToggle(self.cHide,
-				function ()
-					return outfit.ShowCloak == false
-				end,
-				function ()
-					self:PerformAction("HIDECLOAK", outfit)
-				end)
-
-		end)
-	end
-
 	menu:AddChildMenu(self.cBankCategoryTitle, function (submenu)
 		submenu:AddFunction(self.cDepositToBank, function () self:PerformAction("DEPOSIT", outfit) end, not self.BankFrameIsOpen)
 		submenu:AddFunction(self.cDepositUniqueToBank, function () self:PerformAction("DEPOSITUNIQUE", outfit) end, not self.BankFrameIsOpen)
@@ -2226,12 +2088,6 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 		end, function (menu, value)
 			outfit.UnequipOthers = value or nil
 			self:OutfitSettingsChanged(outfit)
-		end)
-		menu:AddToggle(self.cPreventUnequip, function()
-		  return outfit.PreventUnequip
-		end, function (menu, value)
-		  outfit.PreventUnequip = value or nil
-		  self:OutfitSettingsChanged(outfit)
 		end)
 	end
 	menu:AddToggle(self.cIgnoreComparisons, function ()
@@ -2447,32 +2303,10 @@ function Outfitter:AddScriptCategorySubmenu(menu, category, get, set)
 		end)
 end
 
---TODO Figure out the RIGHT way to create the menu
 function Outfitter.ItemDropDownMenuFunc(dropdown, menu)
 	local listItem = dropdown:GetParent():GetParent()
 	local outfit = listItem:GetOutfit()
-	if outfit then
-		Outfitter:AddOutfitMenu(menu, outfit)
-	  	--Outfitter.SchedulerLib:ScheduleTask(1.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) --DAC
-	end
-end
-
--- TODO This is all kinds of odd figure out the RIGHT way to close the dropdown menus
--- If the menu is not being shown, make sure LibDropdown does what it should
-function Outfitter.ItemDropDownMenuAutoClose(dropdown)
-   local f = GetMouseFocus()
-   local frameName = f:GetName() or ""
-   if frameName == "" and f.GetRoot ~= nil then -- Assume it's a libdropdown frame if the GetRoot function is available
-		frameName = f:GetRoot():GetName() or ""
-   end
-   if string.find(frameName, "LibDropdown") then -- is the mouse over a dropdown frame?
-     	Outfitter.SchedulerLib:RescheduleTask(.5, Outfitter.ItemDropDownMenuAutoClose, dropdown) -- If the frame is a dropdown, reschedule the check
-   else
-		-- best way so far is using dropdown:ToggleMenu
-		dropdown:ToggleMenu()  -- If the frame is not a dropdown frame, close the dropdown
-		-- This SHOULD be the way we close the menu
-		--self:HideOutfitMenu()
-   end
+	Outfitter:AddOutfitMenu(menu, outfit)
 end
 
 function Outfitter.ItemDropDown_Initialize(pFrame)
@@ -2746,6 +2580,7 @@ function Outfitter:HideOutfitMenu()
 	if not self.outfitMenu then
 		return
 	end
+
 	self.outfitMenu:Hide()
 end
 
@@ -2782,7 +2617,6 @@ function Outfitter:Item_CheckboxClicked(pItem)
 end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
-	--return -- uncomment if we want to disable storage
 	if pItem.isCategory then
 		return
 	end
@@ -2928,7 +2762,7 @@ function Outfitter:Update(pOutfitsChanged)
 
 	--
 
-	if self.CurrentPanel == 1 then
+	if self.CurrentPanel == 3 then
 		-- Main panel
 
 		if not self.DisplayIsDirty then
@@ -3080,7 +2914,7 @@ function Outfitter:UpdateSlotEnables(pOutfit, pInventoryCache)
 				vCheckbox:SetCheckedTexture("Interface\\Addons\\Outfitter\\Textures\\CheckboxUnknown")
 				vCheckbox.IsUnknown = true
 			end
-			vCheckbox:GetCheckedTexture():Show() -- Grabbed from retail (not sure if it's needed)
+			vCheckbox:GetCheckedTexture():Show()
 			vCheckbox:SetChecked(true)
 		end
 	end
@@ -3873,6 +3707,7 @@ function Outfitter:GetEmptyBagSlot(pStartBagIndex, pStartBagSlotIndex, pIncludeB
 
 			for vSlotIndex = vStartBagSlotIndex, vNumBagSlots do
 				if not C_Container.GetContainerItemLink(vBagIndex, vSlotIndex) then
+
 					return {BagIndex = vBagIndex, BagSlotIndex = vSlotIndex, BagType = vBagType}
 				end
 			end
@@ -4178,8 +4013,7 @@ function Outfitter:GetNewItemsOutfit(pPreviousOutfit)
 		local vSkipSlot = false
 
 		if vInventorySlot == "SecondaryHandSlot" then
-			--local vMainHandItem = pPreviousOutfit:GetItem("MainHandSlot") -- retail? xysis00
-			local vMainHandItem = self.CurrentInventoryOutfit:GetItem("MainHandSlot") -- classic/wrath?
+			local vMainHandItem = pPreviousOutfit:GetItem("MainHandSlot")
 
 			if not vMainHandItem then
 				--self:DebugMessage("MainHandItem is nil")
@@ -4330,7 +4164,7 @@ function Outfitter:GetPlayerAuraStates()
 	end
 
 	while true do
-		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		local vName, _, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
 
 		if not vName then
 			return self.AuraStates
@@ -4452,13 +4286,12 @@ function Outfitter:UpdateAuraStates()
 	self:EndEquipmentUpdate()
 
 	-- Update shapeshift state on aura change too
-	-- NOTE: WoW client 2.3 - the shapeshift info isn't
+	-- NOTE: Currently (WoW client 2.3) the shapeshift info isn't
 	-- always up-to-date when the AURA event comes in, so update
 	-- the shapeshift state after about 1 frame to allow the state to
-	-- sync (Changed to .5 sec)
+	-- synch
 
-	self.SchedulerLib:ScheduleUniqueTask(0.5, self.UpdateShapeshiftState, self) -- using the retail delay
-	--self.SchedulerLib:ScheduleUniqueTask(0.01, self.UpdateShapeshiftState, self) -- using the classic delay
+	self.SchedulerLib:ScheduleUniqueTask(0.01, self.UpdateShapeshiftState, self)
 end
 
 function Outfitter:UpdateMountedState()
@@ -4818,37 +4651,6 @@ function Outfitter:FindAndAddItemsToOutfit(pOutfit, pSlotName, pItems, pInventor
 	end
 end
 
--- Make sure Outfitter opens/closes if GearManager is open/closed
-function Outfitter:EquipmentManagerViewSync()
-	if GearManagerDialog:IsVisible() then
-		OutfitterFrame:Show()
-	else
-		OutfitterFrame:Hide()
-	end
-end
-
--- Make sure the GearManagerDialog closes if we close
-function Outfitter:EquipmentManagerClose()
-	GearManagerDialog:Hide()
-end
-
--- Needs to fix GearManagerDialog too
-function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" then -- cvar values are strings
-		-- Hook the GearManagerDialog for open/close
-		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
-		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
-
-		-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
-		hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
-
-		GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
-		OutfitterButton:Hide()
-	else
-		OutfitterButton:Show()
-	end
-end
-
 function Outfitter:IsInitialized()
 	return self.Initialized
 end
@@ -4871,14 +4673,12 @@ function Outfitter:Initialize()
 	end
 
 	-- Make sure they're not upgrading with a reloadui when there are new files
-	--[[-- GovtGeek Left here just in case, but Blizzard changes to addon loading should make this unnecessary
-	if tonumber(C_AddOns.GetAddOnMetadata("Outfitter", "X-ReloadTag")) ~= 2 then
+	if tonumber(GetAddOnMetadata("Outfitter", "X-ReloadTag")) ~= 2 then
 		OutfitterMinimapButton:Hide() -- Remove access to Outfitter so more errors don't start coming up
 		OutfitterButtonFrame:Hide()
 		StaticPopup_Show("OUTFITTER_CANT_RELOADUI")
 		return
 	end
-	--]]--
 
 	-- Get the basic player info
 	self.PlayerName = UnitName("player")
@@ -4908,12 +4708,8 @@ function Outfitter:Initialize()
 	end
 
 	-- Hook onto C_PetJournal.SummonPetByGUID so that the cooldown can be monitored
-	if C_PetJournal then
-		hooksecurefunc(C_PetJournal, "SummonPetByGUID", function () self.SummonPetByGUIDTime = GetTime() end)
-		self.SummonPetByGUIDTime = GetTime()
-	else
-		self.SummonPetByGUIDTime = 100
-	end
+	hooksecurefunc(C_PetJournal, "SummonPetByGUID", function () self.SummonPetByGUIDTime = GetTime() end)
+	self.SummonPetByGUIDTime = GetTime()
 
 	-- Initialize the main UI tabs
 	self._SidebarWindowFrame.Construct(OutfitterFrame)
@@ -4982,7 +4778,6 @@ function Outfitter:Initialize()
 	end
 
 	-- Set the minimap button
-
 	if self.Settings.Options.HideMinimapButton then
 		OutfitterMinimapButton:Hide()
 	else
@@ -5001,9 +4796,7 @@ function Outfitter:Initialize()
 	end
 
 	-- Move the Blizzard UI over a bit
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
-	end
+	PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
 
 	-- Initialize player state
 
@@ -5057,14 +4850,13 @@ function Outfitter:Initialize()
 
 	-- For monitoring bank bags
 
-	self.EventLib:RegisterEvent("BANKFRAME_OPENED", self.PlayerInteractionManagerFrameShow, self)
-	self.EventLib:RegisterEvent("BANKFRAME_CLOSED", self.PlayerInteractionManagerFrameHide, self)
+	self.EventLib:RegisterEvent("BANKFRAME_OPENED", self.BankFrameOpened, self)
+	self.EventLib:RegisterEvent("BANKFRAME_CLOSED", self.BankFrameClosed, self)
 
 	-- For monitoring void storage
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		self.EventLib:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", self.PlayerInteractionManagerFrameShow, self)
-		self.EventLib:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", self.PlayerInteractionManagerFrameHide, self)
-	end
+
+	self.EventLib:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_SHOW", self.VoidStorageFrameOpened, self)
+	self.EventLib:RegisterEvent("PLAYER_INTERACTION_MANAGER_FRAME_HIDE", self.VoidStorageFrameClosed, self)
 
 	-- For unequipping the dining outfit
 
@@ -5106,10 +4898,8 @@ function Outfitter:Initialize()
 
 	--
 
-	self.EventLib:RegisterEvent("CHARACTER_POINTS_CHANGED", self.TalentsChanged, self) -- Classic
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		self.EventLib:RegisterEvent("PLAYER_TALENT_UPDATE", self.TalentsChanged, self) -- Wrath/Retail
-	end
+	self.EventLib:RegisterEvent("CHARACTER_POINTS_CHANGED", self.TalentsChanged, self)
+	self.EventLib:RegisterEvent("PLAYER_TALENT_UPDATE", self.TalentsChanged, self)
 
 	self:TalentsChanged()
 
@@ -5125,21 +4915,9 @@ function Outfitter:Initialize()
 		self:HookScript(MI2_TooltipFrame, "OnHide", self.GameToolTip_OnHide)
 	end
 
-	-- Check for Equipment Manager availability and adjust Outfitter accordingly
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
-		self.EventLib:RegisterEvent("CVAR_UPDATE", self.EquipmentManagerAdjust, self)
-		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "USE_EQUIPMENT_MANAGER", C_CVar.GetCVar("equipmentManager"))
-	end
-
 	-- Synchronize with the Equipment Manager
 	self:StartMonitoringEM()
 
-	-- Season of Discovery handling
-	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
-		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
-		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
-		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
-	end
 	--
 
 	self:DispatchOutfitEvent("OUTFITTER_INIT")
@@ -5166,15 +4944,11 @@ function Outfitter:Initialize()
 end
 
 function Outfitter:StartMonitoringEM()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
-		self.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
-	end
+	self.EventLib:RegisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
 end
 
 function Outfitter:StopMonitoringEM()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
-		self.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
-	end
+	self.EventLib:UnregisterEvent("EQUIPMENT_SETS_CHANGED", self.SynchronizeEM, self)
 end
 
 -- Blizzard added icon numbers in patch 6 but no API for mapping between the number and the path, so create a texture to use for doing the mapping
@@ -5242,7 +5016,6 @@ function Outfitter:AttachOutfitMethods()
 end
 
 function Outfitter:SynchronizeEM()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 
 	-- Mark all the EM outfits as unused
@@ -5435,25 +5208,21 @@ function Outfitter:InitializeSpecialOccasionOutfits()
 	self:InitializeClassOutfits()
 end
 
-function Outfitter:InstallDefaultSpecializationIcons() --miv
-	if _G["GetNumSpecializations"] then
-		local numSpecs = GetNumSpecializations()
-		for specIndex = 1, numSpecs do
-			local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
-			local scriptID = "SPECIALIZATION_"..specIndex
-			Outfitter.OutfitBar.cDefaultScriptIcons[scriptID] = specIconID
-		end
-	else
-		Outfitter.OutfitBar.cDefaultScriptIcons["SPECIALIZATION_" .. 1] = "Interface\\ICONS\\INV_Misc_QuestionMark"
+function Outfitter:InstallDefaultSpecializationIcons()
+	local numSpecs = GetNumSpecializations()
+	for specIndex = 1, numSpecs do
+		local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
+		local scriptID = "SPECIALIZATION_"..specIndex
+		Outfitter.OutfitBar.cDefaultScriptIcons[scriptID] = specIconID
 	end
 end
 
-function Outfitter:InitializeTalentTreeOutfits() --miv
+function Outfitter:InitializeTalentTreeOutfits()
 	local playerClass = UnitClass("player")
 
-	local numSpecs = 1 --GetNumSpecializations()
+	local numSpecs = GetNumSpecializations()
 	for specIndex = 1, numSpecs do
-		--local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
+		local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
 
 		-- Done when the names run out
 		if not specName then
@@ -6145,42 +5914,6 @@ function Outfitter:SetScriptEnabled(pOutfit, pEnable)
 	self:OutfitSettingsChanged(pOutfit)
 end
 
-function Outfitter.OutfitMenuActions:SHOWHELM(pOutfit)
-	pOutfit.ShowHelm = true
-	self.OutfitStack:UpdateOutfitDisplay()
-	self:OutfitSettingsChanged(pOutfit)
-end
-
-function Outfitter.OutfitMenuActions:HIDEHELM(pOutfit)
-	pOutfit.ShowHelm = false
-	self.OutfitStack:UpdateOutfitDisplay()
-	self:OutfitSettingsChanged(pOutfit)
-end
-
-function Outfitter.OutfitMenuActions:IGNOREHELM(pOutfit)
-	pOutfit.ShowHelm = nil
-	self.OutfitStack:UpdateOutfitDisplay()
-	self:OutfitSettingsChanged(pOutfit)
-end
-
-function Outfitter.OutfitMenuActions:SHOWCLOAK(pOutfit)
-	pOutfit.ShowCloak = true
-	self.OutfitStack:UpdateOutfitDisplay()
-	self:OutfitSettingsChanged(pOutfit)
-end
-
-function Outfitter.OutfitMenuActions:HIDECLOAK(pOutfit)
-	pOutfit.ShowCloak = false
-	self.OutfitStack:UpdateOutfitDisplay()
-	self:OutfitSettingsChanged(pOutfit)
-end
-
-function Outfitter.OutfitMenuActions:IGNORECLOAK(pOutfit)
-	pOutfit.ShowCloak = nil
-	self.OutfitStack:UpdateOutfitDisplay()
-	self:OutfitSettingsChanged(pOutfit)
-end
-
 function Outfitter.OutfitMenuActions:IGNORETITLE(pOutfit)
 	pOutfit.ShowTitleID = nil
 	self.OutfitStack:UpdateOutfitDisplay()
@@ -6440,7 +6173,7 @@ function Outfitter:CheckDatabase()
 	end
 
 	-- Remove ranged slot (WoW patch 5)
---[[
+
 	if self.Settings.Version < 19 then
 		if self.Settings.Outfits then
 			for vCategoryID, vOutfits in pairs(self.Settings.Outfits) do
@@ -6452,7 +6185,7 @@ function Outfitter:CheckDatabase()
 			end
 		end
 		self.Settings.Version = 19
-	end--]]
+	end
 
 	--[[ Added ID11,12 and 13 for WoW patch 6
 
@@ -6684,7 +6417,7 @@ function Outfitter:DepositOutfit(pOutfit, pUniqueItemsOnly)
 	local vEmptyBankSlots = self:GetEmptyBankSlotList()
 
 	-- Execute the changes
-	vEquipmentChangeList:execute(vEmptyBankSlots, vInventoryCache)
+	vEquipmentChangeList:execute(vEmptyBankSlots, vExpectedInventoryCache)
 
 	self:DispatchOutfitEvent("EDIT_OUTFIT", pOutfit:GetName(), pOutfit)
 end
@@ -7390,7 +7123,7 @@ end
 
 function Outfitter:InventoryItemIsActive(pInventorySlot)
 	-- See if the item is on cooldown at all
-	if pInventorySlot == nil then return false end
+
 	local vSlotID = self.cSlotIDs[pInventorySlot]
 	local vItemLink = self:GetInventorySlotIDLink(vSlotID)
 	local vItemCode = self:GetSlotIDLinkInfo(vSlotID)[1]
@@ -7527,19 +7260,8 @@ function Outfitter:PlayerIsOnQuestID(pQuestID)
 	return false
 end
 
--- Overloaded this function
 function Outfitter:GetTrackingEnabled(pTexture)
 	local vNumTypes = C_Minimap.GetNumTrackingTypes()
-
-	-- A nil texture means we want to know what spell we're tracking and just return the texture
-	if not pTexture then
-		for vIndex = 1, vNumTypes do
-			local vName, vTexture, vActive, vType = C_Minimap.GetTrackingInfo(vIndex);
-			if vActive and vType == "spell" then
-				return vTexture;
-			end
-		end
-	end
 
 	for vIndex = 1, vNumTypes do
 		local vName, vTexture, vActive = C_Minimap.GetTrackingInfo(vIndex)
@@ -7547,15 +7269,12 @@ function Outfitter:GetTrackingEnabled(pTexture)
 			return vActive, vIndex
 		end
 	end
-	return false, 0
 end
 
 function Outfitter:SetTrackingEnabled(pTexture, pEnabled)
-	if not pTexture then return end
 	local vActive, vIndex = self:GetTrackingEnabled(pTexture)
-	if pEnabled == 1 or pEnabled then pEnabled = true else pEnabled = false end
 	if vActive ~= pEnabled then
-		C_Minimap.SetTracking(vIndex, pEnabled)
+		C_Minimap.SetTracking(vIndex, pEnabled == true or pEnabled == 1)
 	end
 end
 
@@ -7566,32 +7285,29 @@ Outfitter._ExtendedCompareTooltip = {}
 function Outfitter._ExtendedCompareTooltip:Construct()
 	hooksecurefunc("GameTooltip_ShowCompareItem", function (pShift)
 		if not Outfitter.Settings.Options.DisableItemComparisons then
-			if TooltipUtil and TooltipUtil.ShouldDoItemComparison() then
-				self:ShowCompareItem(pShift)
+			--if OutfitterAPI.IsWoW1002 then
+			if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+				if TooltipUtil.ShouldDoItemComparison() then
+					self:ShowCompareItem(pShift)
+				end
 			else
 				self:ShowCompareItem(pShift)
 			end
 		end
 	end)
 
-	GameTooltip:HookScript("OnHide", function ()
-		self:HideCompareItems()
-	end)
-
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
-			if not IsModifiedClick("COMPAREITEMS") then
-				self:HideCompareItems()
-			end
+	--if not OutfitterAPI.IsWoW1002 then
+	if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
+		GameTooltip:HookScript("OnHide", function ()
+			self:HideCompareItems()
 		end)
-	else
-		----[[-- Old way of hooking tooltip when an item is assigned
+
 		GameTooltip:HookScript("OnTooltipSetItem", function ()
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
 			end
 		end)
-		--]]--
+
 	end
 
 	self.Tooltips = {}
@@ -7602,8 +7318,8 @@ end
 function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	self:HideCompareItems()
 
-	--local _, vLink = GameTooltip:GetItem()
-	local vLink = Outfitter:GetLinkFromTooltip(GameTooltip)
+	local _, vLink = GameTooltip:GetItem()
+
 	if not vLink then
 		return
 	end
@@ -7624,8 +7340,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	      vTooltipItemCount,
 	      vTooltipItemInvType = GetItemInfo(vTooltipItemCodes[1])
 
-	--if not vTooltipItemInvType or vTooltipItemType ~= "Armor" then -- retail (why do we only check armor? why not weapons?)
-	if not vTooltipItemInvType then -- classic/wrath
+	if not vTooltipItemInvType or vTooltipItemType ~= "Armor" then
 		return
 	end
 
@@ -7640,9 +7355,10 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	-- append the 'used by' info on shopping tooltips
 
 	self.AnchorToTooltip = nil
+
 	for vIndex, vShoppingTooltip in ipairs(GameTooltip.shoppingTooltips) do
-		--local _, vShoppingLink = vShoppingTooltip:GetItem() -- orig
-		local vShoppingLink = Outfitter:GetLinkFromTooltip(vShoppingTooltip)
+		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then Mixin(vShoppingTooltip, GameTooltipDataMixin) end
+		local _, vShoppingLink = vShoppingTooltip:GetItem()
 		local vShoppingItemInfo = Outfitter:GetItemInfoFromLink(vShoppingLink)
 
 		if vShoppingItemInfo then
@@ -7691,6 +7407,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 			if not vOutfit.IgnoreComparisons then
 				for _, vInventorySlot in ipairs(vInventorySlots) do
 					local vItem = vOutfit:GetItem(vInventorySlot)
+
 					if vItem then
 						local vItemLink, vItemQuality = Outfitter:GenerateItemLink(vItem)
 
@@ -7707,10 +7424,12 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	table.sort(vShoppingItems, function (pItem1, pItem2)
 		return (pItem1.Item.Level or 0) > (pItem2.Item.Level or 0)
 	end)
+
 	for _, vItem in ipairs(vShoppingItems) do
 		if self.NumTooltipsShown >= self.MaxTooltipsShown then
 			break
 		end
+
 		if not self:ShoppingItemIsShown(vItem.Item) then
 			self:AddShoppingLink(vItem.OutfitName, vItem.Item.Name, vItem.Link)
 		end
@@ -7738,13 +7457,13 @@ function Outfitter._ExtendedCompareTooltip:ItemsAreEquivalent(pItemInfo1, pItemI
 end
 
 function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
-	--local _, vTooltipLink = GameTooltip:GetItem()
-	local vTooltipLink = Outfitter:GetLinkFromTooltip(GameTooltip)
+	local _, vTooltipLink = GameTooltip:GetItem()
 	local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
 
 	if not vTooltipItemInfo then
 		return false
 	end
+
 	--Outfitter:DebugMessage("ShoppingLinkIsShown: Comparing GameTooltip %s to %s", tostring(vTooltipLink):gsub("|", "||"), tostring(vLink):gsub("|", "||"))
 
 	if self:ItemsAreEquivalent(pItemInfo, vTooltipItemInfo) then
@@ -7762,8 +7481,9 @@ function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
 			break
 		end
 
-		--local _, vTooltipLink = vTooltip:GetItem()
-		local vTooltipLink = Outfitter:GetLinkFromTooltip(vTooltip)
+		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then Mixin(vTooltip, GameTooltipDataMixin) end
+
+		local _, vTooltipLink = vTooltip:GetItem()
 		local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
 
 		--Outfitter:DebugMessage("ShoppingLinkIsShown: Comparing ShoppingTooltip%d %s to %s", vIndex, tostring(vTooltipLink):gsub("|", "||"), tostring(vLink):gsub("|", "||"))
@@ -7779,8 +7499,7 @@ function Outfitter._ExtendedCompareTooltip:ShoppingItemIsShown(pItemInfo)
 			break
 		end
 
-		--local _, vTooltipLink = vTooltip:GetItem()
-		local vTooltipLink = Outfitter:GetLinkFromTooltip(vTooltip)
+		local _, vTooltipLink = vTooltip:GetItem()
 		local vTooltipItemInfo = Outfitter:GetItemInfoFromLink(vTooltipLink)
 
 		--Outfitter:DebugMessage("ShoppingLinkIsShown: Comparing OutfitterShoppingTooltip%d %s to %s", vIndex, tostring(vTooltipLink):gsub("|", "||"), tostring(vLink):gsub("|", "||"))
@@ -7799,19 +7518,18 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
-		print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
-
-		vTooltip:SetScript("OnUpdate", function ()
-			if Outfitter.Settings.Options.DisableItemComparisons then
-				self:HideCompareItems()
-			end
-		end)
-
-		vTooltip:SetScript("OnHide", function ()
-			self:HideCompareItems()
-		end)
-
+		if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+		  Mixin(vTooltip, GameTooltipDataMixin)
+		  vTooltip:SetScript("OnUpdate", function ()
+			  if not TooltipUtil.ShouldDoItemComparison() then
+				  self:HideCompareItems()
+			  end
+		  end)
+		  vTooltip:SetScript("OnHide", function ()
+			  self:HideCompareItems()
+		  end)
+		end
 		vTooltip:SetOwner(UIParent, "ANCHOR_NONE")
 		vTooltip:Hide()
 
@@ -7841,15 +7559,12 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 
 	local vTooltipName = vTooltip:GetName()
 
-	-- Fix an issue with flyout item selection
-	if vTooltip ~= self.AnchorToTooltip then
-		vTooltip:SetOwner(self.AnchorToTooltip, "ANCHOR_NONE")
+	vTooltip:SetOwner(self.AnchorToTooltip, "ANCHOR_NONE")
 
-		if self.LeftToRight then
-			vTooltip:SetPoint("TOPLEFT", self.AnchorToTooltip, "TOPRIGHT", 0, 0)
-		else
-			vTooltip:SetPoint("TOPRIGHT", self.AnchorToTooltip, "TOPLEFT", 0, 0)
-		end
+	if self.LeftToRight then
+		vTooltip:SetPoint("TOPLEFT", self.AnchorToTooltip, "TOPRIGHT", 0, 0)
+	else
+		vTooltip:SetPoint("TOPRIGHT", self.AnchorToTooltip, "TOPLEFT", 0, 0)
 	end
 
 	vTooltip:SetHyperlink(pLink)
@@ -8000,7 +7715,6 @@ function Outfitter:GetMountIDByName(name)
 end
 
 function Outfitter:GetCompanionIDByName(nameToFind)
-	if not C_PetJournal then return end
 	local numPets = C_PetJournal.GetNumPets(false)
 	local lowerName = nameToFind:lower()
 	for index = 1, numPets do
@@ -8134,33 +7848,8 @@ function Outfitter:SynchronizeCompanionState()
 end
 
 function Outfitter:GetTalentTreeName(pIndex)
-	-- Retail shortcut
-	if _G["GetSpecializationInfo"] then
-		local _, vName = GetSpecializationInfo(pIndex)
-		return vName
-	end
-
-	if pIndex then
-		return GetTalentTabInfo(pIndex)
-	end
-	-- The function name isn't right for what is returned,
-	-- but it's used in OutitterScripting
-	local vName1, _, vTab1 = GetTalentTabInfo(1)
-	local vName2, _, vTab2 = GetTalentTabInfo(2)
-	local vName3, _, vTab3 = GetTalentTabInfo(3)
-	if vTab1 >= vTab2 and vTab1 >= vTab3 then
-		return vName1
-		--return "1"
-	elseif vTab2 >= vTab1 and vTab2 >= vTab3 then
-		return vName2
-		--return "2"
-	elseif vTab3 >= vTab1 and vTab3 >= vTab2 then
-		return vName3
-		--return "3"
-	else
-		return "Unknown"
-		--return "4"
-	end
+	local _, vName = GetSpecializationInfo(pIndex)
+	return vName
 end
 
 function Outfitter:Run(pText)
@@ -8324,28 +8013,8 @@ function Outfitter._ListItem:SetToOutfit(pOutfit, pCategoryID, pOutfitIndex, pIn
 
 	self:Show()
 
-	-- Turn off the server storage icon for classic
-	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
-		----[[--
-		local vScriptIcon = _G[vOutfitFrameName.."ScriptIcon"]
-		local vServerButton = _G[vOutfitFrameName.."ServerButton"]
-		local vMenuButton = _G[vOutfitFrameName.."Menu"]
-
-		-- Clear the dependencies
-		vServerButton:ClearAllPoints()
-		vMenuButton:ClearAllPoints()
-		vScriptIcon:ClearAllPoints()
-		-- Hide the server button
-		vServerButton:Hide()
-
-		-- Make sure the menu button isn't dependent on the server button
-		vMenuButton:SetPoint("RIGHT", vOutfitFrame, "RIGHT")
-
-		-- Move the script icon to be relative to the outfit name
-		vScriptIcon:SetPoint("RIGHT", vMenuButton, "LEFT", vMenuButton:GetWidth())
-	end
-
 	-- Show the script icon if there's one attached
+
 	local vScriptIcon = _G[vOutfitFrameName.."ScriptIcon"]
 
 	if pOutfit.ScriptID or pOutfit.Script then
@@ -8581,19 +8250,4 @@ function Outfitter._ListItem:GetOutfit()
 	end
 
 	return Outfitter:GetIndexedOutfit(self.categoryID, self.outfitIndex)
-end
-
-function Outfitter:GetLinkFromTooltip(vTooltip)
-	-- Classic version
-	if vTooltip.GetItem then
-		local _, vLink = GameTooltip:GetItem()
-		return vLink
-	end
-	-- Wrath/Retail version
-	local tooltipData = vTooltip:GetTooltipData()
-	if tooltipData ~= nil and tooltipData.id then
-		_, itemLink = GetItemInfo(tooltipData.id)
-		return itemLink
-	end
-	return nil -- nothing found at all
 end

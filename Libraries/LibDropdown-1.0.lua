@@ -1,10 +1,6 @@
--- This library has been modified and so I've changed the major name to use an MC suffix. Changes are:
--- * Added support for a color parameter on items to tint the text
--- * Added an optional cleanup function to menus so their owner can be notified if they're released
--- * Added support for items with an icon
-
+-- This library has been modified and so I've changed the major name to use an MC suffix.
 local MAJOR = "LibDropdownMC-1.0"
-local MINOR = 2
+local MINOR = 3
 
 local lib = LibStub:NewLibrary(MAJOR, MINOR)
 if not lib then return end
@@ -62,8 +58,7 @@ local openMenu
 
 local noop = lib.noop or function() end
 lib.noop = noop
-
-local new, newHash, newSet, del
+local new, del = lib.new, lib.del
 if not lib.new then
 	local list = setmetatable({}, {__mode='k'})
 	function new(...)
@@ -90,29 +85,32 @@ if not lib.new then
 	end
 	lib.new, lib.del = new, del
 end
+new, del = lib.new, lib.del
 
 -- Make the frame match the tooltip
 local function InitializeFrame(frame)
-	if not GameTooltip.GetBackdrop then
-		Mixin(GameTooltip, BackdropTemplateMixin)
-	end
-
-	if GameTooltip.NineSlice.GetBackdrop then
-		local backdrop = GameTooltip.NineSlice:GetBackdrop()
+	if TooltipBackdropTemplateMixin then
+		frame.layoutType = GameTooltip.layoutType
+		if GameTooltip.layoutType then
+			frame.NineSlice:SetCenterColor(GameTooltip.NineSlice:GetCenterColor())
+			frame.NineSlice:SetBorderColor(GameTooltip.NineSlice:GetBorderColor())
+		end
+	else
+		local backdrop = GameTooltip:GetBackdrop()
 
 		frame:SetBackdrop(backdrop)
 
 		if backdrop then
-			frame:SetBackdropColor(GameTooltip.NineSlice:GetBackdropColor())
-			frame:SetBackdropBorderColor(GameTooltip.NineSlice:GetBackdropBorderColor())
+			frame:SetBackdropColor(GameTooltip:GetBackdropColor())
+			frame:SetBackdropBorderColor(GameTooltip:GetBackdropBorderColor())
 		end
-	else
-		-- If we don't have a backdrop to mimic from the tooltip, use a sane default
-		-- BACKDROP_DARK_DIALOG_32_32 is a blizzard backdrop global
-		frame:SetBackdrop(BACKDROP_DARK_DIALOG_32_32)
 	end
-
 	frame:SetScale(GameTooltip:GetScale())
+	if (frame:GetEffectiveScale() ~= GameTooltip:GetEffectiveScale()) then -- consider applied SetIgnoreParentScale() on GameTooltip regarding scaling of the frame
+		frame:SetScale(frame:GetScale() * GameTooltip:GetEffectiveScale() / frame:GetEffectiveScale())
+	end
+	--frame:SetBackdrop(BACKDROP_DARK_DIALOG_32_32) -- keep for nostalgia (the original thick gray border for a dialog)
+
 end
 
 local editBoxCount = 1
@@ -148,7 +146,7 @@ local function AcquireSlider()
 		return frame
 	end
 
-	local frame = CreateFrame("Slider", nil, UIParent)
+	local frame = CreateFrame("Slider", nil, UIParent, BackdropTemplateMixin and "BackdropTemplate")
 	frame:SetWidth(10)
 	frame:SetHeight(150)
 	frame:SetOrientation("VERTICAL")
@@ -327,7 +325,9 @@ end
 -- Pool methods
 local frameCount = 0
 function NewDropdownFrame()
-	local frame = CreateFrame("Frame", "LibDropdownFrame" .. frameCount, UIParent, BackdropTemplateMixin and "BackdropTemplate")
+	local template = (TooltipBackdropTemplateMixin and "TooltipBackdropTemplate") or (BackdropTemplateMixin and "BackdropTemplate")
+
+	local frame = CreateFrame("Frame", "LibDropdownFrame" .. frameCount, UIParent, template)
 	frameCount = frameCount + 1
 	frame:SetPoint("CENTER", UIParent, "CENTER")
 	frame:SetWidth(10)
@@ -382,7 +382,10 @@ do
 		if self.OnClick and self.clickable then
 			self.OnClick(self)
 			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-			self:GetParent():GetRoot():Refresh()
+			--PlaySound(856)
+			if self:IsShown() then
+				self:GetParent():GetRoot():Refresh()
+			end
 		end
 	end
 
@@ -657,10 +660,11 @@ do
 		b.dataname = k
 		b.refresh = grefresh
 
-		-- Tint with a color (mundocani)
+		--[[ Tint with a color (mundocani)
 		if v.color then
 			b.text:SetTextColor(v.color.r, v.color.g, v.color.b, v.color.a)
 		end
+		--]]
 		return b
 	end
 
@@ -794,7 +798,9 @@ do
 		b.OnClick = function(self)
 			initInfo('execute')
 			runHandler(self, "func")
-			self:GetRoot():Refresh()
+			if self:IsShown() then
+				self:GetRoot():Refresh()
+			end
 		end
 	end
 
@@ -808,7 +814,9 @@ do
 		local function inputValueChanged(self, val)
 			initInfo('input')
 			runHandler(self:GetParent():GetParent(), "set", val)
-			self:GetParent():GetRoot():Refresh()
+			if self:IsShown() then
+				self:GetParent():GetRoot():Refresh()
+			end
 		end
 
 		function Ace3.input(k, v, parent)
@@ -864,7 +872,9 @@ do
 				local val = not runHandler(self, "get")
 				runHandler(self, "set", val)
 			end
-			self:GetRoot():Refresh()
+			if self:IsShown() then
+				self:GetRoot():Refresh()
+			end
 		end
 
 		function Ace3.toggle(k, v, parent)
@@ -901,7 +911,7 @@ do
 			local b = setup(k, v, parent)
 			b.swatch:Show()
 			b.clickable = false
-			 b.refresh = refresh
+			b.refresh = refresh
 			b.OnClick = function(self, r, g, b, a)
 				runHandler(self, "set", r, g, b, a)
 				self:GetRoot():Refresh()
@@ -1022,12 +1032,12 @@ do
 
 	do
 		local sortOptions = function(a, b)
-		if (b.order or 100) > (a.order or 100) then return true
-		elseif (b.order or 100) < (a.order or 100) then return false
-		elseif b.name:lower() > a.name:lower() then return true
-		else return false
+			if (b.order or 100) > (a.order or 100) then return true
+			elseif (b.order or 100) < (a.order or 100) then return false
+			elseif b.name:lower() > a.name:lower() then return true
+			else return false
+			end
 		end
-	end
 
 		function lib:OpenAce3Menu(t, parent)
 			assert(t and type(t) == "table", "Expected table, got "..type(t))
@@ -1210,5 +1220,8 @@ end]]
 WorldFrame:HookScript("OnMouseDown", function()
 	if openMenu then
 		openMenu = openMenu:Release()
+	end
+	for i = 0, frameCount - 1 do
+		if _G["LibDropdownFrame" .. i]:IsMouseOver() then return end
 	end
 end)

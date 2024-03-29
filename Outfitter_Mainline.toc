@@ -1,10 +1,14 @@
-## Interface: 30403
+## Interface: 100206
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
 ## Version: 3.4.3.5
 ## Notes: Clothing and weapon management and automated equipment changes
+## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
+#### AddonCompartmentFuncOnEnter:
+#### AddonCompartmentFuncOnLeave:
+## IconTexture: Interface/Icons/INV_Chest_Cloth_21
 ## OptionalDeps:
 ## RequiredDeps:
 ## SavedVariablesPerCharacter: gOutfitter_Settings
@@ -61,5 +65,6 @@ OutfitterAbout.lua
 
 OutfitterLDB.lua
 
-Outfitter.xml
+# Fundamental differences between UIs require these
+Mainline/Outfitter.xml
 OutfitterBar.xml

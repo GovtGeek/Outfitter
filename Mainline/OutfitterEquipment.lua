@@ -481,10 +481,11 @@ function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCac
 
 			-- If the items are for different bag types, check to see if we need to
 			-- separate the swap operation into Empty then Equip
-			local equippedItemBagType = Outfitter:GetSlotIDItemBagType(equipmentChange.SlotID)
 
+			local equippedItemBagType = Outfitter:GetSlotIDItemBagType(equipmentChange.SlotID)
 			-- If the item being equipped is in a specialty bag already and the
 			-- current item can't go in that bag then we have to EmptyThenEquip
+
 			local newItemInBagType = equipmentChange.ItemLocation.BagIndex and Outfitter:GetBagType(equipmentChange.ItemLocation.BagIndex)
 
 			if equippedItemBagType
@@ -492,7 +493,9 @@ function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCac
 			and newItemInBagType ~= 0
 			and bit.band(newItemInBagType, equippedItemBagType) == 0 then
 				emptyThenEquip = true
+
 			-- Otherwise, if the item being unequipped has a specialty slot available, then we have to EmptyThenEquip
+
 			elseif equippedItemBagType and Outfitter:FindEmptySpecialtyBagSlot(equippedItemBagType, emptyBagSlots) then
 				emptyThenEquip = true
 			end
@@ -519,14 +522,6 @@ function Outfitter._EquipmentChanges:execute(emptyBagSlots, expectedInventoryCac
 		-- Remove the item
 		else
 			Outfitter:UnequipSlotID(equipmentChange.SlotID or (equipmentChange.Item and equipmentChange.Item.Location), emptyBagSlots, expectedInventoryCache)
-			--[[--
-			--Outfitter:UnequipSlotID(equipmentChange.SlotID, emptyBagSlots, expectedInventoryCache)
-	   		if equipmentChange.SlotID ~= nil then
-   				Outfitter:UnequipSlotID(equipmentChange.SlotID, emptyBagSlots, expectedInventoryCache)
-   			else
-   				Outfitter:UnequipSlotID(equipmentChange.FromLocation, emptyBagSlots, expectedInventoryCache)
-   			end
-			--]]--
 		end
 	end
 
@@ -687,7 +682,7 @@ function Outfitter:PickupItemLocation(pItemLocation)
 		if CT_oldPickupContainerItem then
 			CT_oldPickupContainerItem(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 		else
-			C_Container.PickupContainerItem(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
+			C_Container:PickupContainerItem(pItemLocation.BagIndex, pItemLocation.BagSlotIndex)
 		end
 	elseif pItemLocation.SlotName then
 		PickupInventoryItem(self.cSlotIDs[pItemLocation.SlotName])
@@ -874,8 +869,9 @@ function Outfitter:UpdateEquippedItems()
 		self:DebugOutfitTable(vCompiledOutfit, "CompiledOutfit0")
 	end
 
-	-- When in combat delay the outfit change until combat ends
-	-- TODO: A weapons only outfit should be able to be swapped - at least in Vanilla/Wrath
+	-- When in combat delay the outfit change until
+	-- combat ends
+
 	if self.InCombat or self.MaybeInCombat then
 		self.EquippedNeedsUpdate = true
 		self.MaybeInCombat = false
@@ -889,7 +885,6 @@ function Outfitter:UpdateEquippedItems()
 	vEquipmentChangeList:addChangesToEquipOutfit(vCompiledOutfit, vInventoryCache)
 
 	if vEquipmentChangeList then
-		-- Leave this for debugging later. Not sure why it was commented out. GovtGeek
 		-- local vExpectedInventoryCache = self:New(self._InventoryCache)
 
 		if self.Debug.EquipmentChanges then
@@ -1022,13 +1017,6 @@ function Outfitter.OutfitStack:AddOutfit(pOutfit, pLayerID)
 	local vStackLength = #self.Outfits
 	local vInsertIndex = vStackLength + 1
 
-	-- This was removed for Retail, but not sure why. GovtGeek
-	local vPreventUnequip = false
-	while (vInsertIndex > 1) and self.Outfits[vInsertIndex-1] and self.Outfits[vInsertIndex-1].PreventUnequip do
-		vInsertIndex = vInsertIndex - 1
-		vPreventUnequip = true
-	end
-
 	local vLayerIndex = gOutfitter_Settings.LayerIndex[pLayerID]
 
 	if vLayerIndex then
@@ -1120,13 +1108,6 @@ function Outfitter.OutfitStack:FindOutfitByCategory(pCategoryID)
 end
 
 function Outfitter.OutfitStack:Clear()
-	--[[-- GovtGeek - not sure about this loop --]]--
-	-- Check for persistent outfits
-	for vIndex, vOutfit in ipairs(self.Outfits) do
-	  if vOutfit.PreventUnequip then
-		return self:ClearNonPersistent();
-	  end
-	end
 	for vIndex, vOutfit in ipairs(self.Outfits) do
 		Outfitter:DispatchOutfitEvent("UNWEAR_OUTFIT", vOutfit:GetName(), vOutfit)
 	end
@@ -1139,48 +1120,6 @@ function Outfitter.OutfitStack:Clear()
 
 	if gOutfitter_Settings.Options.ShowStackContents then
 		Outfitter:DebugMessage("Outfitter stack cleared")
-	end
-end
-
-function Outfitter.OutfitStack:ClearNonPersistent()
-	local vIndex = 1
-	local vStackLength = #self.Outfits
-	local vChanged = false
-
-	while vIndex <= vStackLength do
-		local vOutfit = self.Outfits[vIndex]
-
-		if vOutfit and not vOutfit.PreventUnequip then
-			-- Remove the outfit from the stack
-
-			table.remove(self.Outfits, vIndex)
-			table.remove(gOutfitter_Settings.LastOutfitStack, vIndex)
-
-			vStackLength = vStackLength - 1
-			vChanged = true
-
-			-- Adjust the layer indices
-
-			for vLayerID, vLayerIndex in pairs(gOutfitter_Settings.LayerIndex) do
-				if vIndex < vLayerIndex then
-					gOutfitter_Settings.LayerIndex[vLayerID] = vLayerIndex - 1
-				end
-			end
-
-			Outfitter:DispatchOutfitEvent("UNWEAR_OUTFIT", vOutfit:GetName(), vOutfit)
-		else
-			vIndex = vIndex + 1
-		end
-	end
-
-	self:CollapseTemporaryOutfits()
-
-	if vChanged then
-		if gOutfitter_Settings.Options.ShowStackContents then
-			self:DebugOutfitStack("Clear non-persistent outfits")
-		end
-
-		Outfitter.DisplayIsDirty = true
 	end
 end
 
@@ -1291,36 +1230,13 @@ function Outfitter.OutfitStack:IsTopmostOutfit(pOutfit)
 end
 
 function Outfitter.OutfitStack:UpdateOutfitDisplay()
-	local vShowHelm, vShowCloak, vShowTitleID
+	local vShowTitleID
 
 	for vIndex, vOutfit in ipairs(self.Outfits) do
-		if vOutfit.ShowHelm ~= nil then
-			vShowHelm = vOutfit.ShowHelm
-		end
-
-		if vOutfit.ShowCloak ~= nil then
-			vShowCloak = vOutfit.ShowCloak
-		end
-
 		if vOutfit.ShowTitleID ~= nil then
 			vShowTitleID = vOutfit.ShowTitleID
 		end
 	end -- for
-
-	--[[-- Helm and Cloak visibility only available in Vanilla and Wrath --]]--
-	if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-		if vShowHelm == true then
-			ShowHelm(true)
-		elseif vShowHelm == false then
-			ShowHelm(false)
-		end
-
-		if vShowCloak == true then
-			ShowCloak(true)
-		elseif vShowCloak == false then
-			ShowCloak(false)
-		end
-	end
 
 	if vShowTitleID ~= nil
 	and Outfitter.HasHWEvent then

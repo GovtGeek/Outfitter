@@ -12,9 +12,9 @@
 		</Scripts>
 	</Frame>
 
-	<Frame name="OutfitterChooseIconDialog" toplevel="true" frameStrata="DIALOG" parent="UIParent" movable="true" enableMouse="true" hidden="true" inherits="BackdropTemplate">
+	<Frame name="OutfitterChooseIconDialog" toplevel="true" frameStrata="DIALOG" movable="true" parent="UIParent" enableMouse="true" hidden="true" inherits="BackdropTemplate" mixin="BackdropTemplateMixin">
 		<Size>
-			<AbsDimension x="340" y="415"/>
+			<AbsDimension x="400" y="415"/>
 		</Size>
 		<Anchors>
 			<Anchor point="CENTER">
@@ -36,6 +36,7 @@
 					</Anchors>
 				</FontString>
 			</Layer>
+
 		</Layers>
 		<Frames>
 			<Frame inherits="OutfitterDialogFrameTemplate"/>
@@ -43,7 +44,7 @@
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentTitle" relativePoint="BOTTOMLEFT">
 						<Offset>
-							<AbsDimension x="74" y="-10"/>
+							<AbsDimension x="45" y="-10"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -112,9 +113,9 @@
 				<FontString inherits="ChatFontNormal"/>
 			</EditBox>
 
-			<ScrollFrame name="$parentScrollFrame" inherits="ListScrollFrameTemplate">
+			<ScrollFrame name="$parentScrollFrame" inherits="FauxScrollFrameTemplate">
 				<Size>
-					<AbsDimension x="270" y="260"/>
+					<AbsDimension x="320" y="260"/>
 				</Size>
 				<Anchors>
 					<Anchor point="TOPLEFT" relativeTo="$parentFilterEditBox" relativePoint="BOTTOMLEFT">
@@ -136,7 +137,7 @@
 				<Anchors>
 					<Anchor point="BOTTOMRIGHT">
 						<Offset>
-							<AbsDimension x="-23" y="15"/>
+							<AbsDimension x="-23" y="25"/>
 						</Offset>
 					</Anchor>
 				</Anchors>
@@ -171,6 +172,9 @@
 			<OnLoad>
 				Outfitter.InitializeFrame(self, Outfitter.OutfitBar._ChooseIconDialog)
 			</OnLoad>
+			<OnShow>
+				self:SetFrameLevel(self:GetParent():GetFrameLevel())
+			</OnShow>
 			<OnMouseWheel>
 				return
 			</OnMouseWheel>
