@@ -2,7 +2,7 @@ name: Package Addon
 
 on:
   push:
-    branches: [ main ]
+    branches: [ master ]
     tags: [ "*" ]
 
 jobs:
@@ -17,7 +17,15 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v2
 
+      - name: Package and release Retail
+        uses: BigWigsMods/packager@master
+
       - name: Package and release Wrath
         uses: BigWigsMods/packager@master
         with:
           args: -g wrath
+
+      - name: Package and release Classic
+        uses: BigWigsMods/packager@master
+        with:
+          args: -g classic
