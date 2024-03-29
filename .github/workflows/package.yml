@@ -5,6 +5,10 @@ on:
     branches: [ master ]
     tags: [ "*" ]
 
+# Permission can be added at job level or workflow level
+permissions:
+  contents: write   # This is required to create/push the new git tag
+
 jobs:
   release:
     runs-on: ubuntu-latest
@@ -15,7 +19,7 @@ jobs:
 
     steps:
       - name: Clone project
-        uses: actions/checkout@v2
+        uses: actions/checkout@v4
 
       - name: Package and release Retail
         uses: BigWigsMods/packager@master
