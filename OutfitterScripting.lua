@@ -179,6 +179,23 @@ end
 ]]
 
 ----------------------------------------
+Outfitter.ScriptModules.WarriorStance = {}
+----------------------------------------
+Outfitter.ScriptModules.WarriorStance.ModuleName = "Warrior: Stance"
+Outfitter.ScriptModules.WarriorStance.Classes = {"WARRIOR"}
+Outfitter.ScriptModules.WarriorStance.Settings =
+{
+	{id = "Battle", type = "boolean", label = Outfitter.cWarriorBattleStance},
+	{id = "Defensive", type = "boolean", label = Outfitter.cWarriorDefensiveStance},
+	{id = "Berserker", type = "boolean", label = Outfitter.cWarriorBerserkerStance},
+}
+Outfitter.ScriptModules.WarriorStance.Events =
+{
+	Battle = "BATTLE_STANCE",
+	Defensive = "DEFENSIVE_STANCE",
+	Berserker = "BERSERKER_STANCE",
+}
+----------------------------------------
 Outfitter.ScriptModules.AutoLootOnEquip =
 ----------------------------------------
 {
@@ -1103,6 +1120,59 @@ end
 		Class = "HUNTER",
 		Script = Outfitter:GenerateSimpleScript("FEIGN_DEATH", Outfitter.cHunterFeignDeathDescription),
 	},
+	----[[--
+	{
+		Name = Outfitter.cWarriorBattleStance,
+		ID = "Battle",
+		Class = "WARRIOR",
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA", Outfitter.cWarriorBattleStanceDescription)..
+[[
+-- 71/2, 73/2
+if not Outfitter:IsMainline() and (GetShapeshiftForm() == 1) then
+  equip = true
+elseif Outfitter:IsMainline() and
+    (GetSpecializationInfo(GetSpecialization()) == 71
+     or GetSpecializationInfo(GetSpecialization()) == 73)
+     and GetShapeshiftForm() == 2 then
+  equip = true
+elseif didEquip then
+  equip = false
+end
+]],
+	},
+	{
+		Name = Outfitter.cWarriorDefensiveStance,
+		ID = "Defensive",
+		Class = "WARRIOR",
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA", Outfitter.cWarriorDefensiveStanceDescription)..
+[[
+-- 71/1, 72/1, 73/1
+if (not Outfitter:IsMainline()) and (GetShapeshiftForm() == 2) then
+  equip = true
+elseif Outfitter:IsMainline() and (GetShapeshiftForm() == 1) then
+  equip = true
+elseif didEquip then
+  equip = false
+end
+]],
+	},
+	{
+		Name = Outfitter.cWarriorBerserkerStance,
+		ID = "Berserker",
+		Class = "WARRIOR",
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA", Outfitter.cWarriorBerserkerStanceDescription)..
+[[
+-- 72/2,
+if not Outfitter:IsMainline() and (GetShapeshiftForm() == 3) then
+  equip = true
+elseif Outfitter:IsMainline() and (GetSpecializationInfo(GetSpecialization()) == 72) and (GetShapeshiftForm() == 2) then
+  equip = true
+elseif didEquip then
+  equip = false
+end
+]],
+	},
+	--]]--
 	{
 		Name = Outfitter.cSoloOutfit,
 		ID = "SOLO",
