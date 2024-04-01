@@ -1200,6 +1200,7 @@ if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
 	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
 	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
+	table.insert(Outfitter.cShapeshiftIDInfo, 33891, {ID = "Tree"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 40120, {ID = "Flight"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1785, {ID = "Stealth"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1786, {ID = "Stealth"})
@@ -4495,7 +4496,6 @@ function Outfitter:UpdateShapeshiftState()
 		--self:DebugMessage("%s: %s texture = %s %s", tostring(index), tostring(shapeshiftID), tostring(texture), isActive and "ACTIVE" or "not active")
 
 		local shapeshiftInfo = self.cShapeshiftIDInfo[shapeshiftID]
-
 		if shapeshiftInfo then
 			self.Settings.ShapeshiftIndexInfo[index] = shapeshiftInfo
 		else
