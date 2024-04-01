@@ -959,7 +959,7 @@ Outfitter.cSpecialIDEvents =
 	Bear = {Equip = "BEAR_FORM", Unequip = "NOT_BEAR_FORM"},
 	Cat = {Equip = "CAT_FORM", Unequip = "NOT_CAT_FORM"},
 	Travel = {Equip = "TRAVEL_FORM", Unequip = "NOT_TRAVEL_FORM"},
-	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"},
+	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}, -- Classic Wrath only
 	Moonkin = {Equip = "MOONKIN_FORM", Unequip = "NOT_MOONKIN_FORM"},
 	Tree = {Equip = "TREE_FORM", Unequip = "NOT_TREE_FORM"},
 	Prowl = {Equip = "STEALTH", Unequip = "NOT_STEALTH"},
@@ -1011,7 +1011,7 @@ Outfitter.cClassSpecialOutfits =
 		{Name = Outfitter.cDruidBearForm, ScriptID = "Bear"},
 		{Name = Outfitter.cDruidCatForm, ScriptID = "Cat"},
 		{Name = Outfitter.cDruidTravelForm, ScriptID = "Travel"},
-		{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"},
+		--{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"}, -- Wrath only
 		{Name = Outfitter.cDruidMoonkinForm, ScriptID = "Moonkin"},
 		{Name = Outfitter.cDruidTreeOfLifeForm, ScriptID = "Tree"},
 		{Name = Outfitter.cDruidProwl, ScriptID = "Prowl"},
@@ -1180,8 +1180,8 @@ Outfitter.cShapeshiftIDInfo = {
 	[9634] = {ID = "Bear", MaybeInCombat = true},
 	[768] = {ID = "Cat"},
 	[783] = {ID = "Travel"},
-	[24858] = {ID = "Moonkin"},
-	--[40120] = {ID = "Flight"},
+	[24858] = {ID = "Moonkin"},  -- Wrath
+	[197625] = {ID = "Moonkin"}, -- Retail
 	CasterForm = {ID = "Caster"}, -- this is a psuedo-form which is active when no other druid form is
 
 	-- Rogue
@@ -1200,6 +1200,7 @@ if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
 	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
 	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
+	table.insert(Outfitter.cClassSpecialOutfits.DRUID, {Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 33891, {ID = "Tree"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 40120, {ID = "Flight"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1785, {ID = "Stealth"})
