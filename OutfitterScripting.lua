@@ -396,7 +396,6 @@ end
 
 -- If spec changed, unequip any form (default to caster)
 if event == "PLAYER_TALENT_UPDATE" then
-  print("Player changed specs, we should unequip")
   equip = false
 end
 
