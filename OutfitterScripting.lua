@@ -268,13 +268,14 @@ function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDe
 -- $SETTING Tree4={type="boolean", label=Outfitter:GetTalentTreeName(4), default=true}
 
 -- Unequip and return if they're not in an enabled spec
-
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    equip = false
-    return
+if Outfitter:IsMainline() then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      equip = false
+      return
+  end
 end
 ]]
 	end
@@ -323,11 +324,13 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    return
+if Outfitter:IsMainline() then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      return
+  end
 end
 
 -- Return if the user isn't in full control
@@ -358,7 +361,7 @@ end
 
 function Outfitter:GenerateDruidShapeshiftScript(pEventID, pDescription)
 	return
-		self:GenerateScriptHeader({pEventID, 'NOT_'..pEventID, 'OUTFIT_EQUIPPED'}, pDescription)..
+		self:GenerateScriptHeader({pEventID, 'NOT_'..pEventID, 'PLAYER_TALENT_UPDATE', 'OUTFIT_EQUIPPED'}, pDescription)..
 [[
 -- $SETTING DisableBG={type="boolean", label="Don't equip in Battlegrounds", default=false}
 -- $SETTING DisablePVP={type="boolean", label="Don't equip while PvP flagged", default=false}
@@ -376,17 +379,25 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    return
+if Outfitter:IsMainline() then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      return
+  end
 end
 
 -- Return if the user isn't in full control
 
 if not Outfitter.IsDead and not HasFullControl() then
     return
+end
+
+-- If spec changed, unequip any form (default to caster)
+if event == "PLAYER_TALENT_UPDATE" then
+  print("Player changed specs, we should unequip")
+  equip = false
 end
 
 -- If the user is manually equipping the outfit, let
@@ -1003,11 +1014,13 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    return
+if Outfitter:IsMainline() then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      return
+  end
 end
 
 -- Return if the user isn't in full control
