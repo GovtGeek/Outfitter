@@ -100,7 +100,7 @@ Outfitter.ScriptModules.DruidShapeshift.Settings =
 	{id = "Travel", type = "boolean", label = "Travel form"},
 	{id = "Moonkin", type = "boolean", label = "Moonkin form"},
 	{id = "Tree", type = "boolean", label = "Tree form"},
-	{id = "Flight", type = "boolean", label = "Swift Flight form"}, --DAC
+	{id = "Flight", type = "boolean", label = "Swift Flight form"},
 }
 
 Outfitter.ScriptModules.DruidShapeshift.Events =
@@ -113,6 +113,10 @@ Outfitter.ScriptModules.DruidShapeshift.Events =
 	Tree = "TREE_FORM",
 	Flight = "SWIFT_FLIGHT_FORM" --DAC
 }
+-- Add Swift Flight Form if we're in Classic Wrath
+if Outfitter:IsClassicWrath() then
+	Outfitter.ScriptModules.DruidShapeshift.Events.Flight = "SWIFT_FLIGHT_FORM"
+end
 
 function Outfitter.ScriptModules.DruidShapeshift:GetEquipHeader(pSettings)
 	local vResult = ""
@@ -1071,12 +1075,14 @@ end
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("TRAVEL_FORM", "This outfit will be worn whenever you're in Travel Form"),
 	},
+--[[-- Only available in BCC/Wrath. Added in later if needed.
 	{
 		Name = Outfitter.cDruidSwiftFlightForm, --DAC
 		ID = "Flight",
 		Class = "DRUID",
-		Script = Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
+		Script = "" --Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
 	},
+--]]--
 	{
 		Name = Outfitter.cDruidMoonkinForm,
 		ID = "Moonkin",
@@ -1589,6 +1595,17 @@ end
 ]], --DAC
 	}
 }
+
+-- Add Classic Wrath
+if Outfitter:IsClassicWrath() then
+	table.insert(Outfitter.PresetScripts, {
+		Name = Outfitter.cDruidSwiftFlightForm, --DAC
+		ID = "Flight",
+		Class = "DRUID",
+		Script = Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
+	}
+)
+end
 
 Outfitter.cScriptCategoryOrder =
 {
