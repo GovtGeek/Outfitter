@@ -2764,7 +2764,6 @@ function Outfitter:Item_CheckboxClicked(pItem)
 	end
 
 	local vOutfit = vOutfits[pItem.outfitIndex]
-
 	if not vOutfit then
 		-- Error: outfit not found
 		return
@@ -2785,26 +2784,30 @@ end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
 	--return -- uncomment if we want to disable storage
-	if pItem.isCategory then
+	if C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
+		self:NoteMessage("Can't store on server: Equipment Manager not enabled")
+		local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
+		--vCheckbox:SetButtonState("NORMAL")
+		vCheckbox:Disable()
 		return
 	end
+
+	-- Can't store a category on a server (and how did you click the button for that?)
+	if pItem.isCategory then return	end
 
 	local vOutfits = self.Settings.Outfits[pItem.categoryID]
 
-	if not vOutfits then
-		-- Error: outfit category not found
-		return
-	end
+	-- Error: outfit category not found
+	if not vOutfits then return end
 
 	local vOutfit = vOutfits[pItem.outfitIndex]
 
-	if not vOutfit then
-		-- Error: outfit not found
-		return
-	end
+	-- Error: outfit not found
+	if not vOutfit then return end
 
 	local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
 
+	-- If we want it stored on the server, equip the outfit if it's not being worn, then save it
 	if vCheckbox:GetChecked() then
 		if vOutfit ~= self.SelectedOutfit then
 			self:WearOutfit(vOutfit)
@@ -3150,7 +3153,6 @@ function Outfitter:WearOutfit(pOutfit, pLayerID, pCallerIsScript)
 	self:BeginEquipmentUpdate()
 
 	-- Update the equipment
-
 	pOutfit.didEquip = pCallerIsScript
 	pOutfit.didUnequip = false
 
@@ -3786,7 +3788,6 @@ function Outfitter:GetCompiledOutfit()
 
 	for vStackIndex, vOutfit in ipairs(Outfitter.OutfitStack.Outfits) do
 		local vItems = vOutfit:GetItems()
-
 		if vItems then
 			for vInventorySlot, vOutfitItem in pairs(vItems) do
 				vCompiledOutfit:SetItem(vInventorySlot, vOutfitItem)
@@ -5243,9 +5244,9 @@ function Outfitter:AttachOutfitMethods()
 end
 
 function Outfitter:SynchronizeEM()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-
+	if C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
+	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 	-- Mark all the EM outfits as unused
 	for vCategoryID, outfits in pairs(self.Settings.Outfits) do
 		for vIndex, outfit in ipairs(outfits) do
@@ -5274,11 +5275,9 @@ function Outfitter:SynchronizeEM()
 	end
 
 	-- Scan the EM outfits
-
 	for _, equipmentSetID in ipairs(equipmentSetIDs) do
 		local name = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID)
 		local outfit = self:FindEMOutfitByName(name)
-
 		-- If the outfit is missing, see if it can be restored from
 		-- the preserved list
 
@@ -5353,7 +5352,6 @@ end
 
 function Outfitter:FindEMOutfitByName(pName)
 	local vLowerName = pName:lower()
-
 	for vCategoryID, vOutfits in pairs(self.Settings.Outfits) do
 		for vIndex, vOutfit in ipairs(vOutfits) do
 			if vOutfit.StoredInEM
@@ -7800,7 +7798,7 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
-		print("Creating vTooltip") --DAC
+		--print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
 
 		vTooltip:SetScript("OnUpdate", function ()
