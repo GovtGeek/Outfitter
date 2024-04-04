@@ -1022,7 +1022,7 @@ Addon.UIElementsLib._PlainBorderedFrame = {}
 ----------------------------------------
 
 function Addon.UIElementsLib._PlainBorderedFrame:New(pParent)
-	return CreateFrame("Frame", nil, pParent)
+	return CreateFrame("Frame", nil, pParent, BackdropTemplateMixin and "BackdropTemplate" or nil)
 end
 
 function Addon.UIElementsLib._PlainBorderedFrame:Construct(pParent)
