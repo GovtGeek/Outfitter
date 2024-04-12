@@ -14,11 +14,12 @@ Outfitter.Debug =
 function Outfitter:IsMainline()
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
---[[--
+----[[--
 function Outfitter:IsClassicCataclysm()
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+	--return WOW_PROJECT_ID == WOW_PROJECT_CATA_CLASSIC
+	return LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 end
-]]--
+--]]--
 function Outfitter:IsClassicWrath()
 	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
 end
@@ -4836,13 +4837,14 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" then -- cvar values are strings
-
+	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" and not Outfitter:IsClassicCataclysm() then -- cvar values are strings
+print("Scooting") --DAC
 		-- Scoot the title drop down over a little and adjust the button and frame
-		_G["PlayerTitleDropDown"]:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
-		_G["OutfitterButtonFrame"]:SetPoint("RIGHT", GearManagerToggleButton, "LEFT", 42, 0)
+		PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+		OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
 		--_G["OutfitterButton"]:Show()
-		_G["OutfitterFrame"]:SetPoint("TOPLEFT", OutfitterButtonFrame, "TOPRIGHT", 0, -48)
+		--OutfitterFrame:SetPoint("TOPLEFT", OutfitterButtonFrame, "TOPRIGHT", 0, -48)
+		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 
 		--[[--
 		-- Hook the GearManagerDialog for open/close
@@ -5012,9 +5014,12 @@ function Outfitter:Initialize()
 		OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
 	end
 
-	-- Move the Blizzard UI over a bit
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+	-- Adjust the Blizzard UI and Outfitter frames
+	if Outfitter:IsMainline() or Outfitter:IsClassicCataclysm() then
 		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
+	end
+	if Outfitter:IsClassicCataclysm() then
+		OutfitterFrame:SetPoint("TOPLEFT", "OutfitterButtonFrame", "TOPRIGHT", -2, -30)
 	end
 
 	-- Initialize player state
@@ -5148,6 +5153,7 @@ function Outfitter:Initialize()
 
 	-- Season of Discovery handling
 	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
+		print("Season detected")
 		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
 		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
 		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
