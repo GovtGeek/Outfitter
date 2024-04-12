@@ -2784,7 +2784,7 @@ end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
 	--return -- uncomment if we want to disable storage
-	if C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
+	if not Outfitter:IsMainline() and C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
 		self:NoteMessage("Can't store on server: Equipment Manager not enabled")
 		local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
 		--vCheckbox:SetButtonState("NORMAL")
@@ -4837,6 +4837,14 @@ end
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
 	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" then -- cvar values are strings
+
+		-- Scoot the title drop down over a little and adjust the button and frame
+		_G["PlayerTitleDropDown"]:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+		_G["OutfitterButtonFrame"]:SetPoint("RIGHT", GearManagerToggleButton, "LEFT", 42, 0)
+		--_G["OutfitterButton"]:Show()
+		_G["OutfitterFrame"]:SetPoint("TOPLEFT", OutfitterButtonFrame, "TOPRIGHT", 0, -48)
+
+		--[[--
 		-- Hook the GearManagerDialog for open/close
 		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
 		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
@@ -4845,9 +4853,11 @@ function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
 		hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
 
 		GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
+		-- PlayerTitleDropDown TOP CharacterLevelText BOTTOM 0 -6
 		OutfitterButton:Hide()
-	else
-		OutfitterButton:Show()
+		--]]--
+	--else
+		--OutfitterButton:Show()
 	end
 end
 
@@ -5245,7 +5255,7 @@ end
 
 function Outfitter:SynchronizeEM()
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
+	if not Outfitter:IsMainline() and C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 	-- Mark all the EM outfits as unused
 	for vCategoryID, outfits in pairs(self.Settings.Outfits) do
