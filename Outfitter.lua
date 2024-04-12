@@ -4837,30 +4837,38 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" and not Outfitter:IsClassicCataclysm() then -- cvar values are strings
-print("Scooting") --DAC
-		-- Scoot the title drop down over a little and adjust the button and frame
-		PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
-		OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
-		--_G["OutfitterButton"]:Show()
-		--OutfitterFrame:SetPoint("TOPLEFT", OutfitterButtonFrame, "TOPRIGHT", 0, -48)
-		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+	--print(eventName.." "..cvar.." "..value.." ("..type(value)..")") --DAC
+	if not Outfitter:IsClassicCataclysm() then
+		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
+			-- Scoot the title drop down over a little and adjust the button and frame
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 
-		--[[--
-		-- Hook the GearManagerDialog for open/close
-		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
-		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
+			--[[--
+			-- Hook the GearManagerDialog for open/close
+			showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+			hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
 
-		-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
-		hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
+			-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
+			hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
 
-		GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
-		-- PlayerTitleDropDown TOP CharacterLevelText BOTTOM 0 -6
-		OutfitterButton:Hide()
-		--]]--
-	--else
-		--OutfitterButton:Show()
+			GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
+			-- PlayerTitleDropDown TOP CharacterLevelText BOTTOM 0 -6
+			OutfitterButton:Hide()
+			--]]--
+		elseif cvar == "equipmentManager" and value == "0" then
+			-- Try to put everything back
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", 0, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+		end
 	end
+	OutfitterButton:Show()
 end
 
 function Outfitter:IsInitialized()
@@ -5143,9 +5151,10 @@ function Outfitter:Initialize()
 	end
 
 	-- Check for Equipment Manager availability and adjust Outfitter accordingly
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+	--if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+	if C_CVar then
 		self.EventLib:RegisterEvent("CVAR_UPDATE", self.EquipmentManagerAdjust, self)
-		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "USE_EQUIPMENT_MANAGER", C_CVar.GetCVar("equipmentManager"))
+		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "equipmentManager", C_CVar.GetCVar("equipmentManager"))
 	end
 
 	-- Synchronize with the Equipment Manager
@@ -6434,7 +6443,12 @@ end
 
 function Outfitter:OpenUI()
 	ShowUIPanel(CharacterFrame)
-	CharacterFrame_ShowSubFrame("PaperDollFrame")
+
+	--CharacterFrame_ShowSubFrame("PaperDollFrame")
+	if not PaperDollFrame:IsVisible() then
+		ToggleCharacter("PaperDollFrame")
+	end
+
 	OutfitterFrame:Show()
 end
 
