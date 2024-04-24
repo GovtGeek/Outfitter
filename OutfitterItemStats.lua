@@ -222,10 +222,10 @@ Outfitter.SimpleStatCategories =
 		Name = PLAYERSTAT_SECONDARY_STATS or "Stats (Secondary)",
 		Stats =
 		{
-			{ID = ITEM_MOD_HASTE_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
-			{ID = ITEM_MOD_VERSATILITY, ExpansionMin = LE_EXPANSION_LEGION, ExpansionMax = nil},
-			{ID = ITEM_MOD_MASTERY_RATING_SHORT, ExpansionMin = LE_EXPANSION_CATACLYSM, ExpansionMax = LE_EXPANSION_CATACLYSM},
 			{ID = ITEM_MOD_CRIT_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
+			{ID = ITEM_MOD_HASTE_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
+			{ID = ITEM_MOD_MASTERY_RATING_SHORT, ExpansionMin = LE_EXPANSION_CATACLYSM, ExpansionMax = LE_EXPANSION_CATACLYSM},
+			{ID = ITEM_MOD_VERSATILITY, ExpansionMin = LE_EXPANSION_LEGION, ExpansionMax = nil},
 		}
 	},
 	{
@@ -246,11 +246,11 @@ Outfitter.SimpleStatCategories =
 		Stats =
 		{
 			{ID = "MELEE_DMG", ExpansionMin = nil, ExpansionMax = nil},
-			{ID = ITEM_MOD_HASTE_MELEE_RATING_SHORT, ExpansionMin = nil, ExpansionMax = nil},
 			{ID = ITEM_MOD_ATTACK_POWER_SHORT, ExpansionMin = nil, ExpansionMax = nil},
 			{ID = ITEM_MOD_RANGED_ATTACK_POWER_SHORT, ExpansionMin = nil, ExpansionMax = nil},
 			{ID = ITEM_MOD_HIT_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = LE_EXPANSION_MISTS_OF_PANDARIA},
 			{ID = ITEM_MOD_CRIT_MELEE_RATING_SHORT, ExpansionMin = nil, ExpansionMax = nil},
+			{ID = ITEM_MOD_HASTE_MELEE_RATING_SHORT, ExpansionMin = nil, ExpansionMax = nil},
 			{ID = ITEM_MOD_EXPERTISE_RATING_SHORT, ExpansionMin = LE_EXPANSION_WRATH_OF_THE_LICH_KING, ExpansionMax = LE_EXPANSION_MISTS_OF_PANDARIA},
 			{ID = ITEM_MOD_ARMOR_PENETRATION_RATING_SHORT, ExpansionMin = LE_EXPANSION_WRATH_OF_THE_LICH_KING, ExpansionMax = nil},
 		},
@@ -289,7 +289,7 @@ Outfitter.SimpleStatCategories =
 		Stats =
 		{
 			{ID = ITEM_MOD_EXTRA_ARMOR_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
-			{ID = ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC},
+			{ID = ITEM_MOD_DEFENSE_SKILL_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = LE_EXPANSION_WRATH_OF_THE_LICH_KING},
 			{ID = ITEM_MOD_DODGE_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
 			{ID = ITEM_MOD_PARRY_RATING_SHORT, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
 			{ID = ITEM_MOD_BLOCK_RATING_SHORT	, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = nil},
