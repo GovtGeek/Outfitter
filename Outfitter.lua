@@ -21,7 +21,7 @@ function Outfitter:IsClassicCataclysm()
 end
 --]]--
 function Outfitter:IsClassicWrath()
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 end
 function Outfitter:IsClassicEra()
 	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
@@ -1217,6 +1217,36 @@ end
 for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
 end
+function Outfitter:OutfitterButtonAdjust()
+	if not Outfitter:IsClassicCataclysm() then
+		--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
+		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
+			-- Scoot the title drop down over a little and adjust the button and frame
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+
+			-- Close the Outfitter frame if the GearManager window is opened
+			GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+		elseif cvar == "equipmentManager" and value == "0" then
+			-- Try to put everything back
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", 0, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+		end
+		--]]--
+		if RuneFrameControlButton ~= nil then
+			OutfitterButton:ClearAllPoints()
+			OutfitterButton:SetPoint("BOTTOMRIGHT", RuneFrameControlButton, "BOTTOMLEFT", 10, -4)
+		end
+	else
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
+end
 
 function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 	if CharacterFrame:IsShown() then
@@ -1253,9 +1283,12 @@ end
 
 function Outfitter:OnShow()
 	-- Season of Discovery frame issue
-	local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
+	--local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
 	if EngravingFrame ~= nil and EngravingFrame:IsVisible() then
 		_G["RuneFrameControlButton"]:Click()	-- Need to hide EngravingFrame - just click it off!
+	end
+	if GearManagerDialog and GearManagerDialog:IsVisible() then
+		GearManagerDialog:Hide()
 	end
 
 	self.SetFrameLevel(OutfitterFrame, PaperDollFrame:GetFrameLevel() - 1)
@@ -4824,9 +4857,9 @@ end
 -- Make sure Outfitter opens/closes if GearManager is open/closed
 function Outfitter:EquipmentManagerViewSync()
 	if GearManagerDialog:IsVisible() then
-		OutfitterFrame:Show()
-	else
 		OutfitterFrame:Hide()
+	--else
+		--OutfitterFrame:Hide()
 	end
 end
 
@@ -4847,6 +4880,8 @@ function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
 			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
 			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 
+			-- Close the Outfitter frame if the GearManager window is opened
+			GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
 			--[[--
 			-- Hook the GearManagerDialog for open/close
 			showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
@@ -4867,6 +4902,8 @@ function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
 			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
 			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 		end
+	else
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
 	end
 	OutfitterButton:Show()
 end
@@ -5162,10 +5199,8 @@ function Outfitter:Initialize()
 
 	-- Season of Discovery handling
 	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
-		print("Season detected")
 		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
-		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
-		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
+		Outfitter:OutfitterButtonAdjust()
 	end
 	--
 
