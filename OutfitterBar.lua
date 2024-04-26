@@ -612,6 +612,7 @@ function Outfitter.OutfitBar:UpdateBars2()
 		end
 	end
 
+
 	self.DragBar1:SetTextureOffset(vBar1OffsetX, vBar1OffsetY)
 	self.DragBar2:SetTextureOffset(vBar2OffsetX, vBar2OffsetY)
 end
@@ -714,8 +715,22 @@ Outfitter.OutfitBar._Button.Widgets =
 
 -- Is this where we need to set border? DAC
 function Outfitter.OutfitBar._Button:Construct()
-	self:SetWidth(Outfitter.Style.ButtonBar.ButtonWidth+10)
-	self:SetHeight(Outfitter.Style.ButtonBar.ButtonHeight+10)
+	self:SetWidth(Outfitter.Style.ButtonBar.ButtonWidth)
+	self:SetHeight(Outfitter.Style.ButtonBar.ButtonHeight)
+
+	-- Fix the checked, highlight, and pushed textures
+	local tChecked = self:GetCheckedTexture()
+	tChecked:SetSize(self:GetWidth(), self:GetHeight())
+	tChecked:ClearAllPoints()
+	tChecked:SetPoint("CENTER")
+
+	local tHighlight = self:GetHighlightTexture()
+	tHighlight:SetSize(self:GetWidth(), self:GetHeight())
+	tHighlight:ClearAllPoints()
+	tHighlight:SetPoint("CENTER")
+
+	self:ClearPushedTexture()
+	-- end fix
 
 	self:SetScript("OnClick", function (button, ...) button:OnClick(...) end)
 	self:SetScript("OnEnter", function (button, ...) button:OnEnter(...) end)
@@ -1718,8 +1733,8 @@ function Outfitter.OutfitBar._DragBar:SetVerticalOrientation(pVertical)
 		self.DragTexture:SetHeight(0)
 
 		self.DragTexture:ClearAllPoints()
-		self.DragTexture:SetPoint("TOPLEFT", self, "TOPLEFT", self.TextureOffsetX, self.TextureOffsetY - 1)
-		self.DragTexture:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", self.TextureOffsetX, self.TextureOffsetY + 4)
+		self.DragTexture:SetPoint("TOPLEFT", self, "TOPLEFT", self.TextureOffsetX, self.TextureOffsetY)
+		self.DragTexture:SetPoint("BOTTOMLEFT", self, "BOTTOMLEFT", self.TextureOffsetX, self.TextureOffsetY)
 
 		self.DragTexture:SetTexture("Interface\\Addons\\Outfitter\\Textures\\LeftDragHandle")
 		self.DragTexture:SetTexCoord(0, 0.46875, 0, 0.75)
