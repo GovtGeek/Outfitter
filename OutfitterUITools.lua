@@ -48,7 +48,8 @@ function Outfitter._ButtonBar:SetDimensions(pNumColumns, pNumRows)
 	for vIndex = #self.BackgroundTextures, vTotalTextures do
 		local vTexture = self:CreateTexture(nil, "BACKGROUND")
 
-		vTexture:SetTexture("Interface\\Addons\\Outfitter\\Textures\\QuickSlotsBackground")
+		vTexture:SetTexture("Interface\\Addons\\Outfitter\\Textures\\QuickSlotsBackground") --orig
+
 		vTexture:SetHeight(Outfitter.Style.ButtonBar.BackgroundHeight)
 		vTexture:Hide()
 
@@ -79,7 +80,7 @@ function Outfitter._ButtonBar:SetDimensions(pNumColumns, pNumRows)
 			elseif vPrevRowFirstButton then
 				vButton:SetPoint("TOP", vPrevRowFirstButton, "TOP", 0, -Outfitter.Style.ButtonBar.BackgroundHeight)
 			else
-				vButton:SetPoint("TOPLEFT", self, "TOPLEFT", 7, -6) --orig
+				vButton:SetPoint("TOPLEFT", self, "TOPLEFT", 7, -6) -- Hardcoded for addon's QuickSlots background
 			end
 
 			vButton:EnableMouse(true)
@@ -168,12 +169,7 @@ function Outfitter._ButtonBar:SetDimensions(pNumColumns, pNumRows)
 			elseif vPrevRowFirstTexture then
 				vTexture:SetPoint("TOP", vPrevRowFirstTexture, "BOTTOM")
 			else
-				--vTexture:SetPoint("TOPLEFT", self, "TOPLEFT") -- DAC orig
-				if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then -- GovtGeek (a hack I don't like, but it's quicker)
-					vTexture:SetPoint("TOPLEFT", self, "TOPLEFT", 3, -3)
-				else
-					vTexture:SetPoint("TOPLEFT", self, "TOPLEFT", 5, -5)
-				end
+				vTexture:SetPoint("TOPLEFT", self, "TOPLEFT") -- DAC orig
 			end
 
 			if not self.HideBackground then
