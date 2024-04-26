@@ -718,7 +718,7 @@ function Outfitter.OutfitBar._Button:Construct()
 	self:SetWidth(Outfitter.Style.ButtonBar.ButtonWidth)
 	self:SetHeight(Outfitter.Style.ButtonBar.ButtonHeight)
 
-	-- Fix the checked, highlight, and pushed textures
+	-- Fix the checked, highlight, normal, and pushed textures
 	local tChecked = self:GetCheckedTexture()
 	tChecked:SetSize(self:GetWidth(), self:GetHeight())
 	tChecked:ClearAllPoints()
@@ -729,6 +729,7 @@ function Outfitter.OutfitBar._Button:Construct()
 	tHighlight:ClearAllPoints()
 	tHighlight:SetPoint("CENTER")
 
+	self:ClearNormalTexture()
 	self:ClearPushedTexture()
 	-- end fix
 
