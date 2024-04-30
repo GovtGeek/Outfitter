@@ -890,7 +890,7 @@ function Outfitter:UpdateEquippedItems()
 
 	if vEquipmentChangeList then
 		-- Leave this for debugging later. Not sure why it was commented out. GovtGeek
-		-- local vExpectedInventoryCache = self:New(self._InventoryCache)
+		local vExpectedInventoryCache = self:New(self._InventoryCache)
 
 		if self.Debug.EquipmentChanges then
 			self:DebugMessage("UpdateEquippedItems: Executing change list")

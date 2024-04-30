@@ -1,4 +1,4 @@
-## Interface: 30403
+## Interface: 40400
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
@@ -61,5 +61,6 @@ OutfitterAbout.lua
 OutfitterLDB.lua
 
 Outfitter.xml
+#Mainline/Outfitter.xml
 OutfitterBar.xml
 #Mainline/OutfitterBar.xml

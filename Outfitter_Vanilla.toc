@@ -1,9 +1,9 @@
-## Interface: 11501
+## Interface: 11502
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 3.4.3.5
+## Version: 4.4.0.0
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps:
 ## RequiredDeps:

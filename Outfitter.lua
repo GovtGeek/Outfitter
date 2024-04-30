@@ -14,13 +14,14 @@ Outfitter.Debug =
 function Outfitter:IsMainline()
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
---[[--
+----[[--
 function Outfitter:IsClassicCataclysm()
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+	--return WOW_PROJECT_ID == WOW_PROJECT_CATA_CLASSIC
+	return LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 end
-]]--
+--]]--
 function Outfitter:IsClassicWrath()
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 end
 function Outfitter:IsClassicEra()
 	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
@@ -959,7 +960,7 @@ Outfitter.cSpecialIDEvents =
 	Bear = {Equip = "BEAR_FORM", Unequip = "NOT_BEAR_FORM"},
 	Cat = {Equip = "CAT_FORM", Unequip = "NOT_CAT_FORM"},
 	Travel = {Equip = "TRAVEL_FORM", Unequip = "NOT_TRAVEL_FORM"},
-	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"},
+	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}, -- Classic Wrath only
 	Moonkin = {Equip = "MOONKIN_FORM", Unequip = "NOT_MOONKIN_FORM"},
 	Tree = {Equip = "TREE_FORM", Unequip = "NOT_TREE_FORM"},
 	Prowl = {Equip = "STEALTH", Unequip = "NOT_STEALTH"},
@@ -1011,7 +1012,7 @@ Outfitter.cClassSpecialOutfits =
 		{Name = Outfitter.cDruidBearForm, ScriptID = "Bear"},
 		{Name = Outfitter.cDruidCatForm, ScriptID = "Cat"},
 		{Name = Outfitter.cDruidTravelForm, ScriptID = "Travel"},
-		{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"},
+		--{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"}, -- Wrath only
 		{Name = Outfitter.cDruidMoonkinForm, ScriptID = "Moonkin"},
 		{Name = Outfitter.cDruidTreeOfLifeForm, ScriptID = "Tree"},
 		{Name = Outfitter.cDruidProwl, ScriptID = "Prowl"},
@@ -1180,8 +1181,8 @@ Outfitter.cShapeshiftIDInfo = {
 	[9634] = {ID = "Bear", MaybeInCombat = true},
 	[768] = {ID = "Cat"},
 	[783] = {ID = "Travel"},
-	[24858] = {ID = "Moonkin"},
-	--[40120] = {ID = "Flight"},
+	[24858] = {ID = "Moonkin"},  -- Wrath
+	[197625] = {ID = "Moonkin"}, -- Retail
 	CasterForm = {ID = "Caster"}, -- this is a psuedo-form which is active when no other druid form is
 
 	-- Rogue
@@ -1200,6 +1201,8 @@ if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
 	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
 	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
 	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
+	table.insert(Outfitter.cClassSpecialOutfits.DRUID, {Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"})
+	table.insert(Outfitter.cShapeshiftIDInfo, 33891, {ID = "Tree"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 40120, {ID = "Flight"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1785, {ID = "Stealth"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1786, {ID = "Stealth"})
@@ -1213,6 +1216,36 @@ end
 
 for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
+end
+function Outfitter:OutfitterButtonAdjust()
+	if not Outfitter:IsClassicCataclysm() then
+		--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
+		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
+			-- Scoot the title drop down over a little and adjust the button and frame
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+
+			-- Close the Outfitter frame if the GearManager window is opened
+			GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+		elseif cvar == "equipmentManager" and value == "0" then
+			-- Try to put everything back
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", 0, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+		end
+		--]]--
+		if RuneFrameControlButton ~= nil then
+			OutfitterButton:ClearAllPoints()
+			OutfitterButton:SetPoint("BOTTOMRIGHT", RuneFrameControlButton, "BOTTOMLEFT", 10, -4)
+		end
+	else
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
 end
 
 function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
@@ -1250,9 +1283,12 @@ end
 
 function Outfitter:OnShow()
 	-- Season of Discovery frame issue
-	local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
+	--local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
 	if EngravingFrame ~= nil and EngravingFrame:IsVisible() then
 		_G["RuneFrameControlButton"]:Click()	-- Need to hide EngravingFrame - just click it off!
+	end
+	if GearManagerDialog and GearManagerDialog:IsVisible() then
+		GearManagerDialog:Hide()
 	end
 
 	self.SetFrameLevel(OutfitterFrame, PaperDollFrame:GetFrameLevel() - 1)
@@ -2762,7 +2798,6 @@ function Outfitter:Item_CheckboxClicked(pItem)
 	end
 
 	local vOutfit = vOutfits[pItem.outfitIndex]
-
 	if not vOutfit then
 		-- Error: outfit not found
 		return
@@ -2783,26 +2818,30 @@ end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
 	--return -- uncomment if we want to disable storage
-	if pItem.isCategory then
+	if not Outfitter:IsMainline() and C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
+		self:NoteMessage("Can't store on server: Equipment Manager not enabled")
+		local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
+		--vCheckbox:SetButtonState("NORMAL")
+		vCheckbox:Disable()
 		return
 	end
+
+	-- Can't store a category on a server (and how did you click the button for that?)
+	if pItem.isCategory then return	end
 
 	local vOutfits = self.Settings.Outfits[pItem.categoryID]
 
-	if not vOutfits then
-		-- Error: outfit category not found
-		return
-	end
+	-- Error: outfit category not found
+	if not vOutfits then return end
 
 	local vOutfit = vOutfits[pItem.outfitIndex]
 
-	if not vOutfit then
-		-- Error: outfit not found
-		return
-	end
+	-- Error: outfit not found
+	if not vOutfit then return end
 
 	local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
 
+	-- If we want it stored on the server, equip the outfit if it's not being worn, then save it
 	if vCheckbox:GetChecked() then
 		if vOutfit ~= self.SelectedOutfit then
 			self:WearOutfit(vOutfit)
@@ -3148,7 +3187,6 @@ function Outfitter:WearOutfit(pOutfit, pLayerID, pCallerIsScript)
 	self:BeginEquipmentUpdate()
 
 	-- Update the equipment
-
 	pOutfit.didEquip = pCallerIsScript
 	pOutfit.didUnequip = false
 
@@ -3784,7 +3822,6 @@ function Outfitter:GetCompiledOutfit()
 
 	for vStackIndex, vOutfit in ipairs(Outfitter.OutfitStack.Outfits) do
 		local vItems = vOutfit:GetItems()
-
 		if vItems then
 			for vInventorySlot, vOutfitItem in pairs(vItems) do
 				vCompiledOutfit:SetItem(vInventorySlot, vOutfitItem)
@@ -4495,7 +4532,6 @@ function Outfitter:UpdateShapeshiftState()
 		--self:DebugMessage("%s: %s texture = %s %s", tostring(index), tostring(shapeshiftID), tostring(texture), isActive and "ACTIVE" or "not active")
 
 		local shapeshiftInfo = self.cShapeshiftIDInfo[shapeshiftID]
-
 		if shapeshiftInfo then
 			self.Settings.ShapeshiftIndexInfo[index] = shapeshiftInfo
 		else
@@ -4821,9 +4857,9 @@ end
 -- Make sure Outfitter opens/closes if GearManager is open/closed
 function Outfitter:EquipmentManagerViewSync()
 	if GearManagerDialog:IsVisible() then
-		OutfitterFrame:Show()
-	else
 		OutfitterFrame:Hide()
+	--else
+		--OutfitterFrame:Hide()
 	end
 end
 
@@ -4834,19 +4870,42 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" then -- cvar values are strings
-		-- Hook the GearManagerDialog for open/close
-		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
-		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
+	--print(eventName.." "..cvar.." "..value.." ("..type(value)..")") --DAC
+	if not Outfitter:IsClassicCataclysm() then
+		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
+			-- Scoot the title drop down over a little and adjust the button and frame
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 
-		-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
-		hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
+			-- Close the Outfitter frame if the GearManager window is opened
+			GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+			--[[--
+			-- Hook the GearManagerDialog for open/close
+			showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+			hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
 
-		GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
-		OutfitterButton:Hide()
+			-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
+			hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
+
+			GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
+			-- PlayerTitleDropDown TOP CharacterLevelText BOTTOM 0 -6
+			OutfitterButton:Hide()
+			--]]--
+		elseif cvar == "equipmentManager" and value == "0" then
+			-- Try to put everything back
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", 0, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+		end
 	else
-		OutfitterButton:Show()
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
 	end
+	OutfitterButton:Show()
 end
 
 function Outfitter:IsInitialized()
@@ -5000,9 +5059,12 @@ function Outfitter:Initialize()
 		OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
 	end
 
-	-- Move the Blizzard UI over a bit
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+	-- Adjust the Blizzard UI and Outfitter frames
+	if Outfitter:IsMainline() or Outfitter:IsClassicCataclysm() then
 		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
+	end
+	if Outfitter:IsClassicCataclysm() then
+		OutfitterFrame:SetPoint("TOPLEFT", "OutfitterButtonFrame", "TOPRIGHT", -2, -30)
 	end
 
 	-- Initialize player state
@@ -5126,9 +5188,10 @@ function Outfitter:Initialize()
 	end
 
 	-- Check for Equipment Manager availability and adjust Outfitter accordingly
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+	--if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+	if C_CVar then
 		self.EventLib:RegisterEvent("CVAR_UPDATE", self.EquipmentManagerAdjust, self)
-		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "USE_EQUIPMENT_MANAGER", C_CVar.GetCVar("equipmentManager"))
+		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "equipmentManager", C_CVar.GetCVar("equipmentManager"))
 	end
 
 	-- Synchronize with the Equipment Manager
@@ -5137,8 +5200,7 @@ function Outfitter:Initialize()
 	-- Season of Discovery handling
 	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
 		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
-		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
-		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
+		Outfitter:OutfitterButtonAdjust()
 	end
 	--
 
@@ -5242,9 +5304,9 @@ function Outfitter:AttachOutfitMethods()
 end
 
 function Outfitter:SynchronizeEM()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-
+	if not Outfitter:IsMainline() and C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
+	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 	-- Mark all the EM outfits as unused
 	for vCategoryID, outfits in pairs(self.Settings.Outfits) do
 		for vIndex, outfit in ipairs(outfits) do
@@ -5273,11 +5335,9 @@ function Outfitter:SynchronizeEM()
 	end
 
 	-- Scan the EM outfits
-
 	for _, equipmentSetID in ipairs(equipmentSetIDs) do
 		local name = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID)
 		local outfit = self:FindEMOutfitByName(name)
-
 		-- If the outfit is missing, see if it can be restored from
 		-- the preserved list
 
@@ -5352,7 +5412,6 @@ end
 
 function Outfitter:FindEMOutfitByName(pName)
 	local vLowerName = pName:lower()
-
 	for vCategoryID, vOutfits in pairs(self.Settings.Outfits) do
 		for vIndex, vOutfit in ipairs(vOutfits) do
 			if vOutfit.StoredInEM
@@ -6419,7 +6478,12 @@ end
 
 function Outfitter:OpenUI()
 	ShowUIPanel(CharacterFrame)
-	CharacterFrame_ShowSubFrame("PaperDollFrame")
+
+	--CharacterFrame_ShowSubFrame("PaperDollFrame")
+	if not PaperDollFrame:IsVisible() then
+		ToggleCharacter("PaperDollFrame")
+	end
+
 	OutfitterFrame:Show()
 end
 
@@ -7799,7 +7863,7 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
-		print("Creating vTooltip") --DAC
+		--print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
 
 		vTooltip:SetScript("OnUpdate", function ()
