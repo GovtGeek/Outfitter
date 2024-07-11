@@ -4871,7 +4871,7 @@ end
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
 	--print(eventName.." "..cvar.." "..value.." ("..type(value)..")") --DAC
-	if not Outfitter:IsClassicCataclysm() then
+	if GearManagerDialog then
 		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
 			-- Scoot the title drop down over a little and adjust the button and frame
 			if PlayerTitleDropDown then
