@@ -1,4 +1,4 @@
-## Interface: 11502
+## Interface: 11503
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
@@ -47,7 +47,6 @@ OutfitterStrings_fr.lua
 OutfitterStrings_cn.lua
 OutfitterStrings_tw.lua
 OutfitterStrings_kr.lua
-OutfitterStrings_ru.lua
 OutfitterStrings_ru.lua
 
 Outfitter.lua
