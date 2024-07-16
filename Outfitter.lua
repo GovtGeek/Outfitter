@@ -2022,7 +2022,11 @@ function Outfitter:TalentsChanged()
 	if _G["GetSpecialization"] then
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
 	else
-		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+		if Outfitter:IsClassicCataclysm() then
+			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 15)) > 0
+		else
+			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+		end
 	end
 end
 
