@@ -3,7 +3,7 @@
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 4.4.0.3
+## Version: 4.4.0.4
 ## Notes: Clothing and weapon management and automated equipment changes
 ## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
 #### AddonCompartmentFuncOnEnter:
@@ -45,7 +45,6 @@ OutfitterStrings_fr.lua
 OutfitterStrings_cn.lua
 OutfitterStrings_tw.lua
 OutfitterStrings_kr.lua
-OutfitterStrings_ru.lua
 OutfitterStrings_ru.lua
 
 Outfitter.lua
