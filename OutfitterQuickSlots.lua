@@ -1,4 +1,4 @@
---[[----------------------------------------
+----[[----------------------------------------
 Outfitter._FlyoutQuickSlots = {}
 ----------------------------------------
 function Outfitter._FlyoutQuickSlots:Construct()
