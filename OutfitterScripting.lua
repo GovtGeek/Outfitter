@@ -534,6 +534,23 @@ Outfitter.PresetScripts =
 		Class = "ROGUE",
 		Script = Outfitter:GenerateLockpickingScript(Outfitter.cLockpickingDescription),
 	},
+	{
+		Name = Outfitter.cTalentSwapAutomation,
+		ID = "TALENTSWAP",
+		Category = "GENERAL",
+		Script = 
+[[
+-- $EVENTS ACTIVE_TALENT_GROUP_CHANGED
+-- $DESC Equips event on Spec Change
+-- $SETTING spec={Label="Spec", Type="Number"}
+
+if not isEquipped and GetActiveTalentGroup() == setting.spec then
+    equip = true
+else
+    return
+end
+]],
+	},
 	{ -- PvP Flagged
 		Name = Outfitter.cPvPFlaggedOutfit,
 		ID = "PVP_FLAGGED",
