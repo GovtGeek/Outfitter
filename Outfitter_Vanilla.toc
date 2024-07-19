@@ -59,7 +59,7 @@ OutfitterOptimize.lua
 OutfitterUITools.lua
 OutfitterScripting.lua
 OutfitterScriptDialog.lua
-OutfitterQuickSlots.lua
+#OutfitterQuickSlots.lua
 OutfitterMinimapButton.lua
 OutfitterBar.lua
 OutfitterAbout.lua
