@@ -80,6 +80,7 @@ Outfitter.cSpellcastOutfit = "Spellcast"
 Outfitter.cRestingOutfit = "Resting"
 Outfitter.cFlameLeviathanOutfit = "Flame Leviathan"
 Outfitter.cQuestTurninOutfit = "Quest Turn-in"
+Outfitter.cTalentSwapAutomation = "Talents changed"
 
 Outfitter.cArgentDawnOutfitDescription = "Equips the outfit when you're in the Plaguelands"
 Outfitter.cRidingOutfitDescription = "Equips the outfit when you're mounted"
