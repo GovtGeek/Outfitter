@@ -2568,6 +2568,11 @@ function Outfitter:SetShowMinimapButton(pShowButton)
 	self:Update(false)
 end
 
+function Outfitter:SetQuickslotFlyouts(pShowButton)
+	self.Settings.Options.QuickslotFlyouts = not pShowButton
+	self:Update(false)
+end
+
 function Outfitter:SetShowHotkeyMessages(pShowHotkeyMessages)
 	self.Settings.Options.DisableHotkeyMessages = not pShowHotkeyMessages
 

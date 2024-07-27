@@ -33,10 +33,12 @@ function Outfitter._FlyoutQuickSlots:Construct()
 end
 
 function Outfitter._FlyoutQuickSlots:PreClick(pButton, ...)
+	if Outfitter.Settings.Options.QuickslotFlyouts then return end
 	self.CurrentInventorySlot = Outfitter.cSlotIDToInventorySlot[pButton:GetID()]
 end
 
 function Outfitter._FlyoutQuickSlots:PostClick(pButton, ...)
+	if Outfitter.Settings.Options.QuickslotFlyouts then return end
 	local vSlotItemLink = Outfitter:GetInventorySlotIDLink(pButton.id or pButton:GetID())
 
 	if EquipmentFlyoutFrame:IsVisible() and EquipmentFlyoutFrame.button == pButton then

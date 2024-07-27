@@ -999,6 +999,29 @@
 									</OnLeave>
 								</Scripts>
 							</CheckButton>
+							<CheckButton name="OutfitterQuickslotFlyouts" inherits="OutfitterCheckboxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="OutfitterItemComparisons" relativePoint="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="0" y="-10"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										getglobal(self:GetName().."Text"):SetText(Outfitter.cEnableQuickslotFlyouts)
+									</OnLoad>
+									<OnClick>
+										Outfitter:SetQuickslotFlyouts(self:GetChecked())
+									</OnClick>
+									<OnEnter>
+										Outfitter.AddNewbieTip(self, Outfitter.cEnableQuickslotFlyouts, 1.0, 1.0, 1.0, Outfitter.cEnableQuickslotFlyoutsDescription, 1)
+									</OnEnter>
+									<OnLeave>
+										GameTooltip:Hide()
+									</OnLeave>
+								</Scripts>
+							</CheckButton>
 						</Frames>
 						<Scripts>
 							<OnLoad>
