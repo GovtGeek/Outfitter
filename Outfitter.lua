@@ -2569,7 +2569,7 @@ function Outfitter:SetShowMinimapButton(pShowButton)
 end
 
 function Outfitter:SetQuickslotFlyouts(pShowButton)
-	self.Settings.Options.QuickslotFlyouts = not pShowButton
+	self.Settings.Options.QuickslotFlyouts = pShowButton
 	self:Update(false)
 end
 
