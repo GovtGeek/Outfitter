@@ -10,7 +10,7 @@
 		</Scripts>
 	</Button>
 
-	<CheckButton name="OutfitterCheckboxTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="OutfitterCheckboxTemplate" inherits="OptionsBaseCheckButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				if self:GetChecked() then

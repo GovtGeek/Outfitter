@@ -212,10 +212,22 @@ local function ReleaseInput(input)
 end
 
 local function MouseOver(frame)
-	local f = GetMouseFocus()
-	while f and f ~= UIParent do
-		if f == frame then return true end
-		f = f:GetParent()
+    if GetMouseFocus then
+        local f = GetMouseFocus()
+        while f and f ~= UIParent do
+            if f == frame then return true end
+            f = f:GetParent()
+        end
+    else
+        local mouseFoci = GetMouseFoci()
+        for _, f in ipairs(mouseFoci) do
+            while f do
+                if f == frame then
+                    return true
+                end
+                f = f:GetParent()
+            end
+        end
 	end
 	return false
 end
@@ -1216,12 +1228,24 @@ local t = {
 --[[function testlibdropdown()
 	LibStub("LibDropdown-1.0"):OpenAce3Menu(t)
 end]]
+if UIDropDownMenu_HandleGlobalMouseEvent then
+	hooksecurefunc("UIDropDownMenu_HandleGlobalMouseEvent", function(button, event)
+		if openMenu and event == "GLOBAL_MOUSE_DOWN" and (button == "LeftButton" or button == "RightButton") then
+			for i = 0, frameCount - 1 do
+				if _G["LibDropdownFrame" .. i]:IsMouseOver() then return end
+			end
 
-WorldFrame:HookScript("OnMouseDown", function()
-	if openMenu then
-		openMenu = openMenu:Release()
-	end
-	for i = 0, frameCount - 1 do
-		if _G["LibDropdownFrame" .. i]:IsMouseOver() then return end
-	end
-end)
+			openMenu:Release()
+		end
+	end)
+else
+	lib.mousecallback = EventRegistry:RegisterFrameEventAndCallback("GLOBAL_MOUSE_DOWN",function(ownerID,button)
+		if openMenu and (button == "LeftButton" or button == "RightButton") then
+			for i = 0, frameCount - 1 do
+				if _G["LibDropdownFrame" .. i]:IsMouseOver() then return end
+			end
+
+			openMenu:Release()
+		end
+	end)
+end
