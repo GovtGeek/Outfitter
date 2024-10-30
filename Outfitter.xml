@@ -10,7 +10,7 @@
 		</Scripts>
 	</Button>
 
-	<CheckButton name="OutfitterCheckboxTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="OutfitterCheckboxTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				if self:GetChecked() then
@@ -843,7 +843,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset>
-											<AbsDimension x="15" y="-90"/>
+											<AbsDimension x="15" y="-70"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -870,7 +870,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterAutoSwitch" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-10"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -895,7 +895,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterShowOutfitBar" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -922,7 +922,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterShowMinimapButton" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -949,7 +949,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterShowHotkeyMessages" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -976,7 +976,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterTooltipInfo" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -1003,7 +1003,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterItemComparisons" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-10"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
