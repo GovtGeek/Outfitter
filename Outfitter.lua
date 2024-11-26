@@ -4379,7 +4379,12 @@ function Outfitter:GetPlayerAuraStates()
 	end
 
 	while true do
-		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		local auraInfo = C_UnitAuras.GetBuffDataByIndex("player", vBuffIndex)
+		local vName, vTexture, vSpellID
+		if auraInfo then
+			vName, vTexture, vSpellID = auraInfo.name, auraInfo.icon, auraInfo.spellId
+		end
 
 		if not vName then
 			return self.AuraStates
