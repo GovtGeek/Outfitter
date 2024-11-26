@@ -492,7 +492,7 @@ Outfitter._PawnScaleStatMetaTable = {__index = Outfitter._PawnScaleStat}
 -- Install Pawn scales
 ----------------------------------------
 
-if IsAddOnLoaded("Pawn") then
+if C_AddOns.IsAddOnLoaded("Pawn") then
 	table.insert(Outfitter.StatCategories, Outfitter.PawnScalesCategory)
 else
 	Outfitter.EventLib:RegisterEvent("ADDON_LOADED", function (pEventID, pAddOnName)
@@ -564,7 +564,7 @@ Outfitter._WeightsWatcherStatMetaTable = {__index = Outfitter._WeightsWatcherSta
 -- Install WeightsWatcher
 ----------------------------------------
 
-if IsAddOnLoaded("WeightsWatcher") then
+if C_AddOns.IsAddOnLoaded("WeightsWatcher") then
 	table.insert(Outfitter.StatCategories, Outfitter.WeightsWatcherCategory)
 else
 	Outfitter.EventLib:RegisterEvent("ADDON_LOADED", function (pEventID, pAddOnName)
