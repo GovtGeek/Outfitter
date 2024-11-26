@@ -3,7 +3,7 @@
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 4.4.0.5
+## Version: 4.4.1.1
 ## Notes: Clothing and weapon management and automated equipment changes
 ## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
 #### AddonCompartmentFuncOnEnter:
@@ -14,7 +14,7 @@
 ## SavedVariablesPerCharacter: gOutfitter_Settings
 ## SavedVariables: gOutfitter_GlobalSettings
 ## X-ReloadTag: 2
-## X-Curse-Project-ID:
+## X-Curse-Project-ID: 1011204
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
