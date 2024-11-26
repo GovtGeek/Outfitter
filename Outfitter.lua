@@ -1218,6 +1218,13 @@ for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
 end
 function Outfitter:OutfitterButtonAdjust()
+	if Outfitter:IsClassicEra() then
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -40)
+	end
+	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
+		OutfitterButton:ClearAllPoints()
+		OutfitterButton:SetPoint("BOTTOMRIGHT", RuneFrameControlButton, "BOTTOMLEFT", 10, -4)
+	end
 	if not Outfitter:IsClassicCataclysm() then
 		--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
 		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
@@ -1239,10 +1246,6 @@ function Outfitter:OutfitterButtonAdjust()
 			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 		end
 		--]]--
-		if RuneFrameControlButton ~= nil then
-			OutfitterButton:ClearAllPoints()
-			OutfitterButton:SetPoint("BOTTOMRIGHT", RuneFrameControlButton, "BOTTOMLEFT", 10, -4)
-		end
 	else
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
 	end
@@ -4376,7 +4379,12 @@ function Outfitter:GetPlayerAuraStates()
 	end
 
 	while true do
-		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		local auraInfo = C_UnitAuras.GetBuffDataByIndex("player", vBuffIndex)
+		local vName, vTexture, vSpellID
+		if auraInfo then
+			vName, vTexture, vSpellID = auraInfo.name, auraInfo.icon, auraInfo.spellId
+		end
 
 		if not vName then
 			return self.AuraStates
@@ -5209,10 +5217,11 @@ function Outfitter:Initialize()
 	-- Season of Discovery handling
 	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
 		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
-		Outfitter:OutfitterButtonAdjust()
 	end
-	--
 
+	-- Move the Outfitter button according to the version we're running
+	Outfitter:OutfitterButtonAdjust()
+	
 	self:DispatchOutfitEvent("OUTFITTER_INIT")
 
 	self.SchedulerLib:ScheduleUniqueRepeatingTask(0.5, self.UpdateSwimming, self, nil, "Outfitter:UpdateSwimming")
