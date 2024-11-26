@@ -3,7 +3,7 @@
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 4.4.1.1
+## Version: 4.4.1.2
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps:
 ## RequiredDeps:
@@ -36,12 +36,12 @@ Libraries/MC2TooltipLib/MC2TooltipLib.lua
 Libraries/MC2ItemStatsLib/MC2ItemStatsLib.lua
 
 OutfitterStrings.lua
-OutfitterStrings_de.lua
-OutfitterStrings_fr.lua
-OutfitterStrings_cn.lua
-OutfitterStrings_tw.lua
-OutfitterStrings_kr.lua
-OutfitterStrings_ru.lua
+Localization/OutfitterStrings_de.lua
+Localization/OutfitterStrings_fr.lua
+Localization/OutfitterStrings_cn.lua
+Localization/OutfitterStrings_tw.lua
+Localization/OutfitterStrings_kr.lua
+Localization/OutfitterStrings_ru.lua
 
 Outfitter.lua
 
