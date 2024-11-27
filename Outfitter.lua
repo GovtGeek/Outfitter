@@ -4920,7 +4920,7 @@ function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
 			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 		end
 	else
-		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+		Outfitter:OutfitterButtonAdjust()
 	end
 	OutfitterButton:Show()
 end
