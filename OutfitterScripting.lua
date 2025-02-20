@@ -46,6 +46,34 @@
 	Scripts can support equip/unequip or disable or both.
 ]]
 
+local cityZones = {
+    -- Classic Cities
+    [1453] = true, -- Stormwind City (Classic)
+    [1454] = true, -- Orgrimmar (Classic)
+    [1455] = true, -- Ironforge (Classic)
+    [1456] = true, -- Thunder Bluff (Classic)
+    [1457] = true, -- Darnassus (Classic)
+    [1458] = true, -- Undercity (Classic)
+    
+    -- Retail Cities
+    [84] = true,  -- Stormwind City
+    [85] = true,  -- Orgrimmar
+    [87] = true,  -- Ironforge
+    [88] = true,  -- Thunder Bluff
+    [89] = true,  -- Darnassus
+    [90] = true,  -- Undercity
+    [103] = true, -- The Exodar
+    [110] = true, -- Silvermoon City
+    [111] = true, -- Shattrath City
+    [125] = true, -- Dalaran
+    [1161] = true, -- Boralus
+    [1165] = true  -- Dazar'alor
+}
+function Outfitter:IsPlayerInCity()
+    local currentZoneID = C_Map.GetBestMapForUnit("player")
+    return cityZones[currentZoneID] or false
+end
+
 ----------------------------------------
 Outfitter.ScriptModules = {}
 ----------------------------------------
@@ -931,7 +959,11 @@ end
 		Name = Outfitter.cCityOutfit,
 		ID = "City",
 		Category = "ENTERTAIN",
-		Script = Outfitter:GenerateSimpleScript("CITY", Outfitter.cCityOutfitDescription),
+		Script = Outfitter:GenerateScriptHeader("ZONE_CHANGED_NEW_AREA", Outfitter.cCityOutfitDescription)..
+[[
+-- If the event fires, equip the outfit if the player is in a city, otherwise remove it
+    equip = Outfitter:IsPlayerInCity(C_Map.GetBestMapForUnit("player"))
+]],
 	},
 	{ -- Battleground
 		Name = Outfitter.cBattlegroundOutfit,

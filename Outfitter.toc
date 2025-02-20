@@ -1,9 +1,9 @@
-## Interface: 40402, 40401, 30403, 20504, 11506
+## Interface: 40402, 30403, 20504, 11506
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 4.4.2.0
+## Version: 4.4.2.1
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps:
 ## RequiredDeps:
