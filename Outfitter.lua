@@ -5104,13 +5104,13 @@ function Outfitter:Initialize()
 	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
 	if Outfitter.LDB and LDBIcon then
 		-- LibDBIcon is handling all Minimap calls
-		print("Registering Outfitter with LibDBIcon") --DAC
+		--print("Registering Outfitter with LibDBIcon") --DAC
 		Outfitter.LDBIcon = LDBIcon
 		LDBIcon:Register("Outfitter", Outfitter.LDB.DataObj, gOutfitter_Settings.Options.MinimapButton)
 		OutfitterMinimapButton = LDBIcon:GetMinimapButton("Outfitter")
 	else
 		-- Outfitter is handling all Minimap calls
-		print("Using Outfitter defined Minimap") --DAC
+		--print("Using Outfitter defined Minimap") --DAC
 		Outfitter._MinimapButton:CreateMinimapButton()
 
 		if self.Settings.Options.MinimapButton.minimapPos then
