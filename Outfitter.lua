@@ -355,6 +355,11 @@ Outfitter.OutfitInfoCache = {}
 
 Outfitter.MaxSimpleTitles = 10
 
+local MinimapButtonDefaults = {
+	["ShowButton"] = true,
+	["minimapPos"] = -1.5708,
+}
+
 function Outfitter:FormatItemList(pList)
 	local vNumItems = #pList
 
@@ -2562,15 +2567,45 @@ function Outfitter:SetShowItemComparisons(pShowComparisons)
 end
 
 function Outfitter:SetShowMinimapButton(pShowButton)
-	self.Settings.Options.HideMinimapButton = not pShowButton
+	--self.Settings.Options.HideMinimapButton = not pShowButton
+	self.Settings.Options.MinimapButton.ShowButton = pShowButton
 
-	if self.Settings.Options.HideMinimapButton then
-		OutfitterMinimapButton:Hide()
-	else
-		OutfitterMinimapButton:Show()
+	Outfitter:ShowMinimapButton(pShowButton)
+	--[[
+	print(OutfitterMinimapButton, Outfitter.LDBIcon:GetMinimapButton("Outfitter"))
+	if Outfitter.LDBIcon then
+		if pShowButton then
+			Outfitter.LDBIcon:Show("Outfitter")
+		else
+			Outfitter.LDBIcon:Hide("Outfitter")
+		end
 	end
 
+	if self.Settings.Options.MinimapButton.ShowButton then
+		OutfitterMinimapButton:Show()
+	else
+		OutfitterMinimapButton:Hide()
+	end
+	]]
+
 	self:Update(false)
+end
+
+function Outfitter:ShowMinimapButton(bShowButton)
+	-- Showing/Hiding the minimap button is different depending on LDBIcon availability
+	if Outfitter.LDBIcon then
+		if bShowButton then
+			Outfitter.LDBIcon:Show("Outfitter")
+		else
+			Outfitter.LDBIcon:Hide("Outfitter")
+		end
+	else
+		if bShowButton then
+			OutfitterMinimapButton:Show()
+		else
+			OutfitterMinimapButton:Hide()
+		end
+	end
 end
 
 function Outfitter:SetQuickslotFlyouts(pShowButton)
@@ -3086,7 +3121,8 @@ function Outfitter:Update(pOutfitsChanged)
 				0, 0)                           -- smallHighlightWidth, bigHighlightWidth
 	elseif self.CurrentPanel == 2 then -- Options panel
 		OutfitterAutoSwitch:SetChecked(self.Settings.Options.DisableAutoSwitch)
-		OutfitterShowMinimapButton:SetChecked(not self.Settings.Options.HideMinimapButton)
+		--OutfitterShowMinimapButton:SetChecked(not self.Settings.Options.HideMinimapButton)
+		OutfitterShowMinimapButton:SetChecked(self.Settings.Options.MinimapButton.ShowButton)
 		OutfitterTooltipInfo:SetChecked(not self.Settings.Options.DisableToolTipInfo)
 		OutfitterShowHotkeyMessages:SetChecked(not self.Settings.Options.DisableHotkeyMessages)
 		OutfitterShowOutfitBar:SetChecked(self.Settings.OutfitBar.ShowOutfitBar)
@@ -5060,36 +5096,30 @@ function Outfitter:Initialize()
 		end
 	end
 
-	-- Set the minimap button
+	-- Set up the minimap button
+	gOutfitter_Settings.Options.MinimapButton = gOutfitter_Settings.Options.MinimapButton or MinimapButtonDefaults
 
-	-- Register the minimap button
+	-- Register the minimap button with LDB?
+	if C_AddOns.IsAddOnLoadOnDemand("LibDBIcon-1.0") then C_AddOns.LoadAddOn("LibDBIcon-1.0") end
 	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
 	if Outfitter.LDB and LDBIcon then
 		-- LibDBIcon is handling all Minimap calls
-		gOutfitter_Settings.Options.MinimapButtonLDB = gOutfitter_Settings.Options.MinimapButtonLDB or {}
-		LDBIcon:Register("Outfitter", Outfitter.LDB.DataObj, gOutfitter_Settings.Options.MinimapButtonLDB)
-		OutfitterMinimapButton = _G["LibDBIcon10_Outfitter"]
+		print("Registering Outfitter with LibDBIcon") --DAC
+		Outfitter.LDBIcon = LDBIcon
+		LDBIcon:Register("Outfitter", Outfitter.LDB.DataObj, gOutfitter_Settings.Options.MinimapButton)
+		OutfitterMinimapButton = LDBIcon:GetMinimapButton("Outfitter")
 	else
 		-- Outfitter is handling all Minimap calls
+		print("Using Outfitter defined Minimap") --DAC
 		Outfitter._MinimapButton:CreateMinimapButton()
 
-		if self.Settings.Options.HideMinimapButton then
-			OutfitterMinimapButton:Hide()
+		if self.Settings.Options.MinimapButton.minimapPos then
+			OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButton.minimapPos)
 		else
-			OutfitterMinimapButton:Show()
-		end
-
-		if not self.Settings.Options.MinimapButtonAngle
-		and not self.Settings.Options.MinimapButtonX then
-			self.Settings.Options.MinimapButtonAngle = -1.5708
-		end
-
-		if self.Settings.Options.MinimapButtonAngle then
-			OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButtonAngle)
-		else
-			OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
+			OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButton.minimapX, self.Settings.Options.MinimapButton.minimapY)
 		end
 	end
+	Outfitter:ShowMinimapButton(self.Settings.Options.MinimapButton.ShowButton)
 
 	-- Adjust the Blizzard UI and Outfitter frames
 	if Outfitter:IsMainline() or Outfitter:IsClassicCataclysm() then
