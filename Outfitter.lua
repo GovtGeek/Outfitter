@@ -1264,10 +1264,13 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 		if not CharacterFrameTab3:GetRight() then
 			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
 		end
+		Outfitter:OpenUI()
+		--[[
 		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
 		CharacterFrame_ShowSubFrame("PaperDollFrame")
 		CharacterFrame:Show()
 		OutfitterFrame:Show()
+		]]
 	end
 end
 
