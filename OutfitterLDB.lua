@@ -9,7 +9,7 @@ function Outfitter.LDB:Initialize()
 		text = "Outfitter",
 		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end,
 	})
-	
+
 	Outfitter:RegisterOutfitEvent("WEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
 	Outfitter:RegisterOutfitEvent("UNWEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
 	Outfitter:RegisterOutfitEvent("OUTFITTER_INIT", function (...) self:OutfitEvent(...) end)
