@@ -85,9 +85,9 @@ function Outfitter:RestrictAngle(pAngle, pRestrictStart, pRestrictEnd)
 end
 
 function Outfitter._MinimapButton:SetPosition(pX, pY)
-	gOutfitter_Settings.Options.MinimapButtonAngle = nil
-	gOutfitter_Settings.Options.MinimapButtonX = pX
-	gOutfitter_Settings.Options.MinimapButtonY = pY
+	gOutfitter_Settings.Options.MinimapButton.minimapPos = nil
+	gOutfitter_Settings.Options.MinimapButton.minimapX = pX
+	gOutfitter_Settings.Options.MinimapButton.minimapY = pY
 
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", pX, pY)
 end
@@ -124,8 +124,9 @@ function Outfitter._MinimapButton:SetPositionAngle(pAngle)
 	local vCenterY = math.cos(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
 
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
+	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX + 1, vCenterY + 1)
 
-	gOutfitter_Settings.Options.MinimapButtonAngle = vAngle
+	gOutfitter_Settings.Options.MinimapButton.minimapPos = vAngle
 end
 
 function Outfitter:GetMinimapDropdownItems(items)
@@ -276,7 +277,7 @@ end
 
 -- Create the minimap button in code rather than XML
 function Outfitter._MinimapButton:CreateMinimapButton()
-	local OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", MinimapBackdrop)
+	OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", MinimapBackdrop)
 	OutfitterMinimapButton:SetSize(32, 32)
 	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -80, 0)
 	OutfitterMinimapButton:SetMovable(true)
@@ -284,6 +285,10 @@ function Outfitter._MinimapButton:CreateMinimapButton()
 
 	-- Textures
 	OutfitterMinimapButton:SetNormalTexture("Interface\\Addons\\Outfitter\\Textures\\MinimapButton")
+	local overlayTexture = OutfitterMinimapButton:CreateTexture(nil, "OVERLAY")
+	overlayTexture:SetSize(53, 53)
+	overlayTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+	overlayTexture:SetPoint("TOPLEFT")
 	local highlightTexture = OutfitterMinimapButton:CreateTexture(nil, "HIGHLIGHT")
 	highlightTexture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
 	highlightTexture:SetBlendMode("ADD")
