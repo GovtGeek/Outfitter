@@ -7,7 +7,7 @@ function Outfitter.LDB:Initialize()
 		type = "data source",
 		icon = "Interface\\AddOns\\Outfitter\\Textures\\Icon",
 		text = "Outfitter",
-		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end
+		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end,
 	})
 	
 	Outfitter:RegisterOutfitEvent("WEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
@@ -20,6 +20,7 @@ function Outfitter.LDB:OnClick(pFrame, pButton)
 		self:ToggleMenu()
 		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	else
+		self:HideMenu()
 		Outfitter:ToggleUI(true)
 	end
 end
@@ -70,7 +71,9 @@ function Outfitter.LDB:ShowMenu()
 
 	-- Show the menu
 	self.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
-	self.dropDownMenu:Show(items, quadrant, UIParent, "BOTTOMLEFT", cursorX, cursorY)
+	--self.dropDownMenu:Show(items, quadrant, UIParent, "BOTTOMLEFT", cursorX, cursorY)
+	self.dropDownMenu:Show(items, "TOPRIGHT", OutfitterMinimapButton, "TOPRIGHT", -20, -20) --DAC
+
 	self.dropDownMenu.cleanup = function ()
 		self.dropDownMenu = nil
 	end

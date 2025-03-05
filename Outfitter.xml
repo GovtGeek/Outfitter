@@ -1333,6 +1333,7 @@
 			</Frame>
 		</Frames>
 	</Frame>
+	<!-- DAC
 	<Button name="OutfitterMinimapButton" hidden="false" enableMouse="true" movable="true" parent="MinimapBackdrop">
 		<Size>
 			<AbsDimension x="32" y="32"/>
@@ -1369,6 +1370,7 @@
 		<NormalTexture file="Interface\Addons\Outfitter\Textures\MinimapButton"/>
 		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 	</Button>
+	-->
 
 	<GameTooltip name="OutfitterTooltip" parent="UIParent" hidden="true" inherits="GameTooltipTemplate">
 		<Anchors>

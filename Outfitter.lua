@@ -1482,7 +1482,9 @@ function Outfitter:UpdateCurrentOutfitIcon()
 	if type(vTexture) == "number" then
 		vTexture = 	self:ConvertTextureIDToPath(vTexture)
 	end
-	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+	if OutfitterMinimapButton and OutfitterMinimapButton.CurrentOutfitTexture and vTexture then
+		SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+	end
 end
 
 function Outfitter:PlayerInteractionManagerFrameShow(event, interactionType)
@@ -2690,6 +2692,7 @@ end
 function Outfitter.AddNewbieTip(pItem, pNormalText, pRed, pGreen, pBlue, pNewbieText, pNoNormalText)
 	if GetCVarBool("UberTooltips") then
 		GameTooltip_SetDefaultAnchor(GameTooltip, pItem)
+		GameTooltip:SetOwner(pItem, "ANCHOR_RIGHT")
 		if pNormalText then
 			GameTooltip:SetText(pNormalText, pRed, pGreen, pBlue)
 			GameTooltip:AddLine(pNewbieText, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
@@ -5059,21 +5062,35 @@ function Outfitter:Initialize()
 
 	-- Set the minimap button
 
-	if self.Settings.Options.HideMinimapButton then
-		OutfitterMinimapButton:Hide()
+	-- Register the minimap button
+	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
+	if Outfitter.LDB and LDBIcon then
+		-- LibDBIcon is handling all Minimap calls
+		print("Registering Outfitter with LibDBIcon") --DAC
+		gOutfitter_Settings.Options.MinimapButtonLDB = gOutfitter_Settings.Options.MinimapButtonLDB or {}
+		LDBIcon:Register("Outfitter", Outfitter.LDB.DataObj, gOutfitter_Settings.Options.MinimapButtonLDB)
+		OutfitterMinimapButton = _G["LibDBIcon10_Outfitter"]
 	else
-		OutfitterMinimapButton:Show()
-	end
+		-- Outfitter is handling all Minimap calls
+		print("Using Outfitter defined Minimap") --DAC
+		Outfitter._MinimapButton:CreateMinimapButton()
 
-	if not self.Settings.Options.MinimapButtonAngle
-	and not self.Settings.Options.MinimapButtonX then
-		self.Settings.Options.MinimapButtonAngle = -1.5708
-	end
+		if self.Settings.Options.HideMinimapButton then
+			OutfitterMinimapButton:Hide()
+		else
+			OutfitterMinimapButton:Show()
+		end
 
-	if self.Settings.Options.MinimapButtonAngle then
-		OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButtonAngle)
-	else
-		OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
+		if not self.Settings.Options.MinimapButtonAngle
+		and not self.Settings.Options.MinimapButtonX then
+			self.Settings.Options.MinimapButtonAngle = -1.5708
+		end
+
+		if self.Settings.Options.MinimapButtonAngle then
+			OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButtonAngle)
+		else
+			OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
+		end
 	end
 
 	-- Adjust the Blizzard UI and Outfitter frames
@@ -6486,18 +6503,15 @@ function Outfitter:ToggleUI(pToggleCharWindow)
 	if self:IsOpen() then
 		OutfitterFrame:Hide()
 
-		if pToggleCharWindow then
-			HideUIPanel(CharacterFrame)
-		end
+		--Assume that if Outfitter is open, so is the PaperDollFrame
+		ToggleCharacter("PaperDollFrame")
 	else
 		self:OpenUI()
 	end
 end
 
 function Outfitter:OpenUI()
-	ShowUIPanel(CharacterFrame)
-
-	--CharacterFrame_ShowSubFrame("PaperDollFrame")
+	-- Make sure the PaperDollFrame is visible
 	if not PaperDollFrame:IsVisible() then
 		ToggleCharacter("PaperDollFrame")
 	end

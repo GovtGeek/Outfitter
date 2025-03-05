@@ -6,6 +6,7 @@ end
 
 function Outfitter._MinimapButton:Construct()
 	self:RegisterForDrag("LeftButton")
+	self:RegisterForClicks("LeftButtonDown", "LeftButtonDown", "RightButtonUp")
 	self.CurrentOutfitTexture = self:CreateTexture(nil, "BACKGROUND")
 	self.CurrentOutfitTexture:SetWidth(22)
 	self.CurrentOutfitTexture:SetHeight(22)
@@ -271,4 +272,56 @@ function Outfitter._MinimapButton:ToggleMenu()
 	self.dropDownMenu.cleanup = function ()
 		self.dropDownMenu = nil
 	end
+end
+
+-- Create the minimap button in code rather than XML
+function Outfitter._MinimapButton:CreateMinimapButton()
+	local OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", MinimapBackdrop)
+	OutfitterMinimapButton:SetSize(32, 32)
+	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -80, 0)
+	OutfitterMinimapButton:SetMovable(true)
+	OutfitterMinimapButton:EnableMouse(true)
+
+	-- Textures
+	OutfitterMinimapButton:SetNormalTexture("Interface\\Addons\\Outfitter\\Textures\\MinimapButton")
+	local highlightTexture = OutfitterMinimapButton:CreateTexture(nil, "HIGHLIGHT")
+	highlightTexture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+	highlightTexture:SetBlendMode("ADD")
+	OutfitterMinimapButton:SetHighlightTexture(highlightTexture)
+
+	OutfitterMinimapButton.Inherit = Outfitter.Inherit
+	OutfitterMinimapButton:Inherit(Outfitter._MinimapButton)
+
+	-- Script Handlers
+	OutfitterMinimapButton:SetScript("OnDragStart", function(self)
+		self:HideMenu()
+		self:DragStart()
+	end)
+
+	OutfitterMinimapButton:SetScript("OnDragStop", function(self)
+		self:DragEnd()
+	end)
+
+	OutfitterMinimapButton:SetScript("OnMouseDown", function(self)
+		self:MouseDown()
+	end)
+
+	OutfitterMinimapButton:SetScript("OnClick", function(self, pButton, down)
+		if pButton == "LeftButton" then
+			self:ToggleMenu()
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		elseif pButton == "RightButton" then
+			self:HideMenu()
+			Outfitter:ToggleUI(true)
+		end
+	end)
+
+	OutfitterMinimapButton:SetScript("OnEnter", function(self)
+		Outfitter.AddNewbieTip(self, Outfitter.cMinimapButtonTitle, 1, 1, 1, Outfitter.cMinimapButtonDescription, 1)
+	end)
+
+	OutfitterMinimapButton:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+
 end
