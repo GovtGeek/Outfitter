@@ -1,5 +1,5 @@
 Outfitter._MinimapButton = {}
-local OUTFITTER_MINIMAP_BUTTON_RADIUS = 80
+local OUTFITTER_MINIMAP_BUTTON_RADIUS = 79
 if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
 	OUTFITTER_MINIMAP_BUTTON_RADIUS = 105
 end
@@ -237,9 +237,26 @@ function Outfitter._MinimapButton:ShowMenu()
 	-- Get the items
 	Outfitter:GetMinimapDropdownItems(items)
 
+	-- Originally set to work off the cursor position. Now works off the Minimap button.
+	-- Get the cursor position
+	--[[
+	local cursorX, cursorY = GetCursorPosition()
+	local scaling = UIParent:GetEffectiveScale()
+	cursorX = cursorX / scaling
+	cursorY = cursorY / scaling
+	--]]
+
+	-- Use the screen quadrant as basis to anchor the menu
+	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
+	local top = string.find(quadrant, "TOP") and 1 or -1
+	local left = string.find(quadrant, "LEFT") and -1 or 1
+	local offsetX = left*10
+	local offsetY = top*10
+	local menuQuadrant = (string.find(quadrant, "TOP") and "BOTTOM" or "TOP") .. (string.find(quadrant, "LEFT") and "RIGHT" or "LEFT")
+
 	-- Show the menu
 	self.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
-	self.dropDownMenu:Show(items, "TOPRIGHT", self, "TOPRIGHT", -20, -20)
+	self.dropDownMenu:Show(items, quadrant, OutfitterMinimapButton, menuQuadrant, offsetX, offsetY) --DAC
 	self.dropDownMenu.cleanup = function ()
 		self.dropDownMenu = nil
 	end
