@@ -2,7 +2,7 @@ local _, Addon = ...
 
 Addon.UIElementsLib =
 {
-	Version = 1,
+	Version = 2,
 	Addon = Addon,
 }
 
@@ -1418,6 +1418,7 @@ function Addon.UIElementsLib._DropDownMenu:Show(items, point, relativeTo, relati
 
 	-- Show the menu
 	self.menuFrame = LibStub("LibDropdownMC-1.0"):OpenAce3Menu(items)
+	self.menuFrame:ClearAllPoints()
 	self.menuFrame:SetPoint(point, relativeTo, relativePoint, xOffset, yOffset)
 	self.menuFrame.cleanup = function ()
 		if self.cleanup then
