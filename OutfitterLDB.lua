@@ -70,6 +70,7 @@ function Outfitter.LDB:ShowMenu()
 	--]]
 
 	-- Use the screen quadrant as basis to anchor the menu
+	local cursorX, cursorY = GetCursorPosition()
 	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
 	local top = string.find(quadrant, "TOP") and 1 or -1
 	local left = string.find(quadrant, "LEFT") and -1 or 1
