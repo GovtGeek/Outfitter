@@ -5,7 +5,7 @@ function Outfitter.LDB:Initialize()
 	self.DataObj = self.LDB:NewDataObject(Outfitter.cTitle,
 	{
 		type = "data source",
-		icon = "Interface\\AddOns\\Outfitter\\Textures\\Icon",
+		icon = "Interface\\Icons\\INV_Chest_Cloth_21",
 		text = "Outfitter",
 		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end,
 	})

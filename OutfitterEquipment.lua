@@ -985,7 +985,7 @@ function Outfitter.OutfitStack:RestoreSavedStack()
 
 	Outfitter.ExpectedOutfit = Outfitter:GetCompiledOutfit()
 
-	Outfitter:UpdateTemporaryOutfit(Outfitter:GetNewItemsOutfit(Outfitter.ExpectedOutfit))
+	--Outfitter:UpdateTemporaryOutfit(Outfitter:GetNewItemsOutfit(Outfitter.ExpectedOutfit))
 
 	if gOutfitter_Settings.Options.ShowStackContents then
 		self:DebugOutfitStack("Restore saved stack")

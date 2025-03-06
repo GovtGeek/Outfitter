@@ -1484,14 +1484,16 @@ function Outfitter:DispatchOutfitEvent(pEvent, pParameter1, pParameter2)
 end
 
 function Outfitter:UpdateCurrentOutfitIcon()
+	if not OutfitterMinimapButton then return end
 	local _, vOutfit = self:GetCurrentOutfitInfo()
 	local vTexture = self.OutfitBar:GetOutfitTexture(vOutfit)
-
-	if type(vTexture) == "number" then
-		vTexture = 	self:ConvertTextureIDToPath(vTexture)
-	end
-	if OutfitterMinimapButton and OutfitterMinimapButton.CurrentOutfitTexture and vTexture then
+	if OutfitterMinimapButton.CurrentOutfitTexture and vTexture then
+		if type(vTexture) == "number" then
+			vTexture = 	self:ConvertTextureIDToPath(vTexture)
+		end
 		SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+	elseif OutfitterMinimapButton.icon and vTexture then
+		SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
 	end
 end
 
@@ -2570,27 +2572,9 @@ function Outfitter:SetShowItemComparisons(pShowComparisons)
 end
 
 function Outfitter:SetShowMinimapButton(pShowButton)
-	--self.Settings.Options.HideMinimapButton = not pShowButton
 	self.Settings.Options.MinimapButton.ShowButton = pShowButton
 
 	Outfitter:ShowMinimapButton(pShowButton)
-	--[[
-	print(OutfitterMinimapButton, Outfitter.LDBIcon:GetMinimapButton("Outfitter"))
-	if Outfitter.LDBIcon then
-		if pShowButton then
-			Outfitter.LDBIcon:Show("Outfitter")
-		else
-			Outfitter.LDBIcon:Hide("Outfitter")
-		end
-	end
-
-	if self.Settings.Options.MinimapButton.ShowButton then
-		OutfitterMinimapButton:Show()
-	else
-		OutfitterMinimapButton:Hide()
-	end
-	]]
-
 	self:Update(false)
 end
 
@@ -3124,7 +3108,6 @@ function Outfitter:Update(pOutfitsChanged)
 				0, 0)                           -- smallHighlightWidth, bigHighlightWidth
 	elseif self.CurrentPanel == 2 then -- Options panel
 		OutfitterAutoSwitch:SetChecked(self.Settings.Options.DisableAutoSwitch)
-		--OutfitterShowMinimapButton:SetChecked(not self.Settings.Options.HideMinimapButton)
 		OutfitterShowMinimapButton:SetChecked(self.Settings.Options.MinimapButton.ShowButton)
 		OutfitterTooltipInfo:SetChecked(not self.Settings.Options.DisableToolTipInfo)
 		OutfitterShowHotkeyMessages:SetChecked(not self.Settings.Options.DisableHotkeyMessages)
@@ -5105,15 +5088,14 @@ function Outfitter:Initialize()
 	-- Register the minimap button with LDB?
 	if C_AddOns.IsAddOnLoadOnDemand("LibDBIcon-1.0") then C_AddOns.LoadAddOn("LibDBIcon-1.0") end
 	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
+
 	if Outfitter.LDB and LDBIcon then
-		-- LibDBIcon is handling all Minimap calls
-		--print("Registering Outfitter with LibDBIcon") --DAC
+		-- LibDBIcon is the base for the minimap button
 		Outfitter.LDBIcon = LDBIcon
 		LDBIcon:Register("Outfitter", Outfitter.LDB.DataObj, gOutfitter_Settings.Options.MinimapButton)
 		OutfitterMinimapButton = LDBIcon:GetMinimapButton("Outfitter")
 	else
-		-- Outfitter is handling all Minimap calls
-		--print("Using Outfitter defined Minimap") --DAC
+		-- Outfitter is the base for the minimap button
 		Outfitter._MinimapButton:CreateMinimapButton()
 
 		if self.Settings.Options.MinimapButton.minimapPos then
