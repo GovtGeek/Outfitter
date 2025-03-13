@@ -5084,26 +5084,7 @@ function Outfitter:Initialize()
 
 	-- Set up the minimap button
 	gOutfitter_Settings.Options.MinimapButton = gOutfitter_Settings.Options.MinimapButton or MinimapButtonDefaults
-
-	-- Register the minimap button with LDB?
-	if C_AddOns.IsAddOnLoadOnDemand("LibDBIcon-1.0") then C_AddOns.LoadAddOn("LibDBIcon-1.0") end
-	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
-
-	if Outfitter.LDB and LDBIcon then
-		-- LibDBIcon is the base for the minimap button
-		Outfitter.LDBIcon = LDBIcon
-		LDBIcon:Register("Outfitter", Outfitter.LDB.DataObj, gOutfitter_Settings.Options.MinimapButton)
-		OutfitterMinimapButton = LDBIcon:GetMinimapButton("Outfitter")
-	else
-		-- Outfitter is the base for the minimap button
-		Outfitter._MinimapButton:CreateMinimapButton()
-
-		if self.Settings.Options.MinimapButton.minimapPos then
-			OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButton.minimapPos)
-		else
-			OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButton.minimapX, self.Settings.Options.MinimapButton.minimapY)
-		end
-	end
+	Outfitter:InitializeMinimapButton()
 	Outfitter:ShowMinimapButton(self.Settings.Options.MinimapButton.ShowButton)
 
 	-- Adjust the Blizzard UI and Outfitter frames
