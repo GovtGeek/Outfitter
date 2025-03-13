@@ -1,26 +1,90 @@
-Outfitter._MinimapButton = {}
-local OUTFITTER_MINIMAP_BUTTON_RADIUS = 79
+local addonName, addon  = ...
+local OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 79
 if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
-	OUTFITTER_MINIMAP_BUTTON_RADIUS = 105
+	OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 105
 end
 
-function Outfitter._MinimapButton:Construct()
-	self:RegisterForDrag("LeftButton")
-	self:RegisterForClicks("LeftButtonDown", "LeftButtonDown", "RightButtonUp")
-	self.CurrentOutfitTexture = self:CreateTexture(nil, "BACKGROUND")
-	self.CurrentOutfitTexture:SetWidth(22)
-	self.CurrentOutfitTexture:SetHeight(22)
-	self.CurrentOutfitTexture:SetPoint("TOPLEFT", self, "TOPLEFT", 5, -4)
-	SetPortraitToTexture(self.CurrentOutfitTexture, "Interface\\Icons\\INV_Chest_Cloth_21")
+---- Create the minimap button in code rather than XML
+local function CreateMinimapButton()
+	OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", MinimapBackdrop)
+	OutfitterMinimapButton:SetSize(32, 32)
+	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -80, 0)
+	OutfitterMinimapButton:SetMovable(true)
+	OutfitterMinimapButton:EnableMouse(true)
+
+	-- Textures
+	OutfitterMinimapButton:SetNormalTexture("Interface\\Addons\\Outfitter\\Textures\\MinimapButton")
+	local overlayTexture = OutfitterMinimapButton:CreateTexture(nil, "OVERLAY")
+	overlayTexture:SetSize(53, 53)
+	overlayTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
+	overlayTexture:SetPoint("TOPLEFT")
+	local highlightTexture = OutfitterMinimapButton:CreateTexture(nil, "HIGHLIGHT")
+	highlightTexture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
+	highlightTexture:SetBlendMode("ADD")
+	OutfitterMinimapButton:SetHighlightTexture(highlightTexture)
+
+	--OutfitterMinimapButton.Inherit = Outfitter.Inherit
+	--OutfitterMinimapButton:Inherit(Outfitter._MinimapButton)
+
+	OutfitterMinimapButton.CurrentOutfitTexture = OutfitterMinimapButton:CreateTexture(nil, "BACKGROUND")
+	OutfitterMinimapButton.CurrentOutfitTexture:SetWidth(22)
+	OutfitterMinimapButton.CurrentOutfitTexture:SetHeight(22)
+	OutfitterMinimapButton.CurrentOutfitTexture:SetPoint("TOPLEFT", OutfitterMinimapButton, "TOPLEFT", 5, -4)
+	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, "Interface\\Icons\\INV_Chest_Cloth_21")
+
+	OutfitterMinimapButton:RegisterForDrag("LeftButton")
+	OutfitterMinimapButton:RegisterForClicks("LeftButtonDown", "RightButtonUp")
+
+	-- Script Handlers
+	--[[
+	OutfitterMinimapButton:SetScript("OnDragStart", function(self)
+		self:HideMenu()
+		self:DragStart()
+	end)
+
+	OutfitterMinimapButton:SetScript("OnDragStop", function(self)
+		self:DragEnd()
+	end)
+
+	OutfitterMinimapButton:SetScript("OnMouseDown", function(self)
+		self:MouseDown()
+	end)
+
+	OutfitterMinimapButton:SetScript("OnClick", function(self, pButton, down)
+		if pButton == "LeftButton" then
+			self:ToggleMenu()
+			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		elseif pButton == "RightButton" then
+			self:HideMenu()
+			Outfitter:ToggleUI(true)
+		end
+	end)
+
+	OutfitterMinimapButton:SetScript("OnEnter", function(self)
+		Outfitter.AddNewbieTip(self, Outfitter.cMinimapButtonTitle, 1, 1, 1, Outfitter.cMinimapButtonDescription, 1)
+	end)
+
+	OutfitterMinimapButton:SetScript("OnLeave", function(self)
+		GameTooltip:Hide()
+	end)
+	--]]
 end
 
-function Outfitter._MinimapButton:MouseDown()
+---- Define button functions
+local function _OnEnter()
+	addon.AddNewbieTip(OutfitterMinimapButton, addon.cMinimapButtonTitle, 1, 1, 1, addon.cMinimapButtonDescription, 1)
+end
+
+local function _OnLeave()
+	GameTooltip:Hide()
+end
+
+local function _MouseDown()
 	-- Remember where the cursor was in case the user drags
-
 	local vCursorX, vCursorY = GetCursorPosition()
 
-	vCursorX = vCursorX / self:GetEffectiveScale()
-	vCursorY = vCursorY / self:GetEffectiveScale()
+	vCursorX = vCursorX / OutfitterMinimapButton:GetEffectiveScale()
+	vCursorY = vCursorY / OutfitterMinimapButton:GetEffectiveScale()
 
 	OutfitterMinimapButton.CursorStartX = vCursorX
 	OutfitterMinimapButton.CursorStartY = vCursorY
@@ -34,21 +98,33 @@ function Outfitter._MinimapButton:MouseDown()
 	OutfitterMinimapButton.EnableFreeDrag = IsModifierKeyDown()
 end
 
-function Outfitter._MinimapButton:DragStart()
-	Outfitter.SchedulerLib:ScheduleUniqueRepeatingTask(0, self.UpdateDragPosition, self)
+local function _MouseUp(pButton, down)
+	if pButton == "LeftButton" then
+		OutfitterMinimapButton:ToggleMenu()
+		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	elseif pButton == "RightButton" then
+		OutfitterMinimapButton:HideMenu()
+		Outfitter:ToggleUI(true)
+	end
+
 end
 
-function Outfitter._MinimapButton:DragEnd()
-	Outfitter.SchedulerLib:UnscheduleTask(self.UpdateDragPosition, self)
+local function _DragStart()
+	OutfitterMinimapButton:HideMenu()
+	Outfitter.SchedulerLib:ScheduleUniqueRepeatingTask(0, OutfitterMinimapButton.UpdateDragPosition, OutfitterMinimapButton)
 end
 
-function Outfitter._MinimapButton:UpdateDragPosition()
+local function _DragStop()
+	Outfitter.SchedulerLib:UnscheduleTask(OutfitterMinimapButton.UpdateDragPosition, OutfitterMinimapButton)
+end
+
+local function _UpdateDragPosition()
 	-- Remember where the cursor was in case the user drags
 
 	local vCursorX, vCursorY = GetCursorPosition()
 
-	vCursorX = vCursorX / self:GetEffectiveScale()
-	vCursorY = vCursorY / self:GetEffectiveScale()
+	vCursorX = vCursorX / OutfitterMinimapButton:GetEffectiveScale()
+	vCursorY = vCursorY / OutfitterMinimapButton:GetEffectiveScale()
 
 	local vCursorDeltaX = vCursorX - OutfitterMinimapButton.CursorStartX
 	local vCursorDeltaY = vCursorY - OutfitterMinimapButton.CursorStartY
@@ -59,32 +135,18 @@ function Outfitter._MinimapButton:UpdateDragPosition()
 	local vCenterY = OutfitterMinimapButton.CenterStartY + vCursorDeltaY
 
 	if OutfitterMinimapButton.EnableFreeDrag then
-		self:SetPosition(vCenterX, vCenterY)
+		OutfitterMinimapButton:SetPosition(vCenterX, vCenterY)
 	else
 		-- Calculate the angle and set the new position
 
 		local vAngle = math.atan2(vCenterX, vCenterY)
 
-		self:SetPositionAngle(vAngle)
+		OutfitterMinimapButton:SetPositionAngle(vAngle)
 	end
 end
 
-function Outfitter:RestrictAngle(pAngle, pRestrictStart, pRestrictEnd)
-	if pAngle <= pRestrictStart
-	or pAngle >= pRestrictEnd then
-		return pAngle
-	end
 
-	local vDistance = (pAngle - pRestrictStart) / (pRestrictEnd - pRestrictStart)
-
-	if vDistance > 0.5 then
-		return pRestrictEnd
-	else
-		return pRestrictStart
-	end
-end
-
-function Outfitter._MinimapButton:SetPosition(pX, pY)
+local function _SetPosition(pX, pY)
 	gOutfitter_Settings.Options.MinimapButton.minimapPos = nil
 	gOutfitter_Settings.Options.MinimapButton.minimapX = pX
 	gOutfitter_Settings.Options.MinimapButton.minimapY = pY
@@ -92,7 +154,7 @@ function Outfitter._MinimapButton:SetPosition(pX, pY)
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", pX, pY)
 end
 
-function Outfitter._MinimapButton:SetPositionAngle(pAngle)
+local function _SetPositionAngle(pAngle)
 	local vAngle = pAngle
 
 	-- Restrict the angle from going over the date/time icon or the zoom in/out icons
@@ -120,16 +182,154 @@ function Outfitter._MinimapButton:SetPositionAngle(pAngle)
 
 	--local vRadius = 80
 
-	local vCenterX = math.sin(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
-	local vCenterY = math.cos(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS
+	local vCenterX = math.sin(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH
+	local vCenterY = math.cos(vAngle) * OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH
 
-	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
-	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX + 1, vCenterY + 1)
+	--OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
+	--OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX + 1, vCenterY + 1)
+	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX, vCenterY)
 
 	gOutfitter_Settings.Options.MinimapButton.minimapPos = vAngle
 end
 
-function Outfitter:GetMinimapDropdownItems(items)
+
+local function _HideMenu()
+	if not OutfitterMinimapButton.dropDownMenu then
+		return
+	end
+
+	OutfitterMinimapButton.dropDownMenu:Hide()
+	OutfitterMinimapButton.dropDownMenu = nil
+end
+
+local function _ShowMenu()
+	assert(not OutfitterMinimapButton.dropDownMenu, "can't show the minimap menu while it's already up")
+
+	-- Create the items
+	local items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
+
+		-- Close the menu after a short delay when a menu item is selected
+		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
+			OutfitterMinimapButton:HideMenu()
+		end)
+	end)
+
+	-- Get the items
+	Outfitter:GetMinimapDropdownItems(items)
+
+	-- Originally set to work off the cursor position. Now works off the Minimap button.
+	-- Get the cursor position
+	--[[
+	local cursorX, cursorY = GetCursorPosition()
+	local scaling = UIParent:GetEffectiveScale()
+	cursorX = cursorX / scaling
+	cursorY = cursorY / scaling
+	--]]
+
+	-- Use the screen quadrant as basis to anchor the menu
+	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
+	local top = string.find(quadrant, "TOP") and 1 or -1
+	local left = string.find(quadrant, "LEFT") and -1 or 1
+	local offsetX = left*10
+	local offsetY = top*10
+	local menuQuadrant = (string.find(quadrant, "TOP") and "BOTTOM" or "TOP") .. (string.find(quadrant, "LEFT") and "RIGHT" or "LEFT")
+
+	-- Show the menu
+	OutfitterMinimapButton.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
+	OutfitterMinimapButton.dropDownMenu:Show(items, quadrant, OutfitterMinimapButton, menuQuadrant, offsetX, offsetY) --DAC
+	OutfitterMinimapButton.dropDownMenu.cleanup = function ()
+		OutfitterMinimapButton.dropDownMenu = nil
+	end
+end
+
+local function _ToggleMenu()
+	-- Play a sound
+	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+
+	-- Hide the menu if it's showing
+	if OutfitterMinimapButton.dropDownMenu then
+		OutfitterMinimapButton.dropDownMenu:Hide()
+		return
+	end
+
+	-- Get the items
+	items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
+		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
+			if not OutfitterMinimapButton.dropDownMenu then
+				return
+			end
+
+			OutfitterMinimapButton.dropDownMenu:Hide()
+		end)
+	end)
+	Outfitter:GetMinimapDropdownItems(items)
+
+	-- Show the menu
+	OutfitterMinimapButton.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
+	OutfitterMinimapButton.dropDownMenu:Show(items, "TOPRIGHT", OutfitterMinimapButton, "TOPRIGHT", -20, -20)
+	OutfitterMinimapButton.dropDownMenu.cleanup = function ()
+		OutfitterMinimapButton.dropDownMenu = nil
+	end
+end
+
+-- Assign minimap functions
+local function RegisterOnDrag()
+	OutfitterMinimapButton:HookScript("OnDragStart", _DragStart)
+	OutfitterMinimapButton:HookScript("OnDragStop", _DragStop)
+end
+
+local function RegisterMinimapMethods()
+	OutfitterMinimapButton.UpdateDragPosition = _UpdateDragPosition
+	OutfitterMinimapButton.SetPosition = function (self, x, y) _SetPosition(x, y) end
+	OutfitterMinimapButton.SetPositionAngle = function (self, angle)_SetPositionAngle(angle) end
+	OutfitterMinimapButton.HideMenu = _HideMenu
+	OutfitterMinimapButton.ShowMenu = _ShowMenu
+	OutfitterMinimapButton.ToggleMenu = _ToggleMenu
+
+	RegisterOnDrag()
+
+	OutfitterMinimapButton:HookScript("OnMouseDown", _MouseDown)
+	OutfitterMinimapButton:HookScript("OnMouseUp", function (self, pButton, down) _MouseUp(pButton, down) end)
+	-- LDBIcon wipes out OnDrag functions when locking. Make sure to reassign them when it gets unlocked
+	if type(OutfitterMinimapButton.Lock) == "function" then
+		OutfitterMinimapButton:HookScript("Unlock", RegisterOnDrag)
+	end
+end
+
+---- Create Outfitter functions for the minimap
+
+-- Global call for initialization
+function addon:InitializeMinimapButton()
+	-- Register the minimap button with LDB?
+	local LDBIcon = nil
+	if C_AddOns.LoadAddOn("LibDBIcon-1.0") and C_AddOns.LoadAddOn("LibDataBroker-1.1") and C_AddOns.LoadAddOn("CallbackHandler-1.0") then
+		LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
+	end
+
+	if addon.LDB and LDBIcon then
+		-- LibDBIcon is the base for the minimap button
+		addon.LDBIcon = LDBIcon
+		addon.LDB.DataObj.OnTooltipShow = function () _OnEnter() end
+		LDBIcon:Register("Outfitter", addon.LDB.DataObj, gOutfitter_Settings.Options.MinimapButton)
+		OutfitterMinimapButton = LDBIcon:GetMinimapButton("Outfitter")
+	else
+		-- Outfitter is the base for the minimap button
+		CreateMinimapButton()
+		OutfitterMinimapButton:SetScript("OnEnter", _OnEnter)
+		OutfitterMinimapButton:SetScript("OnLeave", _OnLeave)
+	end
+	RegisterMinimapMethods()
+
+	if addon.Settings.Options.MinimapButton.minimapPos then
+		OutfitterMinimapButton:SetPositionAngle(addon.Settings.Options.MinimapButton.minimapPos)
+	else
+		OutfitterMinimapButton:SetPosition(addon.Settings.Options.MinimapButton.minimapX, addon.Settings.Options.MinimapButton.minimapY)
+	end
+
+	Outfitter:ShowMinimapButton(addon.Settings.Options.MinimapButton.ShowButton)
+end
+
+function addon:GetMinimapDropdownItems(items)
 	-- Just return if not initialized yet
 	if not self.Initialized then
 		return
@@ -151,7 +351,7 @@ function Outfitter:GetMinimapDropdownItems(items)
 	self:GetMinimapOutfitItems(items)
 end
 
-function Outfitter:GetMinimapOutfitItems(items)
+function addon:GetMinimapOutfitItems(items)
 	-- Just return if not initialized yet
 	if not self.Initialized then
 		return
@@ -213,137 +413,17 @@ function Outfitter:GetMinimapOutfitItems(items)
 	end
 end
 
-function Outfitter._MinimapButton:HideMenu()
-	if not self.dropDownMenu then
-		return
+function Outfitter:RestrictAngle(pAngle, pRestrictStart, pRestrictEnd)
+	if pAngle <= pRestrictStart
+	or pAngle >= pRestrictEnd then
+		return pAngle
 	end
 
-	self.dropDownMenu:Hide()
-	self.dropDownMenu = nil
-end
+	local vDistance = (pAngle - pRestrictStart) / (pRestrictEnd - pRestrictStart)
 
-function Outfitter._MinimapButton:ShowMenu()
-	assert(not self.dropDownMenu, "can't show the minimap menu while it's already up")
-
-	-- Create the items
-	local items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
-
-		-- Close the menu after a short delay when a menu item is selected
-		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
-			self:HideMenu()
-		end)
-	end)
-
-	-- Get the items
-	Outfitter:GetMinimapDropdownItems(items)
-
-	-- Originally set to work off the cursor position. Now works off the Minimap button.
-	-- Get the cursor position
-	--[[
-	local cursorX, cursorY = GetCursorPosition()
-	local scaling = UIParent:GetEffectiveScale()
-	cursorX = cursorX / scaling
-	cursorY = cursorY / scaling
-	--]]
-
-	-- Use the screen quadrant as basis to anchor the menu
-	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
-	local top = string.find(quadrant, "TOP") and 1 or -1
-	local left = string.find(quadrant, "LEFT") and -1 or 1
-	local offsetX = left*10
-	local offsetY = top*10
-	local menuQuadrant = (string.find(quadrant, "TOP") and "BOTTOM" or "TOP") .. (string.find(quadrant, "LEFT") and "RIGHT" or "LEFT")
-
-	-- Show the menu
-	self.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
-	self.dropDownMenu:Show(items, quadrant, OutfitterMinimapButton, menuQuadrant, offsetX, offsetY) --DAC
-	self.dropDownMenu.cleanup = function ()
-		self.dropDownMenu = nil
+	if vDistance > 0.5 then
+		return pRestrictEnd
+	else
+		return pRestrictStart
 	end
-end
-
-function Outfitter._MinimapButton:ToggleMenu()
-	-- Play a sound
-	PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-
-	-- Hide the menu if it's showing
-	if self.dropDownMenu then
-		self.dropDownMenu:Hide()
-		return
-	end
-
-	-- Get the items
-	items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
-		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
-			if not self.dropDownMenu then
-				return
-			end
-
-			self.dropDownMenu:Hide()
-		end)
-	end)
-	Outfitter:GetMinimapDropdownItems(items)
-
-	-- Show the menu
-	self.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
-	self.dropDownMenu:Show(items, "TOPRIGHT", self, "TOPRIGHT", -20, -20)
-	self.dropDownMenu.cleanup = function ()
-		self.dropDownMenu = nil
-	end
-end
-
--- Create the minimap button in code rather than XML
-function Outfitter._MinimapButton:CreateMinimapButton()
-	OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", MinimapBackdrop)
-	OutfitterMinimapButton:SetSize(32, 32)
-	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -80, 0)
-	OutfitterMinimapButton:SetMovable(true)
-	OutfitterMinimapButton:EnableMouse(true)
-
-	-- Textures
-	OutfitterMinimapButton:SetNormalTexture("Interface\\Addons\\Outfitter\\Textures\\MinimapButton")
-	local overlayTexture = OutfitterMinimapButton:CreateTexture(nil, "OVERLAY")
-	overlayTexture:SetSize(53, 53)
-	overlayTexture:SetTexture("Interface\\Minimap\\MiniMap-TrackingBorder")
-	overlayTexture:SetPoint("TOPLEFT")
-	local highlightTexture = OutfitterMinimapButton:CreateTexture(nil, "HIGHLIGHT")
-	highlightTexture:SetTexture("Interface\\Minimap\\UI-Minimap-ZoomButton-Highlight")
-	highlightTexture:SetBlendMode("ADD")
-	OutfitterMinimapButton:SetHighlightTexture(highlightTexture)
-
-	OutfitterMinimapButton.Inherit = Outfitter.Inherit
-	OutfitterMinimapButton:Inherit(Outfitter._MinimapButton)
-
-	-- Script Handlers
-	OutfitterMinimapButton:SetScript("OnDragStart", function(self)
-		self:HideMenu()
-		self:DragStart()
-	end)
-
-	OutfitterMinimapButton:SetScript("OnDragStop", function(self)
-		self:DragEnd()
-	end)
-
-	OutfitterMinimapButton:SetScript("OnMouseDown", function(self)
-		self:MouseDown()
-	end)
-
-	OutfitterMinimapButton:SetScript("OnClick", function(self, pButton, down)
-		if pButton == "LeftButton" then
-			self:ToggleMenu()
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		elseif pButton == "RightButton" then
-			self:HideMenu()
-			Outfitter:ToggleUI(true)
-		end
-	end)
-
-	OutfitterMinimapButton:SetScript("OnEnter", function(self)
-		Outfitter.AddNewbieTip(self, Outfitter.cMinimapButtonTitle, 1, 1, 1, Outfitter.cMinimapButtonDescription, 1)
-	end)
-
-	OutfitterMinimapButton:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-
 end
