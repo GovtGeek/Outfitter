@@ -1341,7 +1341,11 @@ function Outfitter:PlayerEnteringWorld()
 
 	self:FlushInventoryCache()
 
-	self:RegenEnabled()
+	if InCombatLockdown() then
+		self:RegenDisabled()
+	else
+		self:RegenEnabled()
+	end
 	self:UpdateAuraStates()
 
 	self:ScheduleUpdateZone()
