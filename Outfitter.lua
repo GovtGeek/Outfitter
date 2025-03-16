@@ -5053,7 +5053,8 @@ function Outfitter:Initialize()
 		self:InitializeSettings()
 	else
 		self.Settings = gOutfitter_Settings
-	end
+		self.Settings.Options.MinimapButton = self.Settings.Options.MinimapButton or MinimapButtonDefaults
+end
 
 	-- Initialize the outfits
 	self.CurrentOutfit = self:GetInventoryOutfit()

@@ -1,5 +1,6 @@
 local addonName, addon  = ...
 local OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 79
+
 if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
 	OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 105
 end
@@ -34,40 +35,6 @@ local function CreateMinimapButton()
 
 	OutfitterMinimapButton:RegisterForDrag("LeftButton")
 	OutfitterMinimapButton:RegisterForClicks("LeftButtonDown", "RightButtonUp")
-
-	-- Script Handlers
-	--[[
-	OutfitterMinimapButton:SetScript("OnDragStart", function(self)
-		self:HideMenu()
-		self:DragStart()
-	end)
-
-	OutfitterMinimapButton:SetScript("OnDragStop", function(self)
-		self:DragEnd()
-	end)
-
-	OutfitterMinimapButton:SetScript("OnMouseDown", function(self)
-		self:MouseDown()
-	end)
-
-	OutfitterMinimapButton:SetScript("OnClick", function(self, pButton, down)
-		if pButton == "LeftButton" then
-			self:ToggleMenu()
-			PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-		elseif pButton == "RightButton" then
-			self:HideMenu()
-			Outfitter:ToggleUI(true)
-		end
-	end)
-
-	OutfitterMinimapButton:SetScript("OnEnter", function(self)
-		Outfitter.AddNewbieTip(self, Outfitter.cMinimapButtonTitle, 1, 1, 1, Outfitter.cMinimapButtonDescription, 1)
-	end)
-
-	OutfitterMinimapButton:SetScript("OnLeave", function(self)
-		GameTooltip:Hide()
-	end)
-	--]]
 end
 
 ---- Define button functions
@@ -101,7 +68,6 @@ end
 local function _MouseUp(pButton, down)
 	if pButton == "LeftButton" then
 		OutfitterMinimapButton:ToggleMenu()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
 	elseif pButton == "RightButton" then
 		OutfitterMinimapButton:HideMenu()
 		Outfitter:ToggleUI(true)
@@ -119,6 +85,7 @@ local function _DragStop()
 end
 
 local function _UpdateDragPosition()
+
 	-- Remember where the cursor was in case the user drags
 
 	local vCursorX, vCursorY = GetCursorPosition()
@@ -147,7 +114,7 @@ end
 
 
 local function _SetPosition(pX, pY)
-	gOutfitter_Settings.Options.MinimapButton.minimapPos = nil
+	gOutfitter_Settings.Options.MinimapButton.angle = nil
 	gOutfitter_Settings.Options.MinimapButton.minimapX = pX
 	gOutfitter_Settings.Options.MinimapButton.minimapY = pY
 
@@ -189,7 +156,7 @@ local function _SetPositionAngle(pAngle)
 	--OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX + 1, vCenterY + 1)
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX, vCenterY)
 
-	gOutfitter_Settings.Options.MinimapButton.minimapPos = vAngle
+	gOutfitter_Settings.Options.MinimapButton.angle = vAngle
 end
 
 
@@ -204,6 +171,7 @@ end
 
 local function _ShowMenu()
 	assert(not OutfitterMinimapButton.dropDownMenu, "can't show the minimap menu while it's already up")
+	_OnLeave() -- Hide the tooltip when we show the menu to prevent overlapping
 
 	-- Create the items
 	local items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
@@ -220,13 +188,13 @@ local function _ShowMenu()
 	-- Originally set to work off the cursor position. Now works off the Minimap button.
 	-- Get the cursor position
 	--[[
-	local cursorX, cursorY = GetCursorPosition()
 	local scaling = UIParent:GetEffectiveScale()
 	cursorX = cursorX / scaling
 	cursorY = cursorY / scaling
 	--]]
 
 	-- Use the screen quadrant as basis to anchor the menu
+	local cursorX, cursorY = GetCursorPosition()
 	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
 	local top = string.find(quadrant, "TOP") and 1 or -1
 	local left = string.find(quadrant, "LEFT") and -1 or 1
@@ -248,27 +216,9 @@ local function _ToggleMenu()
 
 	-- Hide the menu if it's showing
 	if OutfitterMinimapButton.dropDownMenu then
-		OutfitterMinimapButton.dropDownMenu:Hide()
-		return
-	end
-
-	-- Get the items
-	items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
-		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
-			if not OutfitterMinimapButton.dropDownMenu then
-				return
-			end
-
-			OutfitterMinimapButton.dropDownMenu:Hide()
-		end)
-	end)
-	Outfitter:GetMinimapDropdownItems(items)
-
-	-- Show the menu
-	OutfitterMinimapButton.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
-	OutfitterMinimapButton.dropDownMenu:Show(items, "TOPRIGHT", OutfitterMinimapButton, "TOPRIGHT", -20, -20)
-	OutfitterMinimapButton.dropDownMenu.cleanup = function ()
-		OutfitterMinimapButton.dropDownMenu = nil
+		OutfitterMinimapButton:HideMenu()
+	else
+		OutfitterMinimapButton:ShowMenu()
 	end
 end
 
@@ -281,7 +231,7 @@ end
 local function RegisterMinimapMethods()
 	OutfitterMinimapButton.UpdateDragPosition = _UpdateDragPosition
 	OutfitterMinimapButton.SetPosition = function (self, x, y) _SetPosition(x, y) end
-	OutfitterMinimapButton.SetPositionAngle = function (self, angle)_SetPositionAngle(angle) end
+	OutfitterMinimapButton.SetPositionAngle = function (self, angle) _SetPositionAngle(angle) end
 	OutfitterMinimapButton.HideMenu = _HideMenu
 	OutfitterMinimapButton.ShowMenu = _ShowMenu
 	OutfitterMinimapButton.ToggleMenu = _ToggleMenu
@@ -290,10 +240,6 @@ local function RegisterMinimapMethods()
 
 	OutfitterMinimapButton:HookScript("OnMouseDown", _MouseDown)
 	OutfitterMinimapButton:HookScript("OnMouseUp", function (self, pButton, down) _MouseUp(pButton, down) end)
-	-- LDBIcon wipes out OnDrag functions when locking. Make sure to reassign them when it gets unlocked
-	if type(OutfitterMinimapButton.Lock) == "function" then
-		OutfitterMinimapButton:HookScript("Unlock", RegisterOnDrag)
-	end
 end
 
 ---- Create Outfitter functions for the minimap
@@ -301,29 +247,29 @@ end
 -- Global call for initialization
 function addon:InitializeMinimapButton()
 	-- Register the minimap button with LDB?
-	local LDBIcon = nil
-	if C_AddOns.LoadAddOn("LibDBIcon-1.0") and C_AddOns.LoadAddOn("LibDataBroker-1.1") and C_AddOns.LoadAddOn("CallbackHandler-1.0") then
-		LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
-	end
+	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
 
 	if addon.LDB and LDBIcon then
 		-- LibDBIcon is the base for the minimap button
 		addon.LDBIcon = LDBIcon
-		addon.LDB.DataObj.OnTooltipShow = function () _OnEnter() end
+		addon.LDB.DataObj.OnEnter = function () _OnEnter() end
+		addon.LDB.DataObj.OnLeave = function () _OnLeave() end
 		LDBIcon:Register("Outfitter", addon.LDB.DataObj, gOutfitter_Settings.Options.MinimapButton)
 		OutfitterMinimapButton = LDBIcon:GetMinimapButton("Outfitter")
 	else
 		-- Outfitter is the base for the minimap button
 		CreateMinimapButton()
-		OutfitterMinimapButton:SetScript("OnEnter", _OnEnter)
-		OutfitterMinimapButton:SetScript("OnLeave", _OnLeave)
+		OutfitterMinimapButton:HookScript("OnEnter", _OnEnter)
+		OutfitterMinimapButton:HookScript("OnLeave", _OnLeave)
 	end
 	RegisterMinimapMethods()
 
-	if addon.Settings.Options.MinimapButton.minimapPos then
-		OutfitterMinimapButton:SetPositionAngle(addon.Settings.Options.MinimapButton.minimapPos)
-	else
-		OutfitterMinimapButton:SetPosition(addon.Settings.Options.MinimapButton.minimapX, addon.Settings.Options.MinimapButton.minimapY)
+	if not addon.LDBIcon then
+		if addon.Settings.Options.MinimapButton.angle ~= nil then
+			OutfitterMinimapButton:SetPositionAngle(addon.Settings.Options.MinimapButton.angle)
+		else
+			OutfitterMinimapButton:SetPosition(addon.Settings.Options.MinimapButton.minimapX, addon.Settings.Options.MinimapButton.minimapY)
+		end
 	end
 
 	Outfitter:ShowMinimapButton(addon.Settings.Options.MinimapButton.ShowButton)
