@@ -7,22 +7,12 @@ function Outfitter.LDB:Initialize()
 		type = "data source",
 		icon = "Interface\\Icons\\INV_Chest_Cloth_21",
 		text = "Outfitter",
-		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end,
+		--OnClick = function(pFrame, pButton) print(pFrame:GetName()) end,--pFrame:OnClick(pFrame, pButton) end,
 	})
 
 	Outfitter:RegisterOutfitEvent("WEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
 	Outfitter:RegisterOutfitEvent("UNWEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
 	Outfitter:RegisterOutfitEvent("OUTFITTER_INIT", function (...) self:OutfitEvent(...) end)
-end
-
-function Outfitter.LDB:OnClick(pFrame, pButton)
-	if pButton == "LeftButton" then
-		self:ToggleMenu()
-		PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
-	else
-		self:HideMenu()
-		Outfitter:ToggleUI(true)
-	end
 end
 
 function Outfitter.LDB:OutfitEvent(pEvent, pOutfitName, pOutfit)
@@ -34,6 +24,18 @@ function Outfitter.LDB:OutfitEvent(pEvent, pOutfitName, pOutfit)
 	else
 		self.DataObj.text = Outfitter.cTitle
 		self.DataObj.icon = "Interface\\AddOns\\Outfitter\\Textures\\Icon"
+	end
+end
+
+--[[
+function Outfitter.LDB:OnClick(pFrame, pButton)
+	if pButton == "LeftButton" then
+		print(pFrame:GetName())
+		pFrame:ToggleMenu()
+		--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+	else
+		pFrame:HideMenu()
+		Outfitter:ToggleUI(true)
 	end
 end
 
@@ -61,14 +63,6 @@ function Outfitter.LDB:ShowMenu()
 	Outfitter:GetMinimapDropdownItems(items)
 
 	-- Originally set to work off the cursor position. Now works off the Minimap button.
-	-- Get the cursor position
-	--[[
-	local cursorX, cursorY = GetCursorPosition()
-	local scaling = UIParent:GetEffectiveScale()
-	cursorX = cursorX / scaling
-	cursorY = cursorY / scaling
-	--]]
-
 	-- Use the screen quadrant as basis to anchor the menu
 	local cursorX, cursorY = GetCursorPosition()
 	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
@@ -95,5 +89,6 @@ function Outfitter.LDB:HideMenu()
 	self.dropDownMenu:Hide()
 	self.dropDownMenu = nil
 end
+--]]
 
 Outfitter.LDB:Initialize()
