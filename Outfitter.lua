@@ -5049,7 +5049,8 @@ function Outfitter:Initialize()
 		self:InitializeSettings()
 	else
 		self.Settings = gOutfitter_Settings
-	end
+		self.Settings.Options.MinimapButton = self.Settings.Options.MinimapButton or MinimapButtonDefaults
+end
 
 	-- Initialize the outfits
 	self.CurrentOutfit = self:GetInventoryOutfit()
@@ -5083,7 +5084,7 @@ function Outfitter:Initialize()
 	end
 
 	-- Set up the minimap button
-	gOutfitter_Settings.Options.MinimapButton = gOutfitter_Settings.Options.MinimapButton or MinimapButtonDefaults
+	--gOutfitter_Settings.Options.MinimapButton = gOutfitter_Settings.Options.MinimapButton or MinimapButtonDefaults
 	Outfitter:InitializeMinimapButton()
 	Outfitter:ShowMinimapButton(self.Settings.Options.MinimapButton.ShowButton)
 
@@ -5301,6 +5302,7 @@ function Outfitter:InitializeSettings()
 		LayerIndex = {},
 		RecentCompleteOutfits = {},
 	}
+	gOutfitter_Settings.Options.MinimapButton = MinimapButtonDefaults
 
 	self.Settings = gOutfitter_Settings
 
