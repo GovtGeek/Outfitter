@@ -34,7 +34,7 @@ local function CreateMinimapButton()
 	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, "Interface\\Icons\\INV_Chest_Cloth_21")
 
 	OutfitterMinimapButton:RegisterForDrag("LeftButton")
-	OutfitterMinimapButton:RegisterForClicks("LeftButtonDown", "RightButtonUp")
+	OutfitterMinimapButton:RegisterForClicks("LeftButtonDown", "RightButtonDown")
 end
 
 ---- Define button functions
