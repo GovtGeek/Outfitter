@@ -355,6 +355,11 @@ Outfitter.OutfitInfoCache = {}
 
 Outfitter.MaxSimpleTitles = 10
 
+local MinimapButtonDefaults = {
+	["ShowButton"] = true,
+	["minimapPos"] = -1.5708,
+}
+
 function Outfitter:FormatItemList(pList)
 	local vNumItems = #pList
 
@@ -1259,10 +1264,13 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 		if not CharacterFrameTab3:GetRight() then
 			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
 		end
+		Outfitter:OpenUI()
+		--[[
 		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
 		CharacterFrame_ShowSubFrame("PaperDollFrame")
 		CharacterFrame:Show()
 		OutfitterFrame:Show()
+		]]
 	end
 end
 
@@ -1333,7 +1341,11 @@ function Outfitter:PlayerEnteringWorld()
 
 	self:FlushInventoryCache()
 
-	self:RegenEnabled()
+	if InCombatLockdown() then
+		self:RegenDisabled()
+	else
+		self:RegenEnabled()
+	end
 	self:UpdateAuraStates()
 
 	self:ScheduleUpdateZone()
@@ -1476,13 +1488,17 @@ function Outfitter:DispatchOutfitEvent(pEvent, pParameter1, pParameter2)
 end
 
 function Outfitter:UpdateCurrentOutfitIcon()
+	if not OutfitterMinimapButton then return end
 	local _, vOutfit = self:GetCurrentOutfitInfo()
 	local vTexture = self.OutfitBar:GetOutfitTexture(vOutfit)
-
-	if type(vTexture) == "number" then
-		vTexture = 	self:ConvertTextureIDToPath(vTexture)
+	if OutfitterMinimapButton.CurrentOutfitTexture and vTexture then
+		if type(vTexture) == "number" then
+			vTexture = 	self:ConvertTextureIDToPath(vTexture)
+		end
+		SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+	elseif OutfitterMinimapButton.icon and vTexture then
+		SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
 	end
-	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
 end
 
 function Outfitter:PlayerInteractionManagerFrameShow(event, interactionType)
@@ -2560,15 +2576,27 @@ function Outfitter:SetShowItemComparisons(pShowComparisons)
 end
 
 function Outfitter:SetShowMinimapButton(pShowButton)
-	self.Settings.Options.HideMinimapButton = not pShowButton
+	self.Settings.Options.MinimapButton.ShowButton = pShowButton
 
-	if self.Settings.Options.HideMinimapButton then
-		OutfitterMinimapButton:Hide()
-	else
-		OutfitterMinimapButton:Show()
-	end
-
+	Outfitter:ShowMinimapButton(pShowButton)
 	self:Update(false)
+end
+
+function Outfitter:ShowMinimapButton(bShowButton)
+	-- Showing/Hiding the minimap button is different depending on LDBIcon availability
+	if Outfitter.LDBIcon then
+		if bShowButton then
+			Outfitter.LDBIcon:Show("Outfitter")
+		else
+			Outfitter.LDBIcon:Hide("Outfitter")
+		end
+	else
+		if bShowButton then
+			OutfitterMinimapButton:Show()
+		else
+			OutfitterMinimapButton:Hide()
+		end
+	end
 end
 
 function Outfitter:SetQuickslotFlyouts(pShowButton)
@@ -2690,6 +2718,7 @@ end
 function Outfitter.AddNewbieTip(pItem, pNormalText, pRed, pGreen, pBlue, pNewbieText, pNoNormalText)
 	if GetCVarBool("UberTooltips") then
 		GameTooltip_SetDefaultAnchor(GameTooltip, pItem)
+		GameTooltip:SetOwner(pItem, "ANCHOR_RIGHT")
 		if pNormalText then
 			GameTooltip:SetText(pNormalText, pRed, pGreen, pBlue)
 			GameTooltip:AddLine(pNewbieText, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
@@ -3083,7 +3112,7 @@ function Outfitter:Update(pOutfitsChanged)
 				0, 0)                           -- smallHighlightWidth, bigHighlightWidth
 	elseif self.CurrentPanel == 2 then -- Options panel
 		OutfitterAutoSwitch:SetChecked(self.Settings.Options.DisableAutoSwitch)
-		OutfitterShowMinimapButton:SetChecked(not self.Settings.Options.HideMinimapButton)
+		OutfitterShowMinimapButton:SetChecked(self.Settings.Options.MinimapButton.ShowButton)
 		OutfitterTooltipInfo:SetChecked(not self.Settings.Options.DisableToolTipInfo)
 		OutfitterShowHotkeyMessages:SetChecked(not self.Settings.Options.DisableHotkeyMessages)
 		OutfitterShowOutfitBar:SetChecked(self.Settings.OutfitBar.ShowOutfitBar)
@@ -5024,7 +5053,8 @@ function Outfitter:Initialize()
 		self:InitializeSettings()
 	else
 		self.Settings = gOutfitter_Settings
-	end
+		self.Settings.Options.MinimapButton = self.Settings.Options.MinimapButton or MinimapButtonDefaults
+end
 
 	-- Initialize the outfits
 	self.CurrentOutfit = self:GetInventoryOutfit()
@@ -5057,24 +5087,10 @@ function Outfitter:Initialize()
 		end
 	end
 
-	-- Set the minimap button
-
-	if self.Settings.Options.HideMinimapButton then
-		OutfitterMinimapButton:Hide()
-	else
-		OutfitterMinimapButton:Show()
-	end
-
-	if not self.Settings.Options.MinimapButtonAngle
-	and not self.Settings.Options.MinimapButtonX then
-		self.Settings.Options.MinimapButtonAngle = -1.5708
-	end
-
-	if self.Settings.Options.MinimapButtonAngle then
-		OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButtonAngle)
-	else
-		OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
-	end
+	-- Set up the minimap button
+	--gOutfitter_Settings.Options.MinimapButton = gOutfitter_Settings.Options.MinimapButton or MinimapButtonDefaults
+	Outfitter:InitializeMinimapButton()
+	Outfitter:ShowMinimapButton(self.Settings.Options.MinimapButton.ShowButton)
 
 	-- Adjust the Blizzard UI and Outfitter frames
 	if Outfitter:IsMainline() or Outfitter:IsClassicCataclysm() then
@@ -5290,6 +5306,7 @@ function Outfitter:InitializeSettings()
 		LayerIndex = {},
 		RecentCompleteOutfits = {},
 	}
+	gOutfitter_Settings.Options.MinimapButton = MinimapButtonDefaults
 
 	self.Settings = gOutfitter_Settings
 
@@ -6486,18 +6503,15 @@ function Outfitter:ToggleUI(pToggleCharWindow)
 	if self:IsOpen() then
 		OutfitterFrame:Hide()
 
-		if pToggleCharWindow then
-			HideUIPanel(CharacterFrame)
-		end
+		--Assume that if Outfitter is open, so is the PaperDollFrame
+		ToggleCharacter("PaperDollFrame")
 	else
 		self:OpenUI()
 	end
 end
 
 function Outfitter:OpenUI()
-	ShowUIPanel(CharacterFrame)
-
-	--CharacterFrame_ShowSubFrame("PaperDollFrame")
+	-- Make sure the PaperDollFrame is visible
 	if not PaperDollFrame:IsVisible() then
 		ToggleCharacter("PaperDollFrame")
 	end
