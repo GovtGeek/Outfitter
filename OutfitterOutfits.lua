@@ -552,8 +552,7 @@ function Outfitter._OutfitMethodsEM:MarkEnabledSlots()
 	for vSlotName, vSlotID in pairs(Outfitter.cSlotIDs) do
 		local vCheckbox = _G["OutfitterEnable"..vSlotName]
 
-		if vCheckbox:GetChecked()
-		and not vCheckbox.IsUnknown then
+		if vCheckbox:GetChecked() and not vCheckbox.IsUnknown then
 			-- SaveEquipmentSet will pick it up
 		else
 			C_EquipmentSet.IgnoreSlotForSave(vSlotID)
@@ -1004,14 +1003,11 @@ function Outfitter._OutfitMethodsEM:SaveEquipmentSet(iconID)
 	Outfitter:StopMonitoringEM()
 
 	-- Create the set if it's new
-	if  not self.equipmentSetID then
-	   C_EquipmentSet.CreateEquipmentSet(self.Name, iconID)
-	   self.equipmentSetID = C_EquipmentSet.GetEquipmentSetID(self.Name)
-
-	-- Otherwise save it
-	else
-		C_EquipmentSet.SaveEquipmentSet(self.equipmentSetID, iconID)
+	if not self.equipmentSetID then
+		C_EquipmentSet.CreateEquipmentSet(self.Name, iconID)
+		self.equipmentSetID = C_EquipmentSet.GetEquipmentSetID(self.Name)
 	end
+	C_EquipmentSet.SaveEquipmentSet(self.equipmentSetID, iconID)
 
 	-- Resume monitoring EM events
 	Outfitter:StartMonitoringEM()
