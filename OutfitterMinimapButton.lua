@@ -118,6 +118,7 @@ local function _SetPosition(pX, pY)
 	gOutfitter_Settings.Options.MinimapButton.minimapX = pX
 	gOutfitter_Settings.Options.MinimapButton.minimapY = pY
 
+	OutfitterMinimapButton:ClearAllPoints()
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", pX, pY)
 end
 
@@ -154,9 +155,12 @@ local function _SetPositionAngle(pAngle)
 
 	--OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX - 1, vCenterY - 1)
 	--OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX + 1, vCenterY + 1)
+	OutfitterMinimapButton:ClearAllPoints()
 	OutfitterMinimapButton:SetPoint("CENTER", Minimap, "CENTER", vCenterX, vCenterY)
 
 	gOutfitter_Settings.Options.MinimapButton.angle = vAngle
+	gOutfitter_Settings.Options.MinimapButton.minimapX = nil
+	gOutfitter_Settings.Options.MinimapButton.minimapY = nil
 end
 
 
@@ -246,6 +250,11 @@ end
 
 -- Global call for initialization
 function addon:InitializeMinimapButton()
+	-- Retire the old setting
+	if addon.Settings.Options.MinimapButtonAngle then addon.Settings.Options.MinimapButtonAngle = nil end
+	-- The button was already initialized
+	if OutfitterMinimapButton then return end
+
 	-- Register the minimap button with LDB?
 	local LDBIcon = LibStub and LibStub("LibDBIcon-1.0", true) or nil
 
@@ -264,15 +273,25 @@ function addon:InitializeMinimapButton()
 	end
 	RegisterMinimapMethods()
 
-	if not addon.LDBIcon then
-		if addon.Settings.Options.MinimapButton.angle ~= nil then
-			OutfitterMinimapButton:SetPositionAngle(addon.Settings.Options.MinimapButton.angle)
-		else
-			OutfitterMinimapButton:SetPosition(addon.Settings.Options.MinimapButton.minimapX, addon.Settings.Options.MinimapButton.minimapY)
+	-- Hook the SetPoint function to use the free x,y if they're set
+	-- This may be VERY bad.
+	hooksecurefunc(OutfitterMinimapButton, "SetPoint", function (self, point, relativeTo, relativePoint, x, y)
+		if addon.Settings.Options.MinimapButton.minimapX and addon.Settings.Options.MinimapButton.minimapY then
+			if addon.Settings.Options.MinimapButton.minimapX ~= x and addon.Settings.Options.MinimapButton.minimapY ~= y then
+				OutfitterMinimapButton:SetPosition(addon.Settings.Options.MinimapButton.minimapX, addon.Settings.Options.MinimapButton.minimapY)
+			end
 		end
-	end
+	end)
 
+	-- Show/Hide the button before we place it (if LDBIcon is enabled, it will do a default placement)
 	Outfitter:ShowMinimapButton(addon.Settings.Options.MinimapButton.ShowButton)
+
+	-- Make the free position the overriding setting
+	if addon.Settings.Options.MinimapButton.minimapX and addon.Settings.Options.MinimapButton.minimapY then
+		OutfitterMinimapButton:SetPosition(addon.Settings.Options.MinimapButton.minimapX, addon.Settings.Options.MinimapButton.minimapY)
+	elseif not addon.LDBIcon and addon.Settings.Options.MinimapButton.angle ~= nil then
+		OutfitterMinimapButton:SetPositionAngle(addon.Settings.Options.MinimapButton.angle)
+	end
 end
 
 function addon:GetMinimapDropdownItems(items)
