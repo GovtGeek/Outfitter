@@ -1225,9 +1225,11 @@ local t = {
 	}
 }
 
---[[function testlibdropdown()
-	LibStub("LibDropdown-1.0"):OpenAce3Menu(t)
-end]]
+--[[
+function testlibdropdown()
+	LibStub("LibDropdownMC-1.0"):OpenAce3Menu(t)
+end
+--]]
 
 WorldFrame:HookScript("OnMouseDown", function()
 	if openMenu then

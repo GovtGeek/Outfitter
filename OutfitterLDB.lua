@@ -7,7 +7,7 @@ function Outfitter.LDB:Initialize()
 		type = "data source",
 		icon = "Interface\\Icons\\INV_Chest_Cloth_21",
 		text = "Outfitter",
-		--OnClick = function(pFrame, pButton) print(pFrame:GetName()) end,--pFrame:OnClick(pFrame, pButton) end,
+		OnClick = function(pFrame, pButton) self:OnClick(pFrame, pButton) end,
 	})
 
 	Outfitter:RegisterOutfitEvent("WEAR_OUTFIT", function (...) self:OutfitEvent(...) end)
@@ -27,14 +27,12 @@ function Outfitter.LDB:OutfitEvent(pEvent, pOutfitName, pOutfit)
 	end
 end
 
---[[
+----[[
 function Outfitter.LDB:OnClick(pFrame, pButton)
 	if pButton == "LeftButton" then
-		print(pFrame:GetName())
-		pFrame:ToggleMenu()
-		--PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
+		self:ToggleMenu()
 	else
-		pFrame:HideMenu()
+		self:HideMenu()
 		Outfitter:ToggleUI(true)
 	end
 end
@@ -51,8 +49,7 @@ function Outfitter.LDB:ShowMenu()
 	assert(not self.dropDownMenu, "can't show the LDB menu while it's already up")
 
 	-- Create the items
-	items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
-		
+	local items = Outfitter:New(Outfitter.UIElementsLib._DropDownMenuItems, function ()
 		-- Close the menu after a short delay when a menu item is selected
 		Outfitter.SchedulerLib:ScheduleTask(0.1, function ()
 			self:HideMenu()
@@ -62,19 +59,17 @@ function Outfitter.LDB:ShowMenu()
 	-- Get the items
 	Outfitter:GetMinimapDropdownItems(items)
 
-	-- Originally set to work off the cursor position. Now works off the Minimap button.
-	-- Use the screen quadrant as basis to anchor the menu
+	-- The LDB portion should work off cursor position. The LDBIcon portion should work off the minimap position.
 	local cursorX, cursorY = GetCursorPosition()
+	local scaling = UIParent:GetEffectiveScale()
+	cursorX = cursorX / scaling
+	cursorY = cursorY / scaling
+
 	local quadrant = Outfitter:GetScreenQuadrantFromCoordinates(cursorX, cursorY)
-	local top = string.find(quadrant, "TOP") and 1 or -1
-	local left = string.find(quadrant, "LEFT") and -1 or 1
-	local offsetX = left*10
-	local offsetY = top*10
-	local menuQuadrant = (string.find(quadrant, "TOP") and "BOTTOM" or "TOP") .. (string.find(quadrant, "LEFT") and "RIGHT" or "LEFT")
 
 	-- Show the menu
 	self.dropDownMenu = Outfitter:New(Outfitter.UIElementsLib._DropDownMenu)
-	self.dropDownMenu:Show(items, quadrant, OutfitterMinimapButton, menuQuadrant, offsetX, offsetY) --DAC
+	self.dropDownMenu:Show(items, quadrant, UIParent, "BOTTOMLEFT", cursorX, cursorY)
 
 	self.dropDownMenu.cleanup = function ()
 		self.dropDownMenu = nil
