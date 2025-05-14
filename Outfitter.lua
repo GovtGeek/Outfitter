@@ -3985,7 +3985,7 @@ end
 function Outfitter:GetEmptyBankSlotList()
 	local vEmptyBagSlots = {}
 
-	local vBagIndex = NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
+	local vBagIndex = Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
 	local vBagSlotIndex = 1
 
 	while true do
@@ -3994,7 +3994,7 @@ function Outfitter:GetEmptyBankSlotList()
 		if not vBagSlotInfo then
 			return vEmptyBagSlots
 
-		elseif vBagSlotInfo.BagIndex > NUM_TOTAL_EQUIPPED_BAG_SLOTS
+		elseif vBagSlotInfo.BagIndex > Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS
 		or vBagSlotInfo.BagIndex < 0 then
 			table.insert(vEmptyBagSlots, vBagSlotInfo)
 		end

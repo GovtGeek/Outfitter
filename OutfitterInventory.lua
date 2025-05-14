@@ -644,7 +644,6 @@ function Outfitter:GetNumBags()
 	if self.BankFrameIsOpen then
 		return Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, -1
 	else
-		print("Ran GetNumBags:", Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS)
 		return Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS, 0
 	end
 end
