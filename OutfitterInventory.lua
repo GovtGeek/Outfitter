@@ -1,9 +1,4 @@
 ----------------------------------------
--- Constants
-----------------------------------------
-if _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] == nil then _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] = NUM_BAG_SLOTS end
-
-----------------------------------------
 -- General
 ----------------------------------------
 function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
@@ -279,7 +274,7 @@ function Outfitter:GetBagSlotItemName(bag, slot)
 end
 
 function Outfitter:IsBankBagIndex(pBagIndex)
-	return pBagIndex and (pBagIndex > NUM_TOTAL_EQUIPPED_BAG_SLOTS or pBagIndex < 0)
+	return pBagIndex and (pBagIndex > Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS or pBagIndex < 0)
 end
 
 ----------------------------------------
@@ -647,16 +642,16 @@ end
 
 function Outfitter:GetNumBags()
 	if self.BankFrameIsOpen then
-		return NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, -1
+		return Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, -1
 	else
-		return NUM_TOTAL_EQUIPPED_BAG_SLOTS, 0
+		return Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS, 0
 	end
 end
 
 function Outfitter:GetBagList()
 	local vBagList = {}
 	if self.BankFrameIsOpen then
-		for vIndex = -1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
+		for vIndex = -1, Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
 			vBagList[vIndex] = true
 		end
 	else

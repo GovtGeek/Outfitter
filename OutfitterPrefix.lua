@@ -21,3 +21,6 @@ Outfitter.LibDropdown = LibStub("LibDropdownMC-1.0")
 
 Outfitter.LBI = Outfitter.LibBabbleInventory:GetLookupTable()
 Outfitter.LSZ = Outfitter.LibBabbleSubZone:GetLookupTable()
+
+-- Outfitter versions of globals
+Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS = _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] or NUM_BAG_SLOTS
