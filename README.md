@@ -1,3 +1,1 @@
-Outfitter for Classic (Vanilla), Wrath of the Lich King, and Retail
-
-Forked from https://github.com/cdmichaelb/Outfitter
+Outfitter for Classic Era (Vanilla, Season of Discovery, Hardcore), Cataclysm Classic, and Retail
