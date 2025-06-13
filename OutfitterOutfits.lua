@@ -243,7 +243,7 @@ function Outfitter._OutfitMethods:CheckOutfit(pCategoryID)
 		self.Items = {}
 	end
 
-	if Outfitter:IsMainline() then
+	if IsMainline then
 		-- Ammo slot is no longer in the game, ensure it's removed from the database too
 		self.Items.AmmoSlot = nil;
 
@@ -667,7 +667,7 @@ function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
 	end
 
 	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex
-	if Outfitter:IsMainline() then
+	if IsMainline then
 		vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
 	else
 		vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)

@@ -11,9 +11,18 @@ Outfitter.Debug =
 	Optimize = false,
 }
 ----------------------------------------
+local IsMainline = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local IsClassicPandaria = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_MISTS_OF_PANDARIA
+local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
+local IsClassicWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+
+--[[
 function Outfitter:IsMainline()
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
+--]]
+
 ----[[--
 function Outfitter:IsClassicCataclysm()
 	--return WOW_PROJECT_ID == WOW_PROJECT_CATA_CLASSIC
@@ -1200,9 +1209,11 @@ Outfitter.cShapeshiftIDInfo = {
 --[[--
 	Modify entries for a specific version (i.e. Add RangedSlot for non-retail)
 --]]--
-if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-	table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
-	Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
+if not IsMainline then
+	if not IsClassicPandaria then
+		table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
+		Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
+	end
 	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
 	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
 	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
@@ -1223,15 +1234,18 @@ for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
 end
 function Outfitter:OutfitterButtonAdjust()
-	if Outfitter:IsClassicEra() then
+	if IsClassicEra then
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -40)
 	end
 	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
 		OutfitterButton:ClearAllPoints()
 		OutfitterButton:SetPoint("BOTTOMRIGHT", RuneFrameControlButton, "BOTTOMLEFT", 10, -4)
 	end
-	if not Outfitter:IsClassicCataclysm() then
-		--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
+	if IsClassicCataclysm or IsClassicPandaria then
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
+	--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
+	if not IsClassicCataclysm then
 		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
 			-- Scoot the title drop down over a little and adjust the button and frame
 			if PlayerTitleDropDown then
@@ -1250,10 +1264,10 @@ function Outfitter:OutfitterButtonAdjust()
 			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
 			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 		end
-		--]]--
 	else
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
 	end
+	--]]--
 end
 
 function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
@@ -2859,7 +2873,7 @@ end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
 	--return -- uncomment if we want to disable storage
-	if not Outfitter:IsMainline() and C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
+	if not IsMainline and C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
 		self:NoteMessage("Can't store on server: Equipment Manager not enabled")
 		local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
 		--vCheckbox:SetButtonState("NORMAL")
@@ -3922,7 +3936,7 @@ function Outfitter:GetBagType(pBagIndex)
 		return nil
 	end
 
-	return GetItemFamily(vItemLink)
+	return C_Item.GetItemFamily(vItemLink)
 end
 
 function Outfitter:GetEmptyBagSlot(pStartBagIndex, pStartBagSlotIndex, pIncludeBank)
@@ -4731,7 +4745,7 @@ function Outfitter:GetCurrentZoneIDs(pRecycleTable)
 		vZoneSpecialIDMap = self.cZoneSpecialIDMap[GetRealZoneText()]
 	end
 
-	local vPVPType, vIsArena, vFactionName = GetZonePVPInfo()
+	local vPVPType, vIsArena, vFactionName = C_PvP.GetZonePVPInfo()
 
 	if vZoneSpecialIDMap then
 		for _, vZoneSpecialID in ipairs(vZoneSpecialIDMap) do
@@ -4834,12 +4848,17 @@ function Outfitter:AddOutfit(pOutfit)
 	vCategoryID = pOutfit:CalculateOutfitCategory()
 
 	if not self.Settings.Outfits then
+		Outfitter:InitializeOutfits()
+	end
+	--[[
+	if not self.Settings.Outfits then
 		self.Settings.Outfits = {}
 	end
 
 	if not self.Settings.Outfits[vCategoryID] then
 		self.Settings.Outfits[vCategoryID] = {}
 	end
+	--]]
 
 	table.insert(self.Settings.Outfits[vCategoryID], pOutfit)
 	pOutfit.CategoryID = vCategoryID
@@ -5044,6 +5063,12 @@ function Outfitter:Initialize()
 		self.cSlotIDs[vInventorySlot] = vSlotID
 		self.cSlotIDToInventorySlot[vSlotID] = vInventorySlot
 	end
+	-- Make sure the ranged slot checkbox is not visible in classic pandaria/mainline
+	if IsMainline or IsClassicPandaria then
+		if _G["OutfitterEnableRangedSlot"] then
+			OutfitterEnableRangedSlot:Hide()
+		end
+	end
 
 	-- Initialize the scripts
 	Outfitter:InitializeScripts()
@@ -5054,7 +5079,7 @@ function Outfitter:Initialize()
 	else
 		self.Settings = gOutfitter_Settings
 		self.Settings.Options.MinimapButton = self.Settings.Options.MinimapButton or MinimapButtonDefaults
-end
+	end
 
 	-- Initialize the outfits
 	self.CurrentOutfit = self:GetInventoryOutfit()
@@ -5093,10 +5118,10 @@ end
 	Outfitter:ShowMinimapButton(self.Settings.Options.MinimapButton.ShowButton)
 
 	-- Adjust the Blizzard UI and Outfitter frames
-	if Outfitter:IsMainline() or Outfitter:IsClassicCataclysm() then
+	if IsMainline or IsClassicCataclysm or IsClassicPandaria then
 		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
 	end
-	if Outfitter:IsClassicCataclysm() then
+	if IsClassicCataclysm or IsClassicPandaria then
 		OutfitterFrame:SetPoint("TOPLEFT", "OutfitterButtonFrame", "TOPRIGHT", -2, -30)
 	end
 
@@ -5340,7 +5365,7 @@ end
 
 function Outfitter:SynchronizeEM()
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-	if not Outfitter:IsMainline() and C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
+	if not IsMainline and C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 	-- Mark all the EM outfits as unused
 	for vCategoryID, outfits in pairs(self.Settings.Outfits) do
@@ -5463,9 +5488,13 @@ function Outfitter:InitializeOutfits()
 	local vInventoryCache = self:GetInventoryCache()
 
 	-- Create the outfit categories
-	self.Settings.Outfits = {}
+	if not self.Settings.Outfits then
+		self.Settings.Outfits = {}
+	end
 	for vCategoryIndex, vCategoryID in ipairs(Outfitter.cCategoryOrder) do
-		self.Settings.Outfits[vCategoryID] = {}
+		if not self.Settings.Outfits.vCategoryOrder then
+			self.Settings.Outfits[vCategoryID] = {}
+		end
 	end
 
 	-- Load the EM outfits
@@ -5529,11 +5558,42 @@ function Outfitter:InitializeSpecialOccasionOutfits()
 	self:InitializeClassOutfits()
 end
 
+
+local specsByClassID = {
+    [0] = { 74, 81, 79 },
+    [1] = { 71, 72, 73, 1446 },
+    [2] = { 65, 66, 70, 1451 },
+    [3] = { 253, 254, 255, 1448 },
+    [4] = { 259, 260, 261, 1453 },
+    [5] = { 256, 257, 258, 1452 },
+    [6] = { 250, 251, 252, 1455 },
+    [7] = { 262, 263, 264, 1444 },
+    [8] = { 62, 63, 64, 1449 },
+    [9] = { 265, 266, 267, 1454 },
+    [10] = { 268, 270, 269, 1450 },
+    [11] = { 102, 103, 104, 105, 1447 },
+  }
+
+local _GetSpecializationInfoForClassID = function (classID, specIndex)
+	local specID = specsByClassID[classID][specIndex]
+	if not specID then
+		return nil
+	end
+	return GetSpecializationInfoByID(specID)
+end
+
 function Outfitter:InstallDefaultSpecializationIcons() --miv
 	if _G["GetNumSpecializations"] then
 		local numSpecs = GetNumSpecializations()
 		for specIndex = 1, numSpecs do
-			local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
+			--local _, specName, _, specIconID = GetSpecializationInfo(specIndex) -- Good for Cata and below
+			local _, specName, _, specIconID = GetSpecializationInfoForClassID(select(2, UnitClassBase("player")), specIndex)
+
+			-- Handle a Mists beta bug
+			if IsClassicPandaria and not specName then
+				_, specName, _, specIconID = _GetSpecializationInfoForClassID(select(2, UnitClassBase("player")), specIndex)
+			end
+
 			local scriptID = "SPECIALIZATION_"..specIndex
 			Outfitter.OutfitBar.cDefaultScriptIcons[scriptID] = specIconID
 		end
@@ -7551,9 +7611,9 @@ function Outfitter:GenerateItemLink(pItem)
 		return
 	end
 
-	local _, _, vQuality = GetItemInfo(pItem.Code)
+	local _, _, vQuality = C_Item.GetItemInfo(pItem.Code)
 	if pItem.Quality then vQuality = pItem.Quality end
-	local _, _, _, vQualityColorCode = GetItemQualityColor(vQuality or 1)
+	local _, _, _, vQualityColorCode = C_Item.GetItemQualityColor(vQuality or 1)
 
 	return string.format("|c%s|Hitem:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%s%s|h[%s]|h|r", vQualityColorCode, pItem.Code, pItem.EnchantCode or 0, pItem.JewelCode1 or 0, pItem.JewelCode2 or 0, pItem.JewelCode3 or 0, pItem.JewelCode4 or 0, pItem.SubCode or 0, pItem.UniqueID or 0, pItem.LinkLevel or 0, 0, pItem.UpgradeTypeID or 0, pItem.InstanceDifficultyID or 0, pItem.BonusIDs or "::", (pItem.UpgradeItemType and pItem.UpgradeItemType ~= 0) and (":"..pItem.UpgradeID) or "", pItem.Name or "unknown"), vQuality or 1
 end
@@ -7718,7 +7778,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	      vTooltipItemType,
 	      vTooltipItemSubType,
 	      vTooltipItemCount,
-	      vTooltipItemInvType = GetItemInfo(vTooltipItemCodes[1])
+	      vTooltipItemInvType = C_Item.GetItemInfo(vTooltipItemCodes[1])
 
 	--if not vTooltipItemInvType or vTooltipItemType ~= "Armor" then -- retail (why do we only check armor? why not weapons?)
 	if not vTooltipItemInvType then -- classic/wrath
@@ -8688,7 +8748,7 @@ function Outfitter:GetLinkFromTooltip(vTooltip)
 	-- Wrath/Retail version
 	local tooltipData = vTooltip:GetTooltipData()
 	if tooltipData ~= nil and tooltipData.id then
-		_, itemLink = GetItemInfo(tooltipData.id)
+		_, itemLink = C_Item.GetItemInfo(tooltipData.id)
 		return itemLink
 	end
 	return nil -- nothing found at all
