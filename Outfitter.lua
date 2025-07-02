@@ -17,6 +17,7 @@ local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 local IsClassicWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 
+Outfitter.IsMainline = IsMainline
 --[[
 function Outfitter:IsMainline()
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
@@ -2054,6 +2055,8 @@ end
 function Outfitter:TalentsChanged()
 	if _G["GetSpecialization"] then
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
+	elseif IsClassicPandaria then
+		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetPrimaryTalentTree() == 2
 	else
 		if Outfitter:IsClassicCataclysm() then
 			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 15)) > 0
