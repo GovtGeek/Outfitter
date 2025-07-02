@@ -300,7 +300,7 @@ function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDe
 -- $SETTING Tree4={type="boolean", label=Outfitter:GetTalentTreeName(4), default=true}
 
 -- Unequip and return if they're not in an enabled spec
-if IsMainline then
+if Outfitter.IsMainline then
   if not setting.Tree1 and GetSpecialization() == 1
   or not setting.Tree2 and GetSpecialization() == 2
   or not setting.Tree3 and GetSpecialization() == 3
@@ -356,7 +356,7 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if IsMainline then
+if Outfitter.IsMainline then
   if not setting.Tree1 and GetSpecialization() == 1
   or not setting.Tree2 and GetSpecialization() == 2
   or not setting.Tree3 and GetSpecialization() == 3
@@ -411,7 +411,7 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if IsMainline then
+if Outfitter.IsMainline then
   if not setting.Tree1 and GetSpecialization() == 1
   or not setting.Tree2 and GetSpecialization() == 2
   or not setting.Tree3 and GetSpecialization() == 3
@@ -1066,7 +1066,7 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if IsMainline then
+if Outfitter.IsMainline then
   if not setting.Tree1 and GetSpecialization() == 1
   or not setting.Tree2 and GetSpecialization() == 2
   or not setting.Tree3 and GetSpecialization() == 3
