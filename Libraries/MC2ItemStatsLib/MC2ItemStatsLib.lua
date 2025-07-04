@@ -115,7 +115,7 @@ function Addon.ItemStatsLib._Stats:setTooltipStats(tooltipStats)
 end
 
 function Addon.ItemStatsLib._Stats:setInfoFromLink(link)
-	local name, link, rarity, level, minLevel, type, subType, stackCount, equipLoc, texture, sellPrice = GetItemInfo(link)
+	local name, link, rarity, level, minLevel, type, subType, stackCount, equipLoc, texture, sellPrice = C_Item.GetItemInfo(link)
 
 	self.itemLevel = tonumber(level)
 	self.minLevel = tonumber(minLevel)

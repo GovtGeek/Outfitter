@@ -1,5 +1,5 @@
 local addonName, addon  = ...
-local OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 79
+local OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 80
 
 if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
 	OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 105
@@ -7,9 +7,9 @@ end
 
 ---- Create the minimap button in code rather than XML
 local function CreateMinimapButton()
-	OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", MinimapBackdrop)
+	OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", Minimap)
 	OutfitterMinimapButton:SetSize(32, 32)
-	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -80, 0)
+	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH, 0)
 	OutfitterMinimapButton:SetMovable(true)
 	OutfitterMinimapButton:EnableMouse(true)
 
