@@ -243,15 +243,23 @@ function Outfitter._OutfitMethods:CheckOutfit(pCategoryID)
 		self.Items = {}
 	end
 
-	if Outfitter:IsMainline() then
+	if LE_EXPANSION_LEVEL_CURRENT > LE_EXPANSION_CATACLYSM then
+		self.Items.RangedSlot = nil
+	end
+	if LE_EXPANSION_LEVEL_CURRENT > LE_EXPANSION_WRATH_OF_THE_LICH_KING then
+		self.Items.AmmoSlot = nil
+	end
+	--[[
+	if IsMainline then
 		-- Ammo slot is no longer in the game, ensure it's removed from the database too
-		self.Items.AmmoSlot = nil;
+		self.Items.AmmoSlot = nil
+	end
+	--]]
 
-		for vInventorySlot, vItem in pairs(self.Items) do
-			for vField, vDefaultValue in pairs(self.DefaultRepairValues) do
-				if not vItem[vField] then
-					vItem[vField] = vDefaultValue
-				end
+	for vInventorySlot, vItem in pairs(self.Items) do
+		for vField, vDefaultValue in pairs(self.DefaultRepairValues) do
+			if not vItem[vField] then
+				vItem[vField] = vDefaultValue
 			end
 		end
 	end
@@ -667,7 +675,7 @@ function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
 	end
 
 	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex
-	if Outfitter:IsMainline() then
+	if IsMainline then
 		vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
 	else
 		vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)

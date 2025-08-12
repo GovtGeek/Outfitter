@@ -403,7 +403,7 @@ function Outfitter.OutfitBar:GetOutfitTexture(pOutfit)
 	end
 
 	if vOutfitItem then
-		local vTexture = GetItemIcon(vOutfitItem.Code)
+		local vTexture = C_Item.GetItemIconByID(vOutfitItem.Code)
 
 		if vTexture then
 			return vTexture

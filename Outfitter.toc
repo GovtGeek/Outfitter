@@ -1,4 +1,4 @@
-## Interface: 40402, 30403, 20504, 11507
+## Interface: 50500, 40402, 30403, 20504, 11507
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
