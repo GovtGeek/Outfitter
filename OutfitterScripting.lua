@@ -1173,7 +1173,8 @@ end
 ]],
 	},
 	--]]--
-	{
+	{ -- Solo
+
 		Name = Outfitter.cSoloOutfit,
 		ID = "SOLO",
 		Category = "GENERAL",
@@ -2045,3 +2046,4 @@ function Outfitter._ScriptContext:PostProcess(pEquip, pImmediate, pLayer, pDelay
 		Outfitter:TagOutfitLayer(self.Outfit, pLayer)
 	end
 end
+
