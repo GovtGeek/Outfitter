@@ -1,6 +1,8 @@
 ----------------------------------------
 -- General
 ----------------------------------------
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
+
 function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
 	local vInventoryCache = self:GetInventoryCache()
 	local vBestItem, vBestTime
