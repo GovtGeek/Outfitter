@@ -1,17 +1,69 @@
 name: Package Addon
 
 on:
-  push:
-    branches: [ master ]
-    tags: [ "*" ]
+  workflow_dispatch:
+    inputs:
+      LOCAL_BUILD:
+        description: 'Local build'
+        type: boolean
+        required: true
+        default: true
 
 # Permission can be added at job level or workflow level
 permissions:
   contents: write   # This is required to create/push the new git tag
 
 jobs:
+  build_local:
+    if: ${{ github.event.inputs.LOCAL_BUILD == 'true' }}
+    runs-on: ubuntu:latest
+    container:
+      image: ubuntu:latest
+      volumes:
+        # Bind directory to allow saving of output
+        - /tmp/Outfitter:/tmp/Outfitter
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Identify repository and build type
+        run: |
+          echo "Repository name: $(basename ${{ github.repository }})"
+          echo "Local build: ${{ github.event.inputs.LOCAL_BUILD }}"
+
+      - name: Extract Addon Version
+        id: extract_addon_version
+        run: |
+          ADDON_VERSION=$(grep -oP "## Version: \K[^\r ]+" Outfitter.toc)
+          echo "Version found: $ADDON_VERSION"
+          echo "ADDON_VERSION=$ADDON_VERSION" >> $GITHUB_ENV
+
+      - name: Set zip file name
+        id: set_zip_file_name
+        run: |
+          ZIP_FILE_NAME="Outfitter-$ADDON_VERSION.zip"
+          echo "ZIP_FILE_NAME=$ZIP_FILE_NAME" >> $GITHUB_ENV
+
+      - name: Install zip
+        run: |
+          apt-get -qq update > /dev/null && apt-get -qq install -y zip >/dev/null
+
+      - name: Generate Zip file
+        id: generate_zip_file
+        run: |
+          echo "Current directory: ${PWD}"
+          # echo "$(ls)"
+          echo "File name: $ZIP_FILE_NAME"
+          zip -q -r -9 "$ZIP_FILE_NAME" * -x README.md -x .git*
+
+      - name: Copy zip to local container space
+        run: |
+          echo "$ZIP_FILE_NAME"
+          cp "$ZIP_FILE_NAME" /tmp/Outfitter/
+          chmod 666 /tmp/Outfitter/$ZIP_FILE_NAME
+
   release:
-    runs-on: ubuntu-latest
+    if: ${{ github.event.inputs.LOCAL_BUILD == 'false' }}
+    runs-on: ubuntu:latest
 
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
@@ -21,18 +73,8 @@ jobs:
       - name: Clone project
         uses: actions/checkout@v4
 
-      - name: Package and release Retail
+      - name: Package and release
         uses: BigWigsMods/packager@master
-
-      - name: Package and release Wrath
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g wrath
-
-      - name: Package and release Classic
-        uses: BigWigsMods/packager@master
-        with:
-          args: -g classic
 
       - name: Create Release
         id: create_release
