@@ -10,7 +10,7 @@
 		</Scripts>
 	</Button>
 
-	<CheckButton name="OutfitterCheckboxTemplate" inherits="OptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="OutfitterCheckboxTemplate" inherits="UICheckButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				if self:GetChecked() then
@@ -843,7 +843,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT">
 										<Offset>
-											<AbsDimension x="15" y="-90"/>
+											<AbsDimension x="15" y="-70"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -870,7 +870,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterAutoSwitch" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-10"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -895,7 +895,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterShowOutfitBar" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -922,7 +922,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterShowMinimapButton" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -949,7 +949,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterShowHotkeyMessages" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -976,7 +976,7 @@
 								<Anchors>
 									<Anchor point="TOPLEFT" relativeTo="OutfitterTooltipInfo" relativePoint="BOTTOMLEFT">
 										<Offset>
-											<AbsDimension x="0" y="-5"/>
+											<AbsDimension x="0" y="0"/>
 										</Offset>
 									</Anchor>
 								</Anchors>
@@ -993,6 +993,30 @@
 										else
 											Outfitter.AddNewbieTip(self, Outfitter.cItemComparisons, 1.0, 1.0, 1.0, Outfitter.cItemComparisonsOffDescription, 1)
 										end
+									</OnEnter>
+									<OnLeave>
+										GameTooltip:Hide()
+									</OnLeave>
+								</Scripts>
+							</CheckButton>
+							<CheckButton name="OutfitterQuickslotFlyouts" inherits="OutfitterCheckboxTemplate">
+								<Anchors>
+									<Anchor point="TOPLEFT" relativeTo="OutfitterItemComparisons" relativePoint="BOTTOMLEFT">
+										<Offset>
+											<AbsDimension x="0" y="0"/>
+										</Offset>
+									</Anchor>
+								</Anchors>
+								<Scripts>
+									<OnLoad>
+										if Outfitter:IsClassicEra() then OutfitterQuickslotFlyouts:Hide() end
+										getglobal(self:GetName().."Text"):SetText(Outfitter.cEnableQuickslotFlyouts)
+									</OnLoad>
+									<OnClick>
+										Outfitter:SetQuickslotFlyouts(self:GetChecked())
+									</OnClick>
+									<OnEnter>
+										Outfitter.AddNewbieTip(self, Outfitter.cEnableQuickslotFlyouts, 1.0, 1.0, 1.0, Outfitter.cEnableQuickslotFlyoutsDescription, 1)
 									</OnEnter>
 									<OnLeave>
 										GameTooltip:Hide()
@@ -1309,6 +1333,7 @@
 			</Frame>
 		</Frames>
 	</Frame>
+	<!-- DAC
 	<Button name="OutfitterMinimapButton" hidden="false" enableMouse="true" movable="true" parent="MinimapBackdrop">
 		<Size>
 			<AbsDimension x="32" y="32"/>
@@ -1345,6 +1370,7 @@
 		<NormalTexture file="Interface\Addons\Outfitter\Textures\MinimapButton"/>
 		<HighlightTexture alphaMode="ADD" file="Interface\Minimap\UI-Minimap-ZoomButton-Highlight"/>
 	</Button>
+	-->
 
 	<GameTooltip name="OutfitterTooltip" parent="UIParent" hidden="true" inherits="GameTooltipTemplate">
 		<Anchors>

@@ -1,18 +1,15 @@
 ----------------------------------------
--- Constants
-----------------------------------------
-if _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] == nil then _G["NUM_TOTAL_EQUIPPED_BAG_SLOTS"] = NUM_BAG_SLOTS end
-
-----------------------------------------
 -- General
 ----------------------------------------
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
+
 function Outfitter:FindNextCooldownItem(pItemCodes, pIgnoreSwapCooldown)
 	local vInventoryCache = self:GetInventoryCache()
 	local vBestItem, vBestTime
 
 	for _, vItemCode in ipairs(pItemCodes) do
 		if type(vItemCode) == "string" then
-			local vItemName, vItemLink = GetItemInfo(vItemCode)
+			local vItemName, vItemLink = C_Item.GetItemInfo(vItemCode)
 
 			if vItemLink then
 				vItemCode = self:ParseItemLink2(vItemLink)[1]
@@ -89,29 +86,29 @@ function Outfitter:GetBagItemInfo(bagIndex, slotIndex)
 
 	local itemLinkInfo = self:ParseItemLink(itemLink)
 
-		_, itemInfo.Gem1Link = GetItemGem(itemLink,1)
+		_, itemInfo.Gem1Link = C_Item.GetItemGem(itemLink,1)
 	itemInfo.Gem1 = Outfitter:ParseItemLink(itemInfo.Gem1Link)
-	_, itemInfo.Gem2Link = GetItemGem(itemLink,2)
+	_, itemInfo.Gem2Link = C_Item.GetItemGem(itemLink,2)
 	itemInfo.Gem2 = Outfitter:ParseItemLink(itemInfo.Gem2Link)
-	_, itemInfo.Gem3Link = GetItemGem(itemLink,3)
+	_, itemInfo.Gem3Link = C_Item.GetItemGem(itemLink,3)
 	itemInfo.Gem3 = Outfitter:ParseItemLink(itemInfo.Gem3Link)
-	_, itemInfo.Gem4Link = GetItemGem(itemLink,4)
+	_, itemInfo.Gem4Link = C_Item.GetItemGem(itemLink,4)
 	itemInfo.Gem4 = Outfitter:ParseItemLink(itemInfo.Gem4Link)
 
 	--[[-- These steps are recreated in Outfitter:GetSlotIDItemInfo and should get moved to their own function --]]--
 	_, _, itemInfo.Gem1, itemInfo.Gem2, itemInfo.Gem3, itemInfo.Gem4 = unpack(self:ParseItemLink(itemLink))
 
 	if itemInfo.Gem1 ~= nil then
-		itemInfo.Gem1Link = select(2, GetItemInfo(itemInfo.Gem1))
+		itemInfo.Gem1Link = select(2, C_Item.GetItemInfo(itemInfo.Gem1))
 	end
 	if itemInfo.Gem2 ~= nil then
-		itemInfo.Gem2Link = select(2, GetItemInfo(itemInfo.Gem2))
+		itemInfo.Gem2Link = select(2, C_Item.GetItemInfo(itemInfo.Gem2))
 	end
 	if itemInfo.Gem3 ~= nil then
-		itemInfo.Gem3Link = select(2, GetItemInfo(itemInfo.Gem3))
+		itemInfo.Gem3Link = select(2, C_Item.GetItemInfo(itemInfo.Gem3))
 	end
 	if itemInfo.Gem4 ~= nil then
-		itemInfo.Gem4Link = select(2, GetItemInfo(itemInfo.Gem4))
+		itemInfo.Gem4Link = select(2, C_Item.GetItemInfo(itemInfo.Gem4))
 	end
 
 	itemInfo.Location = {BagIndex = bagIndex, BagSlotIndex = slotIndex}
@@ -136,7 +133,7 @@ function Outfitter:GetBagItemInvType(bagIndex, slotIndex)
 		return
 	end
 
-	local _, _, _, _, _, _, _, _, itemInvType = GetItemInfo(itemLink)
+	local _, _, _, _, _, _, _, _, itemInvType = C_Item.GetItemInfo(itemLink)
 
 	return itemInvType
 end
@@ -179,7 +176,7 @@ function Outfitter:GetBagItemBagType(pBagIndex, pSlotIndex)
 		return
 	end
 
-	return GetItemFamily(vItemCodes[1])
+	return C_Item.GetItemFamily(vItemCodes[1])
 end
 
 function Outfitter:GetSlotIDLinkInfo(pSlotID)
@@ -193,7 +190,7 @@ function Outfitter:GetSlotIDItemBagType(pSlotID)
 		return
 	end
 
-	return GetItemFamily(vItemCodes[1])
+	return C_Item.GetItemFamily(vItemCodes[1])
 end
 
 function Outfitter:ParseItemLink(pItemLink)
@@ -279,7 +276,7 @@ function Outfitter:GetBagSlotItemName(bag, slot)
 end
 
 function Outfitter:IsBankBagIndex(pBagIndex)
-	return pBagIndex and (pBagIndex > NUM_TOTAL_EQUIPPED_BAG_SLOTS or pBagIndex < 0)
+	return pBagIndex and (pBagIndex > Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS or pBagIndex < 0)
 end
 
 ----------------------------------------
@@ -300,7 +297,7 @@ function Outfitter._ItemInfo:GetItemInfoFromCode(itemCode)
 	      itemType,
 	      itemSubType,
 	      itemCount,
-	      itemInvType = GetItemInfo(itemCode)
+	      itemInvType = C_Item.GetItemInfo(itemCode)
 
 	--
 
@@ -380,7 +377,7 @@ function Outfitter._ItemInfo:GetItemInfoFromLink(itemLink)
 	local _, _,
 	      itemQuality,
 	      itemLevel,
-	      itemMinLevel = GetItemInfo(itemLink)
+	      itemMinLevel = C_Item.GetItemInfo(itemLink)
 
 	self.Name = itemName
 	self.Link = itemLink
@@ -589,13 +586,13 @@ function Outfitter:GetSlotIDItemInfo(slotID)
 		This way allows all version since GetInventoryItemGems isn't in Vanilla or Retail
 		Same steps as Outfitter:GetBagItemInfo
 	--]]--
-	_, itemInfo.Gem1Link = GetItemGem(itemLink,1)
+	_, itemInfo.Gem1Link = C_Item.GetItemGem(itemLink,1)
 	itemInfo.Gem1 = Outfitter:ParseItemLink(itemInfo.Gem1Link)
-	_, itemInfo.Gem2Link = GetItemGem(itemLink,2)
+	_, itemInfo.Gem2Link = C_Item.GetItemGem(itemLink,2)
 	itemInfo.Gem2 = Outfitter:ParseItemLink(itemInfo.Gem2Link)
-	_, itemInfo.Gem3Link = GetItemGem(itemLink,3)
+	_, itemInfo.Gem3Link = C_Item.GetItemGem(itemLink,3)
 	itemInfo.Gem3 = Outfitter:ParseItemLink(itemInfo.Gem3Link)
-	_, itemInfo.Gem4Link = GetItemGem(itemLink,4)
+	_, itemInfo.Gem4Link = C_Item.GetItemGem(itemLink,4)
 	itemInfo.Gem4 = Outfitter:ParseItemLink(itemInfo.Gem4Link)
 
 	--[[--
@@ -647,16 +644,16 @@ end
 
 function Outfitter:GetNumBags()
 	if self.BankFrameIsOpen then
-		return NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, -1
+		return Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS, -1
 	else
-		return NUM_TOTAL_EQUIPPED_BAG_SLOTS, 0
+		return Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS, 0
 	end
 end
 
 function Outfitter:GetBagList()
 	local vBagList = {}
 	if self.BankFrameIsOpen then
-		for vIndex = -1, NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
+		for vIndex = -1, Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS do
 			vBagList[vIndex] = true
 		end
 	else

@@ -11,16 +11,28 @@ Outfitter.Debug =
 	Optimize = false,
 }
 ----------------------------------------
+local IsMainline = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+local IsClassicPandaria = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_MISTS_OF_PANDARIA
+local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
+local IsClassicWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
+
+Outfitter.IsMainline = IsMainline
+--[[
 function Outfitter:IsMainline()
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 end
---[[--
+--]]
+
+----[[--
 function Outfitter:IsClassicCataclysm()
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
+	--return WOW_PROJECT_ID == WOW_PROJECT_CATA_CLASSIC
+	return LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 end
-]]--
+--]]--
 function Outfitter:IsClassicWrath()
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC
+	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 end
 function Outfitter:IsClassicEra()
 	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
@@ -353,6 +365,11 @@ Outfitter.DisplayIsDirty = true
 Outfitter.OutfitInfoCache = {}
 
 Outfitter.MaxSimpleTitles = 10
+
+local MinimapButtonDefaults = {
+	["ShowButton"] = true,
+	["minimapPos"] = -1.5708,
+}
 
 function Outfitter:FormatItemList(pList)
 	local vNumItems = #pList
@@ -959,7 +976,7 @@ Outfitter.cSpecialIDEvents =
 	Bear = {Equip = "BEAR_FORM", Unequip = "NOT_BEAR_FORM"},
 	Cat = {Equip = "CAT_FORM", Unequip = "NOT_CAT_FORM"},
 	Travel = {Equip = "TRAVEL_FORM", Unequip = "NOT_TRAVEL_FORM"},
-	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"},
+	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}, -- Classic Wrath only
 	Moonkin = {Equip = "MOONKIN_FORM", Unequip = "NOT_MOONKIN_FORM"},
 	Tree = {Equip = "TREE_FORM", Unequip = "NOT_TREE_FORM"},
 	Prowl = {Equip = "STEALTH", Unequip = "NOT_STEALTH"},
@@ -1014,7 +1031,7 @@ Outfitter.cClassSpecialOutfits =
 		{Name = Outfitter.cDruidBearForm, ScriptID = "Bear"},
 		{Name = Outfitter.cDruidCatForm, ScriptID = "Cat"},
 		{Name = Outfitter.cDruidTravelForm, ScriptID = "Travel"},
-		{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"},
+		--{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"}, -- Wrath only
 		{Name = Outfitter.cDruidMoonkinForm, ScriptID = "Moonkin"},
 		{Name = Outfitter.cDruidTreeOfLifeForm, ScriptID = "Tree"},
 		{Name = Outfitter.cDruidProwl, ScriptID = "Prowl"},
@@ -1183,8 +1200,8 @@ Outfitter.cShapeshiftIDInfo = {
 	[9634] = {ID = "Bear", MaybeInCombat = true},
 	[768] = {ID = "Cat"},
 	[783] = {ID = "Travel"},
-	[24858] = {ID = "Moonkin"},
-	--[40120] = {ID = "Flight"},
+	[24858] = {ID = "Moonkin"},  -- Wrath
+	[197625] = {ID = "Moonkin"}, -- Retail
 	CasterForm = {ID = "Caster"}, -- this is a psuedo-form which is active when no other druid form is
 
 	-- Rogue
@@ -1197,12 +1214,16 @@ Outfitter.cShapeshiftIDInfo = {
 --[[--
 	Modify entries for a specific version (i.e. Add RangedSlot for non-retail)
 --]]--
-if WOW_PROJECT_ID ~= WOW_PROJECT_MAINLINE then
-	table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
-	Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
+if not IsMainline then
+	if not IsClassicPandaria then
+		table.insert(Outfitter.cSlotNames, 11, "RangedSlot")
+		Outfitter.cSlotDisplayNames.RangedSlot = RANGEDSLOT
+	end
 	Outfitter.BuiltinEvents.SWIFT_FLIGHT_FORM = true
 	Outfitter.BuiltinEvents.NOT_SWIFT_FLIGHT_FORM = true
 	Outfitter.cSpecialIDEvents.Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}
+	table.insert(Outfitter.cClassSpecialOutfits.DRUID, {Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"})
+	table.insert(Outfitter.cShapeshiftIDInfo, 33891, {ID = "Tree"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 40120, {ID = "Flight"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1785, {ID = "Stealth"})
 	table.insert(Outfitter.cShapeshiftIDInfo, 1786, {ID = "Stealth"})
@@ -1217,6 +1238,42 @@ end
 for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
 end
+function Outfitter:OutfitterButtonAdjust()
+	if IsClassicEra then
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -40)
+	end
+	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
+		OutfitterButton:ClearAllPoints()
+		OutfitterButton:SetPoint("BOTTOMRIGHT", RuneFrameControlButton, "BOTTOMLEFT", 10, -4)
+	end
+	if IsClassicCataclysm or IsClassicPandaria then
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
+	--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
+	if not IsClassicCataclysm then
+		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
+			-- Scoot the title drop down over a little and adjust the button and frame
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+
+			-- Close the Outfitter frame if the GearManager window is opened
+			GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+		elseif cvar == "equipmentManager" and value == "0" then
+			-- Try to put everything back
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", 0, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+		end
+	else
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
+	--]]--
+end
 
 function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 	if CharacterFrame:IsShown() then
@@ -1226,10 +1283,13 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 		if not CharacterFrameTab3:GetRight() then
 			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
 		end
+		Outfitter:OpenUI()
+		--[[
 		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
 		CharacterFrame_ShowSubFrame("PaperDollFrame")
 		CharacterFrame:Show()
 		OutfitterFrame:Show()
+		]]
 	end
 end
 
@@ -1253,9 +1313,12 @@ end
 
 function Outfitter:OnShow()
 	-- Season of Discovery frame issue
-	local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
+	--local EngravingFrame = _G["EngravingFrame"]	-- actual name of the rune list frame
 	if EngravingFrame ~= nil and EngravingFrame:IsVisible() then
 		_G["RuneFrameControlButton"]:Click()	-- Need to hide EngravingFrame - just click it off!
+	end
+	if GearManagerDialog and GearManagerDialog:IsVisible() then
+		GearManagerDialog:Hide()
 	end
 
 	self.SetFrameLevel(OutfitterFrame, PaperDollFrame:GetFrameLevel() - 1)
@@ -1297,7 +1360,11 @@ function Outfitter:PlayerEnteringWorld()
 
 	self:FlushInventoryCache()
 
-	self:RegenEnabled()
+	if InCombatLockdown() then
+		self:RegenDisabled()
+	else
+		self:RegenEnabled()
+	end
 	self:UpdateAuraStates()
 
 	self:ScheduleUpdateZone()
@@ -1440,13 +1507,17 @@ function Outfitter:DispatchOutfitEvent(pEvent, pParameter1, pParameter2)
 end
 
 function Outfitter:UpdateCurrentOutfitIcon()
+	if not OutfitterMinimapButton then return end
 	local _, vOutfit = self:GetCurrentOutfitInfo()
 	local vTexture = self.OutfitBar:GetOutfitTexture(vOutfit)
-
-	if type(vTexture) == "number" then
-		vTexture = 	self:ConvertTextureIDToPath(vTexture)
+	if OutfitterMinimapButton.CurrentOutfitTexture and vTexture then
+		if type(vTexture) == "number" then
+			vTexture = 	self:ConvertTextureIDToPath(vTexture)
+		end
+		SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+	elseif OutfitterMinimapButton.icon and vTexture then
+		SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
 	end
-	SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
 end
 
 function Outfitter:PlayerInteractionManagerFrameShow(event, interactionType)
@@ -1988,8 +2059,14 @@ end
 function Outfitter:TalentsChanged()
 	if _G["GetSpecialization"] then
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
+	elseif IsClassicPandaria then
+		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetPrimaryTalentTree() == 2
 	else
-		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+		if Outfitter:IsClassicCataclysm() then
+			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 15)) > 0
+		else
+			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+		end
 	end
 end
 
@@ -2520,14 +2597,31 @@ function Outfitter:SetShowItemComparisons(pShowComparisons)
 end
 
 function Outfitter:SetShowMinimapButton(pShowButton)
-	self.Settings.Options.HideMinimapButton = not pShowButton
+	self.Settings.Options.MinimapButton.ShowButton = pShowButton
 
-	if self.Settings.Options.HideMinimapButton then
-		OutfitterMinimapButton:Hide()
+	Outfitter:ShowMinimapButton(pShowButton)
+	self:Update(false)
+end
+
+function Outfitter:ShowMinimapButton(bShowButton)
+	-- Showing/Hiding the minimap button is different depending on LDBIcon availability
+	if Outfitter.LDBIcon then
+		if bShowButton then
+			Outfitter.LDBIcon:Show("Outfitter")
+		else
+			Outfitter.LDBIcon:Hide("Outfitter")
+		end
 	else
-		OutfitterMinimapButton:Show()
+		if bShowButton then
+			OutfitterMinimapButton:Show()
+		else
+			OutfitterMinimapButton:Hide()
+		end
 	end
+end
 
+function Outfitter:SetQuickslotFlyouts(pShowButton)
+	self.Settings.Options.QuickslotFlyouts = pShowButton
 	self:Update(false)
 end
 
@@ -2645,6 +2739,7 @@ end
 function Outfitter.AddNewbieTip(pItem, pNormalText, pRed, pGreen, pBlue, pNewbieText, pNoNormalText)
 	if GetCVarBool("UberTooltips") then
 		GameTooltip_SetDefaultAnchor(GameTooltip, pItem)
+		GameTooltip:SetOwner(pItem, "ANCHOR_RIGHT")
 		if pNormalText then
 			GameTooltip:SetText(pNormalText, pRed, pGreen, pBlue)
 			GameTooltip:AddLine(pNewbieText, NORMAL_FONT_COLOR.r, NORMAL_FONT_COLOR.g, NORMAL_FONT_COLOR.b, 1)
@@ -2765,7 +2860,6 @@ function Outfitter:Item_CheckboxClicked(pItem)
 	end
 
 	local vOutfit = vOutfits[pItem.outfitIndex]
-
 	if not vOutfit then
 		-- Error: outfit not found
 		return
@@ -2786,26 +2880,30 @@ end
 
 function Outfitter:Item_StoreOnServerClicked(pItem)
 	--return -- uncomment if we want to disable storage
-	if pItem.isCategory then
+	if not IsMainline and C_CVar and C_CVar.GetCVar("equipmentManager") == nil or C_CVar.GetCVar("equipmentManager") == 0 then
+		self:NoteMessage("Can't store on server: Equipment Manager not enabled")
+		local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
+		--vCheckbox:SetButtonState("NORMAL")
+		vCheckbox:Disable()
 		return
 	end
+
+	-- Can't store a category on a server (and how did you click the button for that?)
+	if pItem.isCategory then return	end
 
 	local vOutfits = self.Settings.Outfits[pItem.categoryID]
 
-	if not vOutfits then
-		-- Error: outfit category not found
-		return
-	end
+	-- Error: outfit category not found
+	if not vOutfits then return end
 
 	local vOutfit = vOutfits[pItem.outfitIndex]
 
-	if not vOutfit then
-		-- Error: outfit not found
-		return
-	end
+	-- Error: outfit not found
+	if not vOutfit then return end
 
 	local vCheckbox = _G[pItem:GetName().."OutfitServerButton"]
 
+	-- If we want it stored on the server, equip the outfit if it's not being worn, then save it
 	if vCheckbox:GetChecked() then
 		if vOutfit ~= self.SelectedOutfit then
 			self:WearOutfit(vOutfit)
@@ -3035,7 +3133,7 @@ function Outfitter:Update(pOutfitsChanged)
 				0, 0)                           -- smallHighlightWidth, bigHighlightWidth
 	elseif self.CurrentPanel == 2 then -- Options panel
 		OutfitterAutoSwitch:SetChecked(self.Settings.Options.DisableAutoSwitch)
-		OutfitterShowMinimapButton:SetChecked(not self.Settings.Options.HideMinimapButton)
+		OutfitterShowMinimapButton:SetChecked(self.Settings.Options.MinimapButton.ShowButton)
 		OutfitterTooltipInfo:SetChecked(not self.Settings.Options.DisableToolTipInfo)
 		OutfitterShowHotkeyMessages:SetChecked(not self.Settings.Options.DisableHotkeyMessages)
 		OutfitterShowOutfitBar:SetChecked(self.Settings.OutfitBar.ShowOutfitBar)
@@ -3151,7 +3249,6 @@ function Outfitter:WearOutfit(pOutfit, pLayerID, pCallerIsScript)
 	self:BeginEquipmentUpdate()
 
 	-- Update the equipment
-
 	pOutfit.didEquip = pCallerIsScript
 	pOutfit.didUnequip = false
 
@@ -3787,7 +3884,6 @@ function Outfitter:GetCompiledOutfit()
 
 	for vStackIndex, vOutfit in ipairs(Outfitter.OutfitStack.Outfits) do
 		local vItems = vOutfit:GetItems()
-
 		if vItems then
 			for vInventorySlot, vOutfitItem in pairs(vItems) do
 				vCompiledOutfit:SetItem(vInventorySlot, vOutfitItem)
@@ -3847,7 +3943,7 @@ function Outfitter:GetBagType(pBagIndex)
 		return nil
 	end
 
-	return GetItemFamily(vItemLink)
+	return C_Item.GetItemFamily(vItemLink)
 end
 
 function Outfitter:GetEmptyBagSlot(pStartBagIndex, pStartBagSlotIndex, pIncludeBank)
@@ -3910,7 +4006,7 @@ end
 function Outfitter:GetEmptyBankSlotList()
 	local vEmptyBagSlots = {}
 
-	local vBagIndex = NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
+	local vBagIndex = Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS + NUM_BANKBAGSLOTS
 	local vBagSlotIndex = 1
 
 	while true do
@@ -3919,7 +4015,7 @@ function Outfitter:GetEmptyBankSlotList()
 		if not vBagSlotInfo then
 			return vEmptyBagSlots
 
-		elseif vBagSlotInfo.BagIndex > NUM_TOTAL_EQUIPPED_BAG_SLOTS
+		elseif vBagSlotInfo.BagIndex > Outfitter.NUM_TOTAL_EQUIPPED_BAG_SLOTS
 		or vBagSlotInfo.BagIndex < 0 then
 			table.insert(vEmptyBagSlots, vBagSlotInfo)
 		end
@@ -4333,7 +4429,12 @@ function Outfitter:GetPlayerAuraStates()
 	end
 
 	while true do
-		local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
+		local auraInfo = C_UnitAuras.GetBuffDataByIndex("player", vBuffIndex)
+		local vName, vTexture, vSpellID
+		if auraInfo then
+			vName, vTexture, vSpellID = auraInfo.name, auraInfo.icon, auraInfo.spellId
+		end
 
 		if not vName then
 			return self.AuraStates
@@ -4498,7 +4599,6 @@ function Outfitter:UpdateShapeshiftState()
 		--self:DebugMessage("%s: %s texture = %s %s", tostring(index), tostring(shapeshiftID), tostring(texture), isActive and "ACTIVE" or "not active")
 
 		local shapeshiftInfo = self.cShapeshiftIDInfo[shapeshiftID]
-
 		if shapeshiftInfo then
 			self.Settings.ShapeshiftIndexInfo[index] = shapeshiftInfo
 		else
@@ -4652,7 +4752,7 @@ function Outfitter:GetCurrentZoneIDs(pRecycleTable)
 		vZoneSpecialIDMap = self.cZoneSpecialIDMap[GetRealZoneText()]
 	end
 
-	local vPVPType, vIsArena, vFactionName = GetZonePVPInfo()
+	local vPVPType, vIsArena, vFactionName = C_PvP.GetZonePVPInfo()
 
 	if vZoneSpecialIDMap then
 		for _, vZoneSpecialID in ipairs(vZoneSpecialIDMap) do
@@ -4755,12 +4855,17 @@ function Outfitter:AddOutfit(pOutfit)
 	vCategoryID = pOutfit:CalculateOutfitCategory()
 
 	if not self.Settings.Outfits then
+		Outfitter:InitializeOutfits()
+	end
+	--[[
+	if not self.Settings.Outfits then
 		self.Settings.Outfits = {}
 	end
 
 	if not self.Settings.Outfits[vCategoryID] then
 		self.Settings.Outfits[vCategoryID] = {}
 	end
+	--]]
 
 	table.insert(self.Settings.Outfits[vCategoryID], pOutfit)
 	pOutfit.CategoryID = vCategoryID
@@ -4824,9 +4929,9 @@ end
 -- Make sure Outfitter opens/closes if GearManager is open/closed
 function Outfitter:EquipmentManagerViewSync()
 	if GearManagerDialog:IsVisible() then
-		OutfitterFrame:Show()
-	else
 		OutfitterFrame:Hide()
+	--else
+		--OutfitterFrame:Hide()
 	end
 end
 
@@ -4837,19 +4942,42 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	if cvar == "USE_EQUIPMENT_MANAGER" and value == "1" then -- cvar values are strings
-		-- Hook the GearManagerDialog for open/close
-		showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
-		hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
+	--print(eventName.." "..cvar.." "..value.." ("..type(value)..")") --DAC
+	if GearManagerDialog then
+		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
+			-- Scoot the title drop down over a little and adjust the button and frame
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", -20, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", GearManagerToggleButton, "TOPLEFT", 12, -4)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
 
-		-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
-		hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
+			-- Close the Outfitter frame if the GearManager window is opened
+			GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+			--[[--
+			-- Hook the GearManagerDialog for open/close
+			showSuccess = GearManagerDialog:HookScript("OnShow", Outfitter.EquipmentManagerViewSync)
+			hideSuccess = GearManagerDialog:HookScript("OnHide", Outfitter.EquipmentManagerViewSync)
 
-		GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
-		OutfitterButton:Hide()
+			-- Hook our own window so GearManager will close if we close Outfitter (more backwards compatible for Vanilla)
+			hideSuccess = OutfitterFrame:HookScript("OnHide", Outfitter.EquipmentManagerClose)
+
+			GearManagerDialog:SetPoint("TOPLEFT", OutfitterFrame, "TOPRIGHT", -5, 4)
+			-- PlayerTitleDropDown TOP CharacterLevelText BOTTOM 0 -6
+			OutfitterButton:Hide()
+			--]]--
+		elseif cvar == "equipmentManager" and value == "0" then
+			-- Try to put everything back
+			if PlayerTitleDropDown then
+				PlayerTitleDropDown:SetPoint("TOP", CharacterLevelText, "BOTTOM", 0, -6)
+			end
+			OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -42)
+			OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -48)
+		end
 	else
-		OutfitterButton:Show()
+		Outfitter:OutfitterButtonAdjust()
 	end
+	OutfitterButton:Show()
 end
 
 function Outfitter:IsInitialized()
@@ -4942,6 +5070,12 @@ function Outfitter:Initialize()
 		self.cSlotIDs[vInventorySlot] = vSlotID
 		self.cSlotIDToInventorySlot[vSlotID] = vInventorySlot
 	end
+	-- Make sure the ranged slot checkbox is not visible in classic pandaria/mainline
+	if IsMainline or IsClassicPandaria then
+		if _G["OutfitterEnableRangedSlot"] then
+			OutfitterEnableRangedSlot:Hide()
+		end
+	end
 
 	-- Initialize the scripts
 	Outfitter:InitializeScripts()
@@ -4951,6 +5085,7 @@ function Outfitter:Initialize()
 		self:InitializeSettings()
 	else
 		self.Settings = gOutfitter_Settings
+		self.Settings.Options.MinimapButton = self.Settings.Options.MinimapButton or MinimapButtonDefaults
 	end
 
 	-- Initialize the outfits
@@ -4984,28 +5119,17 @@ function Outfitter:Initialize()
 		end
 	end
 
-	-- Set the minimap button
+	-- Set up the minimap button
+	--gOutfitter_Settings.Options.MinimapButton = gOutfitter_Settings.Options.MinimapButton or MinimapButtonDefaults
+	Outfitter:InitializeMinimapButton()
+	Outfitter:ShowMinimapButton(self.Settings.Options.MinimapButton.ShowButton)
 
-	if self.Settings.Options.HideMinimapButton then
-		OutfitterMinimapButton:Hide()
-	else
-		OutfitterMinimapButton:Show()
-	end
-
-	if not self.Settings.Options.MinimapButtonAngle
-	and not self.Settings.Options.MinimapButtonX then
-		self.Settings.Options.MinimapButtonAngle = -1.5708
-	end
-
-	if self.Settings.Options.MinimapButtonAngle then
-		OutfitterMinimapButton:SetPositionAngle(self.Settings.Options.MinimapButtonAngle)
-	else
-		OutfitterMinimapButton:SetPosition(self.Settings.Options.MinimapButtonX, self.Settings.Options.MinimapButtonY)
-	end
-
-	-- Move the Blizzard UI over a bit
-	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
+	-- Adjust the Blizzard UI and Outfitter frames
+	if IsMainline or IsClassicCataclysm or IsClassicPandaria then
 		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
+	end
+	if IsClassicCataclysm or IsClassicPandaria then
+		OutfitterFrame:SetPoint("TOPLEFT", "OutfitterButtonFrame", "TOPRIGHT", -2, -30)
 	end
 
 	-- Initialize player state
@@ -5129,9 +5253,10 @@ function Outfitter:Initialize()
 	end
 
 	-- Check for Equipment Manager availability and adjust Outfitter accordingly
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+	--if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then
+	if C_CVar then
 		self.EventLib:RegisterEvent("CVAR_UPDATE", self.EquipmentManagerAdjust, self)
-		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "USE_EQUIPMENT_MANAGER", C_CVar.GetCVar("equipmentManager"))
+		self.EquipmentManagerAdjust(self, "CVAR_UPDATE", "equipmentManager", C_CVar.GetCVar("equipmentManager"))
 	end
 
 	-- Synchronize with the Equipment Manager
@@ -5140,11 +5265,11 @@ function Outfitter:Initialize()
 	-- Season of Discovery handling
 	if C_Seasons and C_Seasons.HasActiveSeason() and (C_Seasons.GetActiveSeason() == Enum.SeasonID.SeasonOfDiscovery) then
 		self.EventLib:RegisterEvent("ENGRAVING_MODE_CHANGED", self.EngravingModeChanged, self)
-		OutfitterButtonFrame:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -34, 0)
-		OutfitterFrame:SetPoint("TOPLEFT", PaperDollFrame, "TOPRIGHT", -34, -32)
 	end
-	--
 
+	-- Move the Outfitter button according to the version we're running
+	Outfitter:OutfitterButtonAdjust()
+	
 	self:DispatchOutfitEvent("OUTFITTER_INIT")
 
 	self.SchedulerLib:ScheduleUniqueRepeatingTask(0.5, self.UpdateSwimming, self, nil, "Outfitter:UpdateSwimming")
@@ -5213,6 +5338,7 @@ function Outfitter:InitializeSettings()
 		LayerIndex = {},
 		RecentCompleteOutfits = {},
 	}
+	gOutfitter_Settings.Options.MinimapButton = MinimapButtonDefaults
 
 	self.Settings = gOutfitter_Settings
 
@@ -5245,9 +5371,9 @@ function Outfitter:AttachOutfitMethods()
 end
 
 function Outfitter:SynchronizeEM()
-	if C_CVar and C_CVar.GetCVar("equipmentManager") ~= nil then return end
 	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
-
+	if not IsMainline and C_CVar and C_CVar.GetCVar("equipmentManager") == nil then return end
+	local equipmentSetIDs = C_EquipmentSet.GetEquipmentSetIDs()
 	-- Mark all the EM outfits as unused
 	for vCategoryID, outfits in pairs(self.Settings.Outfits) do
 		for vIndex, outfit in ipairs(outfits) do
@@ -5276,11 +5402,9 @@ function Outfitter:SynchronizeEM()
 	end
 
 	-- Scan the EM outfits
-
 	for _, equipmentSetID in ipairs(equipmentSetIDs) do
 		local name = C_EquipmentSet.GetEquipmentSetInfo(equipmentSetID)
 		local outfit = self:FindEMOutfitByName(name)
-
 		-- If the outfit is missing, see if it can be restored from
 		-- the preserved list
 
@@ -5355,7 +5479,6 @@ end
 
 function Outfitter:FindEMOutfitByName(pName)
 	local vLowerName = pName:lower()
-
 	for vCategoryID, vOutfits in pairs(self.Settings.Outfits) do
 		for vIndex, vOutfit in ipairs(vOutfits) do
 			if vOutfit.StoredInEM
@@ -5372,9 +5495,13 @@ function Outfitter:InitializeOutfits()
 	local vInventoryCache = self:GetInventoryCache()
 
 	-- Create the outfit categories
-	self.Settings.Outfits = {}
+	if not self.Settings.Outfits then
+		self.Settings.Outfits = {}
+	end
 	for vCategoryIndex, vCategoryID in ipairs(Outfitter.cCategoryOrder) do
-		self.Settings.Outfits[vCategoryID] = {}
+		if not self.Settings.Outfits.vCategoryOrder then
+			self.Settings.Outfits[vCategoryID] = {}
+		end
 	end
 
 	-- Load the EM outfits
@@ -5438,11 +5565,42 @@ function Outfitter:InitializeSpecialOccasionOutfits()
 	self:InitializeClassOutfits()
 end
 
+
+local specsByClassID = {
+    [0] = { 74, 81, 79 },
+    [1] = { 71, 72, 73, 1446 },
+    [2] = { 65, 66, 70, 1451 },
+    [3] = { 253, 254, 255, 1448 },
+    [4] = { 259, 260, 261, 1453 },
+    [5] = { 256, 257, 258, 1452 },
+    [6] = { 250, 251, 252, 1455 },
+    [7] = { 262, 263, 264, 1444 },
+    [8] = { 62, 63, 64, 1449 },
+    [9] = { 265, 266, 267, 1454 },
+    [10] = { 268, 270, 269, 1450 },
+    [11] = { 102, 103, 104, 105, 1447 },
+  }
+
+local _GetSpecializationInfoForClassID = function (classID, specIndex)
+	local specID = specsByClassID[classID][specIndex]
+	if not specID then
+		return nil
+	end
+	return GetSpecializationInfoByID(specID)
+end
+
 function Outfitter:InstallDefaultSpecializationIcons() --miv
 	if _G["GetNumSpecializations"] then
 		local numSpecs = GetNumSpecializations()
 		for specIndex = 1, numSpecs do
-			local _, specName, _, specIconID = GetSpecializationInfo(specIndex)
+			--local _, specName, _, specIconID = GetSpecializationInfo(specIndex) -- Good for Cata and below
+			local _, specName, _, specIconID = GetSpecializationInfoForClassID(select(2, UnitClassBase("player")), specIndex)
+
+			-- Handle a Mists beta bug
+			if IsClassicPandaria and not specName then
+				_, specName, _, specIconID = _GetSpecializationInfoForClassID(select(2, UnitClassBase("player")), specIndex)
+			end
+
 			local scriptID = "SPECIALIZATION_"..specIndex
 			Outfitter.OutfitBar.cDefaultScriptIcons[scriptID] = specIconID
 		end
@@ -6412,17 +6570,19 @@ function Outfitter:ToggleUI(pToggleCharWindow)
 	if self:IsOpen() then
 		OutfitterFrame:Hide()
 
-		if pToggleCharWindow then
-			HideUIPanel(CharacterFrame)
-		end
+		--Assume that if Outfitter is open, so is the PaperDollFrame
+		ToggleCharacter("PaperDollFrame")
 	else
 		self:OpenUI()
 	end
 end
 
 function Outfitter:OpenUI()
-	ShowUIPanel(CharacterFrame)
-	CharacterFrame_ShowSubFrame("PaperDollFrame")
+	-- Make sure the PaperDollFrame is visible
+	if not PaperDollFrame:IsVisible() then
+		ToggleCharacter("PaperDollFrame")
+	end
+
 	OutfitterFrame:Show()
 end
 
@@ -7458,9 +7618,9 @@ function Outfitter:GenerateItemLink(pItem)
 		return
 	end
 
-	local _, _, vQuality = GetItemInfo(pItem.Code)
+	local _, _, vQuality = C_Item.GetItemInfo(pItem.Code)
 	if pItem.Quality then vQuality = pItem.Quality end
-	local _, _, _, vQualityColorCode = GetItemQualityColor(vQuality or 1)
+	local _, _, _, vQualityColorCode = C_Item.GetItemQualityColor(vQuality or 1)
 
 	return string.format("|c%s|Hitem:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%d:%s%s|h[%s]|h|r", vQualityColorCode, pItem.Code, pItem.EnchantCode or 0, pItem.JewelCode1 or 0, pItem.JewelCode2 or 0, pItem.JewelCode3 or 0, pItem.JewelCode4 or 0, pItem.SubCode or 0, pItem.UniqueID or 0, pItem.LinkLevel or 0, 0, pItem.UpgradeTypeID or 0, pItem.InstanceDifficultyID or 0, pItem.BonusIDs or "::", (pItem.UpgradeItemType and pItem.UpgradeItemType ~= 0) and (":"..pItem.UpgradeID) or "", pItem.Name or "unknown"), vQuality or 1
 end
@@ -7625,7 +7785,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 	      vTooltipItemType,
 	      vTooltipItemSubType,
 	      vTooltipItemCount,
-	      vTooltipItemInvType = GetItemInfo(vTooltipItemCodes[1])
+	      vTooltipItemInvType = C_Item.GetItemInfo(vTooltipItemCodes[1])
 
 	--if not vTooltipItemInvType or vTooltipItemType ~= "Armor" then -- retail (why do we only check armor? why not weapons?)
 	if not vTooltipItemInvType then -- classic/wrath
@@ -7802,7 +7962,7 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
-		print("Creating vTooltip") --DAC
+		--print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
 
 		vTooltip:SetScript("OnUpdate", function ()
@@ -8595,7 +8755,7 @@ function Outfitter:GetLinkFromTooltip(vTooltip)
 	-- Wrath/Retail version
 	local tooltipData = vTooltip:GetTooltipData()
 	if tooltipData ~= nil and tooltipData.id then
-		_, itemLink = GetItemInfo(tooltipData.id)
+		_, itemLink = C_Item.GetItemInfo(tooltipData.id)
 		return itemLink
 	end
 	return nil -- nothing found at all

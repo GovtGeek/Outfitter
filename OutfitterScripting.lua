@@ -46,6 +46,34 @@
 	Scripts can support equip/unequip or disable or both.
 ]]
 
+local cityZones = {
+    -- Classic Cities
+    [1453] = true, -- Stormwind City (Classic)
+    [1454] = true, -- Orgrimmar (Classic)
+    [1455] = true, -- Ironforge (Classic)
+    [1456] = true, -- Thunder Bluff (Classic)
+    [1457] = true, -- Darnassus (Classic)
+    [1458] = true, -- Undercity (Classic)
+    
+    -- Retail Cities
+    [84] = true,  -- Stormwind City
+    [85] = true,  -- Orgrimmar
+    [87] = true,  -- Ironforge
+    [88] = true,  -- Thunder Bluff
+    [89] = true,  -- Darnassus
+    [90] = true,  -- Undercity
+    [103] = true, -- The Exodar
+    [110] = true, -- Silvermoon City
+    [111] = true, -- Shattrath City
+    [125] = true, -- Dalaran
+    [1161] = true, -- Boralus
+    [1165] = true  -- Dazar'alor
+}
+function Outfitter:IsPlayerInCity()
+    local currentZoneID = C_Map.GetBestMapForUnit("player")
+    return cityZones[currentZoneID] or false
+end
+
 ----------------------------------------
 Outfitter.ScriptModules = {}
 ----------------------------------------
@@ -100,7 +128,7 @@ Outfitter.ScriptModules.DruidShapeshift.Settings =
 	{id = "Travel", type = "boolean", label = "Travel form"},
 	{id = "Moonkin", type = "boolean", label = "Moonkin form"},
 	{id = "Tree", type = "boolean", label = "Tree form"},
-	{id = "Flight", type = "boolean", label = "Swift Flight form"}, --DAC
+	{id = "Flight", type = "boolean", label = "Swift Flight form"},
 }
 
 Outfitter.ScriptModules.DruidShapeshift.Events =
@@ -113,6 +141,10 @@ Outfitter.ScriptModules.DruidShapeshift.Events =
 	Tree = "TREE_FORM",
 	Flight = "SWIFT_FLIGHT_FORM" --DAC
 }
+-- Add Swift Flight Form if we're in Classic Wrath
+if Outfitter:IsClassicWrath() then
+	Outfitter.ScriptModules.DruidShapeshift.Events.Flight = "SWIFT_FLIGHT_FORM"
+end
 
 function Outfitter.ScriptModules.DruidShapeshift:GetEquipHeader(pSettings)
 	local vResult = ""
@@ -285,13 +317,14 @@ function Outfitter:GenerateSmartUnequipScript(pEventID, pDescription, pUnequipDe
 -- $SETTING Tree4={type="boolean", label=Outfitter:GetTalentTreeName(4), default=true}
 
 -- Unequip and return if they're not in an enabled spec
-
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    equip = false
-    return
+if Outfitter.IsMainline then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      equip = false
+      return
+  end
 end
 ]]
 	end
@@ -340,11 +373,13 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    return
+if Outfitter.IsMainline then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      return
+  end
 end
 
 -- Return if the user isn't in full control
@@ -375,7 +410,7 @@ end
 
 function Outfitter:GenerateDruidShapeshiftScript(pEventID, pDescription)
 	return
-		self:GenerateScriptHeader({pEventID, 'NOT_'..pEventID, 'OUTFIT_EQUIPPED'}, pDescription)..
+		self:GenerateScriptHeader({pEventID, 'NOT_'..pEventID, 'PLAYER_TALENT_UPDATE', 'OUTFIT_EQUIPPED'}, pDescription)..
 [[
 -- $SETTING DisableBG={type="boolean", label="Don't equip in Battlegrounds", default=false}
 -- $SETTING DisablePVP={type="boolean", label="Don't equip while PvP flagged", default=false}
@@ -393,17 +428,24 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    return
+if Outfitter.IsMainline then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      return
+  end
 end
 
 -- Return if the user isn't in full control
 
 if not Outfitter.IsDead and not HasFullControl() then
     return
+end
+
+-- If spec changed, unequip any form (default to caster)
+if event == "PLAYER_TALENT_UPDATE" then
+  equip = false
 end
 
 -- If the user is manually equipping the outfit, let
@@ -512,25 +554,25 @@ end
 
 Outfitter.PresetScripts =
 {
-	{
+	{ -- Herbalism
 		Name = Outfitter.cHerbalismOutfit,
 		ID = "HERBALISM",
 		Category = "TRADE",
 		Script = Outfitter:GenerateGatheringScript(Outfitter.LBI["Herbalism"], Outfitter.cHerbalismDescription),
 	},
-	{
+	{ -- Mining
 		Name = Outfitter.cMiningOutfit,
 		ID = "MINING",
 		Category = "TRADE",
 		Script = Outfitter:GenerateGatheringScript(Outfitter.LBI["Mining"], Outfitter.cMiningDescription),
 	},
-	{
+	{ -- Skinning
 		Name = Outfitter.cSkinningOutfit,
 		ID = "SKINNING",
 		Category = "TRADE",
 		Script = Outfitter:GenerateGatheringScript(UNIT_SKINNABLE_LEATHER, Outfitter.cSkinningDescription),
 	},
-	{
+	{ -- Lockpicking
 		Name = Outfitter.cLockpickingOutfit,
 		ID = "LOCKPICKING",
 		Category = "TRADE",
@@ -538,6 +580,23 @@ Outfitter.PresetScripts =
 		Script = Outfitter:GenerateLockpickingScript(Outfitter.cLockpickingDescription),
 	},
 	{
+		Name = Outfitter.cTalentSwapAutomation,
+		ID = "TALENTSWAP",
+		Category = "GENERAL",
+		Script = 
+[[
+-- $EVENTS ACTIVE_TALENT_GROUP_CHANGED
+-- $DESC Equips event on Spec Change
+-- $SETTING spec={Label="Spec", Type="Number"}
+
+if not isEquipped and GetActiveTalentGroup() == setting.spec then
+    equip = true
+else
+    return
+end
+]],
+	},
+	{ -- PvP Flagged
 		Name = Outfitter.cPvPFlaggedOutfit,
 		ID = "PVP_FLAGGED",
 		Category = "PVP",
@@ -561,7 +620,7 @@ else
 end
 ]],
 	},
-	{
+	{ -- In Dungeon
 		Name = Outfitter.cInDungeonOutfit,
 		ID = "IN_DUNGEON",
 		Category = "GENERAL",
@@ -588,7 +647,7 @@ else
 end
 ]],
 	},
-	{
+	{ -- Trinket
 		Name = "Trinket Queue",
 		ID = "TRINKET_QUEUE",
 		Category = "GENERAL",
@@ -657,7 +716,7 @@ if itemInfo0 or itemInfo1 then
 end
 ]],
 	},
-	{
+	{ -- Rocket Boots
 		Name = "Rocket Boots",
 		ID = "FEET_QUEUE",
 		Category = "GENERAL",
@@ -683,7 +742,7 @@ and not Outfitter:GetInventoryCache():ItemsAreSame(itemInfo, outfit.Items.FeetSl
 end
 ]],
 	},
-	{
+	{ -- In Zones
 		Name = Outfitter.cInZonesOutfit,
 		ID = "IN_ZONES",
 		Category = "GENERAL",
@@ -716,7 +775,7 @@ if didEquip and equip == nil then
 end
 ]], --DAC
 	},
-	{
+	{ -- Riding
 		Name = Outfitter.cRidingOutfit,
 		ID = "Riding",
 		Category = "TRADE",
@@ -780,7 +839,7 @@ elseif event == "TIMER" then
 end
 ]],
 	},
-	{
+	{ -- Swimming
 		Name = Outfitter.cSwimmingOutfit,
 		ID = "Swimming",
 		Category = "TRADE",
@@ -817,7 +876,7 @@ elseif didEquip then
 end
 ]],
 	},
-	{
+	{ -- Fishing
 		Name = Outfitter.cFishingOutfit,
 		ID = "Fishing",
 		Category = "TRADE",
@@ -907,97 +966,101 @@ if equip == equipped then
 end
 ]],
 	},
-	{
+	{ -- Dining
 		Name = Outfitter.cDiningOutfit,
 		ID = "Dining",
 		Category = "TRADE",
 		Script = Outfitter:GenerateSmartUnequipScript("DINING", Outfitter.cDiningOutfitDescription),
 	},
-	{
+	{ -- City
 		Name = Outfitter.cCityOutfit,
 		ID = "City",
 		Category = "ENTERTAIN",
-		Script = Outfitter:GenerateSimpleScript("CITY", Outfitter.cCityOutfitDescription),
+		Script = Outfitter:GenerateScriptHeader("ZONE_CHANGED_NEW_AREA", Outfitter.cCityOutfitDescription)..
+[[
+-- If the event fires, equip the outfit if the player is in a city, otherwise remove it
+    equip = Outfitter:IsPlayerInCity(C_Map.GetBestMapForUnit("player"))
+]],
 	},
-	{
+	{ -- Battleground
 		Name = Outfitter.cBattlegroundOutfit,
 		ID = "Battleground",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND", Outfitter.cBattlegroundOutfitDescription, nil, true),
 	},
-	{
+	{ -- Arathi Basin
 		Name = Outfitter.cABOutfit,
 		ID = "AB",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_AB", Outfitter.cArathiBasinOutfitDescription, nil, true),
 	},
-	{
+	{ -- Alterac Valley
 		Name = Outfitter.cAVOutfit,
 		ID = "AV",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_AV", Outfitter.cAlteracValleyOutfitDescription, nil, true),
 	},
-	{
+	{ -- Warsong Gulch
 		Name = Outfitter.cWSGOutfit,
 		ID = "WSG",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_WSG", Outfitter.cWarsongGulchOutfitDescription, nil, true),
 	},
-	{
+	{ -- Eye of the Storm
 		Name = Outfitter.cEotSOutfit,
 		ID = "EotS",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_EOTS", Outfitter.cEotSOutfitDescription, nil, true),
 	},
-	{
+	{ -- Strand of the Ancients
 		Name = Outfitter.cSotAOutfit,
 		ID = "SotA",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_SOTA", Outfitter.cSotAOutfitDescription, nil, true),
 	},
-	{
+	{ -- Isle of Conquest
 		Name = Outfitter.cIoCOutfit,
 		ID = "IoC",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_IOC", Outfitter.cIoCOutfitDescription, nil, true),
 	},
-	{
+	{ -- Wintergrasp
 		Name = Outfitter.cWintergraspOutfit,
 		ID = "Wintergrasp",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_WG", nil, nil, true),
 	},
-	{
+	{ -- Sewers
 		Name = Outfitter.cSewersOutfit,
 		ID = "Sewers",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_SEWERS", nil, nil, true),
 	},
-	{
+	{ -- Battle for Gilneas
 		Name = Outfitter.cGilneasOutfit,
 		ID = "Gilneas",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_GILNEAS", nil, nil, true),
 	},
-	{
+	{ -- Twin Peaks
 		Name = Outfitter.cTwinPeaksOutfit,
 		ID = "TwinPeaks",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_TWINPEAKS", nil, nil, true),
 	},
-	{
+	{ -- Arena
 		Name = Outfitter.cArenaOutfit,
 		ID = "Arena",
 		Category = "PVP",
 		Script = Outfitter:GenerateSmartUnequipScript("BATTLEGROUND_ARENA", Outfitter.cArenaOutfitDescription, nil, true),
 	},
-	{
+	{ -- Spirit Regen
 		Name = "Spirit Regen",
 		ID = "Spirit",
 		Category = "GENERAL",
 		Script = Outfitter:GenerateSmartUnequipScript("SPIRIT_REGEN", Outfitter.SpiritRegenOutfitDescription, 0.5),
 	},
-	{
+	{ -- Druid Caster
 		Name = Outfitter.cDruidCasterForm,
 		ID = "Caster",
 		Class = "DRUID",
@@ -1020,11 +1083,13 @@ or (setting.DisablePVP and UnitIsPVP("player")) then
 end
 
 -- Return if they're not in an enabled spec
-if not setting.Tree1 and GetSpecialization() == 1
-or not setting.Tree2 and GetSpecialization() == 2
-or not setting.Tree3 and GetSpecialization() == 3
-or not setting.Tree4 and GetSpecialization() == 4 then
-    return
+if Outfitter.IsMainline then
+  if not setting.Tree1 and GetSpecialization() == 1
+  or not setting.Tree2 and GetSpecialization() == 2
+  or not setting.Tree3 and GetSpecialization() == 3
+  or not setting.Tree4 and GetSpecialization() == 4 then
+      return
+  end
 end
 
 -- Return if the user isn't in full control
@@ -1058,49 +1123,51 @@ elseif event == "NOT_CASTER_FORM" then
 end
 ]],
 	},
-	{
+	{ -- Druid Bear
 		Name = Outfitter.cDruidBearForm,
 		ID = "Bear",
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("BEAR_FORM", "This outfit will be worn whenever you're in Bear or Dire Bear Form"),
 	},
-	{
+	{ -- Druid Cat
 		Name = Outfitter.cDruidCatForm,
 		ID = "Cat",
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("CAT_FORM", "This outfit will be worn whenever you're in Cat Form"),
 	},
-	{
+	{ -- Druid Travel
 		Name = Outfitter.cDruidTravelForm,
 		ID = "Travel",
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("TRAVEL_FORM", "This outfit will be worn whenever you're in Travel Form"),
 	},
+--[[-- Only available in BCC/Wrath. Added in later if needed.
 	{
 		Name = Outfitter.cDruidSwiftFlightForm, --DAC
 		ID = "Flight",
 		Class = "DRUID",
-		Script = Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
+		Script = "" --Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
 	},
-	{
+--]]--
+	{ -- Druid Moonkin
 		Name = Outfitter.cDruidMoonkinForm,
 		ID = "Moonkin",
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("MOONKIN_FORM", "This outfit will be worn whenever you're in Moonkin Form"),
 	},
-	{
+	{ -- Druid Tree of Life
 		Name = Outfitter.cDruidTreeOfLifeForm,
 		ID = "Tree",
 		Class = "DRUID",
 		Script = Outfitter:GenerateDruidShapeshiftScript("TREE_FORM", "This outfit will be worn whenever you're in Tree Form"),
 	},
-	{
+	{ -- Druid Prowl
 		Name = Outfitter.cDruidProwl,
 		ID = "Prowl",
 		Class = "DRUID",
 		Script = Outfitter:GenerateSimpleScript("STEALTH", "This outfit will be worn whenever you're prowling"),
 	},
-	{
+	{ -- Rogue Stealth
 		Name = Outfitter.cRogueStealth,
 		ID = "Stealth",
 		Class = "ROGUE",
@@ -1108,13 +1175,13 @@ end
 		         Outfitter:GenerateEquipModule(Outfitter.ScriptModules.RogueStealth, pSettings,
 		         "-- $DESC This outfit will be worn whenever you're stealthed"))
 	},
-	{
+	{ -- Shaman Ghost Wolf
 		Name = Outfitter.cShamanGhostWolf,
 		ID = "GhostWolf",
 		Class = "SHAMAN",
 		Script = Outfitter:GenerateSimpleScript("GHOST_WOLF", Outfitter.cShamanGhostWolfDescription),
 	},
-	{
+	{ -- Hunter Feign Death
 		Name = Outfitter.cHunterFeignDeath,
 		ID = "Feigning",
 		Class = "HUNTER",
@@ -1174,7 +1241,6 @@ end
 	},
 	--]]--
 	{ -- Solo
-
 		Name = Outfitter.cSoloOutfit,
 		ID = "SOLO",
 		Category = "GENERAL",
@@ -1227,7 +1293,7 @@ elseif didEquip then
 end
 ]],
 	},
-	{
+	{ -- Low Health
 		Name = Outfitter.cLowHealthOutfit,
 		ID = "LOW_HEALTH",
 		Category = "GENERAL",
@@ -1245,7 +1311,7 @@ elseif didEquip then
 end
 ]],
 	},
-	{
+	{ -- Has Buff
 		Name = Outfitter.cHasBuffOutfit,
 		ID = "HAS_BUFF",
 		Category = "GENERAL",
@@ -1277,7 +1343,7 @@ end
 if equip == nil and didEquip then equip = false end
 ]],
 	},
-	{
+	{ -- Has Debuff
 		Name = Outfitter.cHasDebuffOutfit,
 		ID = "HAS_DEBUFF",
 		Category = "GENERAL",
@@ -1309,7 +1375,7 @@ end
 if equip == nil and didEquip then equip = false end
 ]],
 	},
-	{
+	{ -- Equip on target
 		Name = "Equip on target",
 		ID = "EQUIP_ON_TARGET",
 		Category = "GENERAL",
@@ -1323,7 +1389,7 @@ if UnitName("target"):lower() == setting.targetName:lower() then
 end
 ]],
 	},
-	{
+	{ -- Falling
 		Name = Outfitter.cFallingOutfit,
 		ID = "FALLING",
 		Category = "TRADE",
@@ -1337,7 +1403,7 @@ elseif didEquip then
 end
 ]],
 	},
-	{
+	{ -- Resting
 		Name = Outfitter.cRestingOutfit,
 		ID = "RESTING",
 		CATEGORY = "TRADE",
@@ -1350,7 +1416,7 @@ else
 end
 ]]
 	},
-	{
+	{ -- Argent Tournament
 		Name = Outfitter.cArgentTournamentOutfit,
 		ID = "ARGENT_TOURNY",
 		Category = "QUEST",
@@ -1419,7 +1485,7 @@ and not UnitInVehicle("player") then
 end
 ]],
 	},
-	{
+	{ -- Vigilance on Wings (Cataclysm)
 		Name = "Vigilance on Wings",
 		ID = "VIGILANCE_ON_WINGS",
 		Category = "QUEST",
@@ -1467,7 +1533,7 @@ and not UnitInVehicle("player") then
 end
 ]],
 	},
-	{
+	{ -- Flame Leviathan (Wrath)
 		Name = Outfitter.cFlameLeviathanOutfit,
 		ID = "FLAME_LEVIATHAN",
 		Category = "QUEST",
@@ -1519,7 +1585,7 @@ and not UnitInVehicle("player") then
 end
 ]],
 	},
-	{
+	{ -- Multiphase Survey (Burning Crusade)
 		Name = Outfitter.cMultiphaseSurveyOutfit,
 		ID = "MULTI_SURVEY",
 		Category = "QUEST",
@@ -1543,7 +1609,7 @@ else
 end
 ]],
 	},
-	{
+	{ -- Quest Turn IN
 		Name = Outfitter.cQuestTurninOutfit,
 		ID = "QUEST_TURNIN",
 		Category = "QUEST",
@@ -1556,7 +1622,7 @@ elseif didEquip then
 end
 ]],
 	},
-	{
+	{ -- Spell Cast
 		Name = Outfitter.cSpellcastOutfit,
 		ID = "SPELLCAST",
 		Category = "TRADE",
@@ -1579,7 +1645,7 @@ else
 end
 ]],
 	},
-	{
+	{ -- Dance
 		Name = "Dance on equip",
 		ID = "DANCE",
 		Category = "ENTERTAIN",
@@ -1593,7 +1659,7 @@ if event == "OUTFIT_EQUIPPED" then
 end
 ]], --DAC
 	},
-	{
+	{ -- Cooking
 		Name = Outfitter.LBI.Cooking,
 		ID = "COOKING",
 		Category = "TRADE",
@@ -1648,6 +1714,17 @@ end
 ]], --DAC
 	}
 }
+
+-- Add Classic Wrath
+if Outfitter:IsClassicWrath() then
+	table.insert(Outfitter.PresetScripts, {
+		Name = Outfitter.cDruidSwiftFlightForm, --DAC
+		ID = "Flight",
+		Class = "DRUID",
+		Script = Outfitter:GenerateDruidShapeshiftScript("SWIFT_FLIGHT_FORM", "This outfit will be worn whenever you're in Swift Flight Form"),
+	}
+)
+end
 
 Outfitter.cScriptCategoryOrder =
 {

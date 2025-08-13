@@ -24,7 +24,7 @@ local wipe = wipe
 local CreateFrame = CreateFrame
 local PlaySound = PlaySound
 local ShowUIPanel = ShowUIPanel
-local GetMouseFocus = GetMouseFocus
+--local GetMouseFocus = GetMouseFocus
 local UISpecialFrames = UISpecialFrames
 
 local ChatFrame1 = ChatFrame1
@@ -212,10 +212,22 @@ local function ReleaseInput(input)
 end
 
 local function MouseOver(frame)
-	local f = GetMouseFocus()
-	while f and f ~= UIParent do
-		if f == frame then return true end
-		f = f:GetParent()
+    if _G["GetMouseFocus"] then
+		local f = GetMouseFocus()
+		while f and f ~= UIParent do
+			if f == frame then return true end
+			f = f:GetParent()
+		end
+	else
+		local mouseFoci = GetMouseFoci()
+		for _, f in ipairs(mouseFoci) do
+			while f do
+				if f == frame then
+					return true
+				end
+				f = f:GetParent()
+			end
+		end
 	end
 	return false
 end
@@ -1213,9 +1225,11 @@ local t = {
 	}
 }
 
---[[function testlibdropdown()
-	LibStub("LibDropdown-1.0"):OpenAce3Menu(t)
-end]]
+--[[
+function testlibdropdown()
+	LibStub("LibDropdownMC-1.0"):OpenAce3Menu(t)
+end
+--]]
 
 WorldFrame:HookScript("OnMouseDown", function()
 	if openMenu then

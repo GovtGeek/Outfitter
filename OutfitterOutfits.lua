@@ -243,8 +243,18 @@ function Outfitter._OutfitMethods:CheckOutfit(pCategoryID)
 		self.Items = {}
 	end
 
-	-- Ammo slot is no longer in the game, ensure it's removed from the database too
-	self.Items.AmmoSlot = nil;
+	if LE_EXPANSION_LEVEL_CURRENT > LE_EXPANSION_CATACLYSM then
+		self.Items.RangedSlot = nil
+	end
+	if LE_EXPANSION_LEVEL_CURRENT > LE_EXPANSION_WRATH_OF_THE_LICH_KING then
+		self.Items.AmmoSlot = nil
+	end
+	--[[
+	if IsMainline then
+		-- Ammo slot is no longer in the game, ensure it's removed from the database too
+		self.Items.AmmoSlot = nil
+	end
+	--]]
 
 	for vInventorySlot, vItem in pairs(self.Items) do
 		for vField, vDefaultValue in pairs(self.DefaultRepairValues) do
@@ -356,11 +366,9 @@ function Outfitter._OutfitMethods:StoreOnServer()
 	end
 
 	-- Remember the selected icon
-
 	local vTexture = Outfitter.OutfitBar:GetOutfitTexture(self)
 
 	-- Create the outfit object
-
 	local vOutfitEM =
 	{
 		Name = self.Name,
@@ -375,18 +383,15 @@ function Outfitter._OutfitMethods:StoreOnServer()
 	setmetatable(vOutfitEM, Outfitter._OutfitMetaTableEM)
 
 	-- Create the new outfit in the EM
-
 	vOutfitEM:MarkEnabledSlots()
 	vOutfitEM:SaveEquipmentSet(vTexture)
 
 	-- Copy the script
-
 	vOutfitEM.Script = self.Script
 	vOutfitEM.ScriptID = self.ScriptID
 	vOutfitEM.StatID = self.StatID
 
 	-- Add the new outfit and remove the old one
-
 	Outfitter:AddOutfit(vOutfitEM)
 	Outfitter:WearOutfit(vOutfitEM)
 	Outfitter:SelectOutfit(vOutfitEM)
@@ -394,7 +399,6 @@ function Outfitter._OutfitMethods:StoreOnServer()
 	Outfitter:DeleteOutfit(self)
 
 	-- Done
-
 	Outfitter.DisplayIsDirty = true
 	Outfitter:Update(true)
 end
@@ -556,8 +560,7 @@ function Outfitter._OutfitMethodsEM:MarkEnabledSlots()
 	for vSlotName, vSlotID in pairs(Outfitter.cSlotIDs) do
 		local vCheckbox = _G["OutfitterEnable"..vSlotName]
 
-		if vCheckbox:GetChecked()
-		and not vCheckbox.IsUnknown then
+		if vCheckbox:GetChecked() and not vCheckbox.IsUnknown then
 			-- SaveEquipmentSet will pick it up
 		else
 			C_EquipmentSet.IgnoreSlotForSave(vSlotID)
@@ -670,7 +673,13 @@ function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
 	if not _G["EquipmentManager_UnpackLocation"] then
 		return nil, nil, nil, nil, nil
 	end
-	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
+
+	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex
+	if IsMainline then
+		vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
+	else
+		vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
+	end
 
 	if vInBags
 	and Outfitter:IsBankBagIndex(vBagIndex) then
@@ -691,9 +700,11 @@ function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
 
 	--[[-- GovtGeek - Brought from retail. Not sure if it's correct or if there was a temporary bug. --]]--
     -- Increase bank bags with +1 because function gives wrong result
+	----[[--
 	if vInBank and vBagIndex > 0 then
 		vBagIndex = vBagIndex + 1
 	end
+	--]]--
 
 	return vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex
 end
@@ -715,7 +726,6 @@ function Outfitter._OutfitMethodsEM:GetItemEM(pSlotName, pIgnoreSlots, pLocation
 	local vLocation = pLocations[vSlotID]
 
 	local vItemInfo = self.Items and self.Items[pSlotName]
-
 	if not vLocation then
 		if not vItemInfo
 		or vItemInfo.Code ~= 0 then
@@ -755,7 +765,7 @@ end
 function Outfitter:DumpEMOutfitLocations(pName)
 	local equipmentSetID = C_EquipmentSet.GetEquipmentSetID(pName)
 	local vLocations = C_EquipmentSet.GetItemLocations(equipmentSetID)
-	local vIgnoreSlots = C_EquipmentSet.GetIgnoredSlots(pName)
+	local vIgnoreSlots = C_EquipmentSet.GetIgnoredSlots(equipmentSetID)
 	self:DebugTable(vLocations, "Locations")
 	self:DebugTable(vIgnoreSlots, "IgnoreSlots")
 
@@ -777,6 +787,7 @@ end
 
 
 function Outfitter._OutfitMethodsEM:GetItems()
+
 	if self.TemporaryItems then
 		return self.TemporaryItems
 	end
@@ -1000,14 +1011,11 @@ function Outfitter._OutfitMethodsEM:SaveEquipmentSet(iconID)
 	Outfitter:StopMonitoringEM()
 
 	-- Create the set if it's new
-	if  not self.equipmentSetID then
-	   C_EquipmentSet.CreateEquipmentSet(self.Name, iconID)
-	   self.equipmentSetID = C_EquipmentSet.GetEquipmentSetID(self.Name)
-
-	-- Otherwise save it
-	else
-		C_EquipmentSet.SaveEquipmentSet(self.equipmentSetID, iconID)
+	if not self.equipmentSetID then
+		C_EquipmentSet.CreateEquipmentSet(self.Name, iconID)
+		self.equipmentSetID = C_EquipmentSet.GetEquipmentSetID(self.Name)
 	end
+	C_EquipmentSet.SaveEquipmentSet(self.equipmentSetID, iconID)
 
 	-- Resume monitoring EM events
 	Outfitter:StartMonitoringEM()

@@ -1,9 +1,9 @@
-## Interface: 100206
+## Interface: 110200
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 3.4.3.5
+## Version: 5.5.0.2-beta-01
 ## Notes: Clothing and weapon management and automated equipment changes
 ## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
 #### AddonCompartmentFuncOnEnter:
@@ -14,7 +14,7 @@
 ## SavedVariablesPerCharacter: gOutfitter_Settings
 ## SavedVariables: gOutfitter_GlobalSettings
 ## X-ReloadTag: 2
-## X-Curse-Project-ID:
+## X-Curse-Project-ID: 1011204
 
 Libraries/UTF8/utf8data.lua
 Libraries/UTF8/utf8.lua
@@ -40,13 +40,12 @@ Libraries/MC2TooltipLib/MC2TooltipLib.lua
 Libraries/MC2ItemStatsLib/MC2ItemStatsLib.lua
 
 OutfitterStrings.lua
-OutfitterStrings_de.lua
-OutfitterStrings_fr.lua
-OutfitterStrings_cn.lua
-OutfitterStrings_tw.lua
-OutfitterStrings_kr.lua
-OutfitterStrings_ru.lua
-OutfitterStrings_ru.lua
+Localization/OutfitterStrings_de.lua
+Localization/OutfitterStrings_fr.lua
+Localization/OutfitterStrings_cn.lua
+Localization/OutfitterStrings_tw.lua
+Localization/OutfitterStrings_kr.lua
+Localization/OutfitterStrings_ru.lua
 
 Outfitter.lua
 
