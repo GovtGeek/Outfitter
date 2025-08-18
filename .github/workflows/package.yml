@@ -72,7 +72,6 @@ jobs:
 #          echo "ZIP_FILE_NAME=$ZIP_FILE_NAME" >> $GITHUB_ENV
 
       - name: Install zip
-        if: ${{ github.event.inputs.LOCAL_BUILD == 'true' }}
         run: |
           apt-get -qq update > /dev/null && apt-get -qq install -y zip >/dev/null
 
