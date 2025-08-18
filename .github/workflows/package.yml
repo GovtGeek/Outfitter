@@ -7,7 +7,7 @@ on:
         description: 'Local build'
         type: boolean
         required: true
-        default: true
+        default: false
 
 # Permission can be added at job level or workflow level
 permissions:
