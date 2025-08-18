@@ -330,7 +330,8 @@ if event == "]]..pEventID..[[" then
 
 elseif didEquip then
     equip = false
-]]..((pUnequipDelay and ("    delay = "..pUnequipDelay)) or "")..[[
+]]..((pUnequipDelay and ("    delay = "..pUnequipDelay)) or " ")..[[
+
 end
 ]]
 
