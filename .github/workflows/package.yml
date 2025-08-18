@@ -101,9 +101,10 @@ jobs:
 
   release:
     if: ${{ github.event.inputs.LOCAL_BUILD == 'false' }}
-    needs: build
+    needs:
+      - environment_variables
+      - build
     runs-on: ubuntu-latest
-
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
