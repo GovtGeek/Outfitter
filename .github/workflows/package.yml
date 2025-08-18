@@ -16,7 +16,7 @@ permissions:
 jobs:
   build_local:
     if: ${{ github.event.inputs.LOCAL_BUILD == 'true' }}
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
     container:
       image: ubuntu:latest
       volumes:
@@ -63,7 +63,7 @@ jobs:
 
   release:
     if: ${{ github.event.inputs.LOCAL_BUILD == 'false' }}
-    runs-on: ubuntu:latest
+    runs-on: ubuntu-latest
 
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
