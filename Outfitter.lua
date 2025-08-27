@@ -1020,6 +1020,9 @@ Outfitter.cClassSpecialOutfits =
 {
 	WARRIOR =
 	{
+		{Name = Outfitter.cWarriorBattleStance, ScriptID = "Battle"},
+		{Name = Outfitter.cWarriorDefensiveStance, ScriptID = "Defensive"},
+		{Name = Outfitter.cWarriorBerserkerStance, ScriptID = "Berserker"},
 	},
 
 	DRUID =

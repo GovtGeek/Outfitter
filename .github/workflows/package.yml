@@ -7,21 +7,18 @@ on:
         description: 'Local build'
         type: boolean
         required: true
-        default: true
+        default: false
 
 # Permission can be added at job level or workflow level
 permissions:
   contents: write   # This is required to create/push the new git tag
 
 jobs:
-  build_local:
-    if: ${{ github.event.inputs.LOCAL_BUILD == 'true' }}
-    runs-on: ubuntu:latest
-    container:
-      image: ubuntu:latest
-      volumes:
-        # Bind directory to allow saving of output
-        - /tmp/Outfitter:/tmp/Outfitter
+  environment_variables:
+    runs-on: ubuntu-latest
+    outputs:
+      ADDON_VERSION: ${{ steps.extract_addon_version.outputs.ADDON_VERSION }}
+      ZIP_FILE_NAME: ${{ steps.set_zip_file_name.outputs.ZIP_FILE_NAME}}
     steps:
       - uses: actions/checkout@v4
 
@@ -36,12 +33,43 @@ jobs:
           ADDON_VERSION=$(grep -oP "## Version: \K[^\r ]+" Outfitter.toc)
           echo "Version found: $ADDON_VERSION"
           echo "ADDON_VERSION=$ADDON_VERSION" >> $GITHUB_ENV
+          echo "ADDON_VERSION=$ADDON_VERSION" >> $GITHUB_OUTPUT
 
       - name: Set zip file name
         id: set_zip_file_name
         run: |
           ZIP_FILE_NAME="Outfitter-$ADDON_VERSION.zip"
           echo "ZIP_FILE_NAME=$ZIP_FILE_NAME" >> $GITHUB_ENV
+          echo "ZIP_FILE_NAME=$ZIP_FILE_NAME" >> $GITHUB_OUTPUT
+
+  build:
+    needs: environment_variables
+    runs-on: ubuntu-latest
+    container:
+      image: ubuntu:latest
+      volumes:
+        # Bind directory to allow saving of output
+        - /tmp/Outfitter:/tmp/Outfitter
+    steps:
+      - uses: actions/checkout@v4
+
+#      - name: Identify repository and build type
+#        run: |
+#          echo "Repository name: $(basename ${{ github.repository }})"
+#          echo "Local build: ${{ github.event.inputs.LOCAL_BUILD }}"
+
+#      - name: Extract Addon Version
+#        id: extract_addon_version
+#        run: |
+#          ADDON_VERSION=$(grep -oP "## Version: \K[^\r ]+" Outfitter.toc)
+#          echo "Version found: $ADDON_VERSION"
+#          echo "ADDON_VERSION=$ADDON_VERSION" >> $GITHUB_ENV
+
+#      - name: Set zip file name
+#        id: set_zip_file_name
+#        run: |
+#          ZIP_FILE_NAME="Outfitter-$ADDON_VERSION.zip"
+#          echo "ZIP_FILE_NAME=$ZIP_FILE_NAME" >> $GITHUB_ENV
 
       - name: Install zip
         run: |
@@ -50,31 +78,42 @@ jobs:
       - name: Generate Zip file
         id: generate_zip_file
         run: |
+          ZIP_FILE_NAME=${{ needs.environment_variables.outputs.ZIP_FILE_NAME }}
           echo "Current directory: ${PWD}"
           # echo "$(ls)"
           echo "File name: $ZIP_FILE_NAME"
           zip -q -r -9 "$ZIP_FILE_NAME" * -x README.md -x .git*
 
       - name: Copy zip to local container space
+        if: ${{ github.event.inputs.LOCAL_BUILD == 'true' }}
         run: |
+          ZIP_FILE_NAME=${{ needs.environment_variables.outputs.ZIP_FILE_NAME }}
           echo "$ZIP_FILE_NAME"
           cp "$ZIP_FILE_NAME" /tmp/Outfitter/
           chmod 666 /tmp/Outfitter/$ZIP_FILE_NAME
 
+      - name: Upload artifact
+        uses: actions/upload-artifact@v4
+        if: ${{ github.event.inputs.LOCAL_BUILD == 'false' }}
+        with:
+          name: ${{ needs.environment_variables.outputs.ZIP_FILE_NAME }}
+          path: ./${{ needs.environment_variables.outputs.ZIP_FILE_NAME }}
+
   release:
     if: ${{ github.event.inputs.LOCAL_BUILD == 'false' }}
-    runs-on: ubuntu:latest
-
+    needs:
+      - environment_variables
+      - build
+    runs-on: ubuntu-latest
     env:
       CF_API_KEY: ${{ secrets.CF_API_KEY }}
       GITHUB_OAUTH: ${{ secrets.GITHUB_TOKEN }}
 
     steps:
-      - name: Clone project
-        uses: actions/checkout@v4
-
-      - name: Package and release
-        uses: BigWigsMods/packager@master
+      - name: Download artifact
+        uses: actions/download-artifact@v4
+        with:
+          name: ${{ needs.environment_variables.outputs.ZIP_FILE_NAME }}
 
       - name: Create Release
         id: create_release
@@ -82,8 +121,7 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }} # This token is provided by Actions, you do not need to create your own token
         with:
-          files: .release/Outfitter-${{env.RELEASE_TAG}}*.zip
-          tag_name: ${{ env.RELEASE_TAG }}
-          #release_name: ${{ env.RELEASE_TAG }}
+          files: ${{ needs.environment_variables.outputs.ZIP_FILE_NAME }}
+          tag_name: ${{ needs.environment_variables.outputs.ADDON_VERSION }}
           draft: false
           prerelease: true

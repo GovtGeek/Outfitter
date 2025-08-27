@@ -1339,7 +1339,7 @@ function Outfitter:TagOutfitLayer(pOutfit, pLayerID)
 end
 
 function Outfitter.OutfitStack:DebugOutfitStack(pOperation)
-	Outfitter:DebugMessage("Outfitter Stack Contents: "..pOperation)
+	Outfitter:DebugMessage("Outfitter Stack Contents: ", pOperation)
 
 	for vIndex, vOutfit in ipairs(self.Outfits) do
 		if vOutfit:GetName() then
