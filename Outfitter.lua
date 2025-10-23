@@ -2059,15 +2059,25 @@ end
 function Outfitter:TalentsChanged()
 	if _G["GetSpecialization"] then
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
-	elseif IsClassicPandaria then
-		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetPrimaryTalentTree() == 2
-	else
-		if Outfitter:IsClassicCataclysm() then
-			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 15)) > 0
-		else
-			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
-		end
+		return
 	end
+
+	if IsClassicPandaria then
+		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetPrimaryTalentTree() == 2
+		return
+	end
+
+	if IsClassicCataclysm then
+		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 15)) > 0
+		return
+	end
+
+	if IsClassicEra then
+		self.CanDualWield2H = false
+		return
+	end
+
+	self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
 end
 
 function Outfitter:SetScript(pOutfit, pScript)
