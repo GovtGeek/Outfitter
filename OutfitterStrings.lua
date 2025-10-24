@@ -118,6 +118,8 @@ Outfitter.cHunterViperDescription = "Equips the outfit when you are in Viper asp
 Outfitter.cHunterDragonhawkDescription = "Equips the outfit when you are in Dragonhawk aspect"
 Outfitter.cHunterFeignDeathDescription = "Equips the outfit when you are feigning death"
 Outfitter.cMageEvocateDescription = "Equips the outfit when you are evocating"
+Outfitter.cMonkSturdyOxStanceDescription = "Equips the outfit when you are in Sturdy Ox stance"
+Outfitter.cMonkFierceTigerStanceDescription = "Equips the outfit when you are in Fierce Tiger stance"
 Outfitter.cWarriorBerserkerStanceDescription = "Equips the outfit when you are in Berserker stance"
 Outfitter.cWarriorDefensiveStanceDescription = "Equips the outfit when you are in Defensive stance"
 Outfitter.cWarriorBattleStanceDescription = "Equips the outfit when you are in Battle stance"
@@ -289,6 +291,9 @@ Outfitter.cHunterDragonhawk = "Hunter: Dragonhawk"
 Outfitter.cHunterFeignDeath = "Hunter: Feign Death"
 
 Outfitter.cMageEvocate = "Mage: Evocate"
+
+Outfitter.cMonkFierceTigerStance = "Monk: Fierce Tiger"
+Outfitter.cMonkSturdyOxStance = "Monk: Sturdy Ox"
 
 Outfitter.cDeathknightBlood = "Deathknight: Blood Presence"
 Outfitter.cDeathknightFrost = "Deathknight: Frost Presence"
