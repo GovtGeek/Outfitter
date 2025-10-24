@@ -675,7 +675,7 @@ function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
 	end
 
 	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex
-	if IsMainline then
+	if Outfitter.IsMainline then
 		vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
 	else
 		vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
