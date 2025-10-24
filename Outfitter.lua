@@ -19,6 +19,9 @@ local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
 
 Outfitter.IsMainline = IsMainline
+Outfitter.IsClassicPandaria = IsClassicPandaria
+Outfitter.IsClassicEra = IsClassicEra
+
 --[[
 function Outfitter:IsMainline()
 	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
@@ -34,9 +37,11 @@ end
 function Outfitter:IsClassicWrath()
 	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 end
+--[[
 function Outfitter:IsClassicEra()
 	return WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 end
+]]
 ----------------------------------------
 Outfitter.CreditPlayersByRealm =
 --
@@ -1024,6 +1029,11 @@ Outfitter.cClassSpecialOutfits =
 		{Name = Outfitter.cWarriorDefensiveStance, ScriptID = "Defensive"},
 		{Name = Outfitter.cWarriorBerserkerStance, ScriptID = "Berserker"},
 	},
+	MONK =
+	{
+		{Name = Outfitter.cMonkFierceTigerStance, ScriptID = "FierceTiger"},
+		{Name = Outfitter.cMonkSturdyOxStance, ScriptID = "SturdyOx"},
+	},
 
 	DRUID =
 	{
@@ -1063,9 +1073,6 @@ Outfitter.cClassSpecialOutfits =
 	{
 	},
 
-	MONK =
-	{
-	},
 	DEMONHUNTER =
 	{
 	},
@@ -2063,9 +2070,9 @@ function Outfitter:TalentsChanged()
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetPrimaryTalentTree() == 2
 	else
 		if Outfitter:IsClassicCataclysm() then
-			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 15)) > 0
+			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and (select(5, GetTalentInfo(2, 15)) or 0) > 0
 		else
-			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and select(5, GetTalentInfo(2, 24)) > 0
+			self.CanDualWield2H = self.PlayerClass == "WARRIOR" and (select(5, GetTalentInfo(2, 24)) or 0) > 0
 		end
 	end
 end

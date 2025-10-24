@@ -6,8 +6,9 @@
 		* Druid: Shapeshift
 		* Death Knight: Presence
 		* Hunter: Aspect
-		* Mage: Invisble
+		* Mage: Invisible
 		* Mage: Evocate
+		* Monk: Stance
 		* Paladin: Aura
 		* Priest: Shadowform
 		* Rogue/Druid: Stealth
@@ -181,6 +182,22 @@ function Outfitter.ScriptModules.DruidShapeshift:GetDisableHeader(pSettings)
 
 	return vResult
 end
+
+----------------------------------------
+Outfitter.ScriptModules.MonkStance = {}
+----------------------------------------
+Outfitter.ScriptModules.MonkStance.ModuleName = "Monk: Stance"
+Outfitter.ScriptModules.MonkStance.Classes = {"MONK"}
+Outfitter.ScriptModules.MonkStance.Settings =
+{
+	{id = "SturdyOx", type = "boolean", label = Outfitter.cMonkSturdyOxStance},
+	{id = "FierceTiger", type = "boolean", label = Outfitter.cMonkFierceTigerStance},
+}
+Outfitter.ScriptModules.MonkStance.Events =
+{
+	SturdyOx = "UPDATE_SHAPESHIFT_FORM",
+	FierceTiger = "UPDATE_SHAPESHIFT_FORM"
+}
 
 ----------------------------------------
 Outfitter.ScriptModules.RogueStealth = {}
@@ -1188,17 +1205,44 @@ end
 		Class = "HUNTER",
 		Script = Outfitter:GenerateSimpleScript("FEIGN_DEATH", Outfitter.cHunterFeignDeathDescription),
 	},
+
+	{ -- Monk SturdyOx
+		Name = Outfitter.cMonkSturdyOxStance,
+		ID = "SturdyOx",
+		Class = "MONK",
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_FORM", Outfitter.cMonkSturdyOxStanceDescription)..
+[[
+if Outfitter.IsClassicPandaria and (GetShapeshiftForm() == 1) then
+  equip = true
+elseif didEquip then
+  equip = false
+end
+]],
+	},
+	{ -- Monk FierceTiger
+		Name = Outfitter.cMonkFierceTigerStance,
+		ID = "FierceTiger",
+		Class = "MONK",
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_FORM", Outfitter.cMonkFierceTigerStanceDescription)..
+[[
+if Outfitter.IsClassicPandaria and (GetShapeshiftForm() == 2) then
+  equip = true
+elseif didEquip then
+  equip = false
+end
+]],
+	},
 	----[[--
 	{
 		Name = Outfitter.cWarriorBattleStance,
 		ID = "Battle",
 		Class = "WARRIOR",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA", Outfitter.cWarriorBattleStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_FORM", Outfitter.cWarriorBattleStanceDescription)..
 [[
 -- 71/2, 73/2
-if not Outfitter:IsMainline() and (GetShapeshiftForm() == 1) then
+if not Outfitter.IsMainline and (GetShapeshiftForm() == 1) then
   equip = true
-elseif Outfitter:IsMainline() and
+elseif Outfitter.IsMainline and
     (GetSpecializationInfo(GetSpecialization()) == 71
      or GetSpecializationInfo(GetSpecialization()) == 73)
      and GetShapeshiftForm() == 2 then
@@ -1212,12 +1256,12 @@ end
 		Name = Outfitter.cWarriorDefensiveStance,
 		ID = "Defensive",
 		Class = "WARRIOR",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA", Outfitter.cWarriorDefensiveStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_FORM", Outfitter.cWarriorDefensiveStanceDescription)..
 [[
 -- 71/1, 72/1, 73/1
-if (not Outfitter:IsMainline()) and (GetShapeshiftForm() == 2) then
+if (not Outfitter.IsMainline) and (GetShapeshiftForm() == 2) then
   equip = true
-elseif Outfitter:IsMainline() and (GetShapeshiftForm() == 1) then
+elseif Outfitter.IsMainline and (GetShapeshiftForm() == 1) then
   equip = true
 elseif didEquip then
   equip = false
@@ -1228,12 +1272,12 @@ end
 		Name = Outfitter.cWarriorBerserkerStance,
 		ID = "Berserker",
 		Class = "WARRIOR",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA", Outfitter.cWarriorBerserkerStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_FORM", Outfitter.cWarriorBerserkerStanceDescription)..
 [[
 -- 72/2,
-if not Outfitter:IsMainline() and (GetShapeshiftForm() == 3) then
+if not Outfitter.IsMainline and (GetShapeshiftForm() == 3) then
   equip = true
-elseif Outfitter:IsMainline() and (GetSpecializationInfo(GetSpecialization()) == 72) and (GetShapeshiftForm() == 2) then
+elseif Outfitter.IsMainline and (GetSpecializationInfo(GetSpecialization()) == 72) and (GetShapeshiftForm() == 2) then
   equip = true
 elseif didEquip then
   equip = false

@@ -1009,7 +1009,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										if Outfitter:IsClassicEra() then OutfitterQuickslotFlyouts:Hide() end
+										if Outfitter.IsClassicEra then OutfitterQuickslotFlyouts:Hide() end
 										getglobal(self:GetName().."Text"):SetText(Outfitter.cEnableQuickslotFlyouts)
 									</OnLoad>
 									<OnClick>
