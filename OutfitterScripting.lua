@@ -192,11 +192,13 @@ Outfitter.ScriptModules.MonkStance.Settings =
 {
 	{id = "SturdyOx", type = "boolean", label = Outfitter.cMonkSturdyOxStance},
 	{id = "FierceTiger", type = "boolean", label = Outfitter.cMonkFierceTigerStance},
+	{id = "WiseSerpent", type = "boolean", label = Outfitter.cMonkWiseSerpentStance},
 }
 Outfitter.ScriptModules.MonkStance.Events =
 {
 	SturdyOx = "UPDATE_SHAPESHIFT_FORM",
-	FierceTiger = "UPDATE_SHAPESHIFT_FORM"
+	FierceTiger = "UPDATE_SHAPESHIFT_FORM",
+	WiseSerpent = "UPDATE_SHAPESHIFT_FORM"
 }
 
 ----------------------------------------
@@ -1210,9 +1212,9 @@ end
 		Name = Outfitter.cMonkSturdyOxStance,
 		ID = "SturdyOx",
 		Class = "MONK",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_FORM", Outfitter.cMonkSturdyOxStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_COOLDOWN ACTIVE_TALENT_GROUP_CHANGED", Outfitter.cMonkSturdyOxStanceDescription)..
 [[
-if Outfitter.IsClassicPandaria and (GetShapeshiftForm() == 1) then
+if C_SpecializationInfo.GetSpecialization() == 1 and (GetShapeshiftForm() == 1) then
   equip = true
 elseif didEquip then
   equip = false
@@ -1223,9 +1225,22 @@ end
 		Name = Outfitter.cMonkFierceTigerStance,
 		ID = "FierceTiger",
 		Class = "MONK",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_FORM", Outfitter.cMonkFierceTigerStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_COOLDOWN ACTIVE_TALENT_GROUP_CHANGED", Outfitter.cMonkFierceTigerStanceDescription)..
 [[
-if Outfitter.IsClassicPandaria and (GetShapeshiftForm() == 2) then
+if (GetShapeshiftForm() == 2) or C_SpecializationInfo.GetSpecialization() == 3 then
+  equip = true
+elseif didEquip then
+  equip = false
+end
+]],
+	},
+	{ -- Monk WiseSerpent
+		Name = Outfitter.cMonkWiseSerpentStance,
+		ID = "WiseSerpent",
+		Class = "MONK",
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UPDATE_SHAPESHIFT_COOLDOWN ACTIVE_TALENT_GROUP_CHANGED", Outfitter.cMonkWiseSerpentStanceDescription)..
+[[
+if C_SpecializationInfo.GetSpecialization() == 2 and (GetShapeshiftForm() == 1) then
   equip = true
 elseif didEquip then
   equip = false
@@ -1237,7 +1252,7 @@ end
 		Name = Outfitter.cWarriorBattleStance,
 		ID = "Battle",
 		Class = "WARRIOR",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_FORM", Outfitter.cWarriorBattleStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_COOLDOWN", Outfitter.cWarriorBattleStanceDescription)..
 [[
 -- 71/2, 73/2
 if not Outfitter.IsMainline and (GetShapeshiftForm() == 1) then
@@ -1256,7 +1271,7 @@ end
 		Name = Outfitter.cWarriorDefensiveStance,
 		ID = "Defensive",
 		Class = "WARRIOR",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_FORM", Outfitter.cWarriorDefensiveStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_COOLDOWN", Outfitter.cWarriorDefensiveStanceDescription)..
 [[
 -- 71/1, 72/1, 73/1
 if (not Outfitter.IsMainline) and (GetShapeshiftForm() == 2) then
@@ -1272,7 +1287,7 @@ end
 		Name = Outfitter.cWarriorBerserkerStance,
 		ID = "Berserker",
 		Class = "WARRIOR",
-		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_FORM", Outfitter.cWarriorBerserkerStanceDescription)..
+		Script = Outfitter:GenerateScriptHeader("PLAYER_ENTERING_WORLD UNIT_AURA UPDATE_SHAPESHIFT_COOLDOWN", Outfitter.cWarriorBerserkerStanceDescription)..
 [[
 -- 72/2,
 if not Outfitter.IsMainline and (GetShapeshiftForm() == 3) then

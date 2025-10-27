@@ -1033,6 +1033,7 @@ Outfitter.cClassSpecialOutfits =
 	{
 		{Name = Outfitter.cMonkFierceTigerStance, ScriptID = "FierceTiger"},
 		{Name = Outfitter.cMonkSturdyOxStance, ScriptID = "SturdyOx"},
+		{Name = Outfitter.cMonkWiseSerpentStance, ScriptID = "WiseSerpent"},
 	},
 
 	DRUID =
