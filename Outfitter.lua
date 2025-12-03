@@ -7737,7 +7737,7 @@ Outfitter._ExtendedCompareTooltip = {}
 function Outfitter._ExtendedCompareTooltip:Construct()
 	hooksecurefunc("GameTooltip_ShowCompareItem", function (pShift)
 		if not Outfitter.Settings.Options.DisableItemComparisons then
-			if TooltipUtil and TooltipUtil.ShouldDoItemComparison() then
+			if TooltipUtil and TooltipUtil.ShouldDoItemComparison(pShift) then
 				self:ShowCompareItem(pShift)
 			else
 				self:ShowCompareItem(pShift)
