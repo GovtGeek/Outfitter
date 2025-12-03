@@ -23,6 +23,7 @@ function Addon.DebugLib:Initialize()
 
 	self.Initialized = true
 
+	--[[
 	hooksecurefunc(
 			"ChatFrame_ConfigEventHandler",
 			function (event)
@@ -31,6 +32,16 @@ function Addon.DebugLib:Initialize()
 					self:FindDebugFrame()
 				end
 			end)
+	--]]
+	ChatFrameUtil.ForEachChatFrame(function (chatFrame) 
+		if chatFrame.OnEvent ~= nil then
+			chatFrame:HookScript("OnEvent", function (event)
+				if event == "UPDATE_CHAT_WINDOWS" and not self.DebugFrame then
+					self:FindDebugFrame()
+				end
+			end)
+		end
+	end)
 
 	self:FindDebugFrame()
 end
