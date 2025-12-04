@@ -3924,10 +3924,11 @@ function Outfitter:GetExpectedOutfit(pExcludeOutfit)
 	for vStackIndex, vOutfit in ipairs(self.OutfitStack.Outfits) do
 		if vOutfit ~= pExcludeOutfit then
 			local vItems = vOutfit:GetItems()
-
-			for vInventorySlot, vOutfitItem in pairs(vItems) do
-				vCompiledOutfit:SetItem(vInventorySlot, vOutfitItem)
-				vCompiledOutfit.SourceOutfit[vInventorySlot] = vOutfit:GetName()
+			if type(vItems) == type({}) then
+				for vInventorySlot, vOutfitItem in pairs(vItems) do
+					vCompiledOutfit:SetItem(vInventorySlot, vOutfitItem)
+					vCompiledOutfit.SourceOutfit[vInventorySlot] = vOutfit:GetName()
+				end
 			end
 		end
 	end

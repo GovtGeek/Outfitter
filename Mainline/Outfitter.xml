@@ -10,7 +10,7 @@
 		</Scripts>
 	</Button>
 
-	<CheckButton name="OutfitterCheckboxTemplate" inherits="InterfaceOptionsCheckButtonTemplate" virtual="true">
+	<CheckButton name="OutfitterCheckboxTemplate" inherits="OptionsBaseCheckButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				if self:GetChecked() then
@@ -575,7 +575,7 @@
 		</Scripts>
 	</Button>
 
-	<Frame name="OutfitterButtonFrame" hidden="false" parent="PaperDollFrame" setAllPoints="true">
+	<Frame name="OutfitterButtonFrame" hidden="false" parent="PaperDollItemsFrame" setAllPoints="true">
 		<Frames>
 			<Button name="OutfitterButton" hidden="false">
 				<Size>
