@@ -3672,6 +3672,32 @@ function Outfitter:FindOutfitByStatID(pStatID)
 end
 
 function Outfitter:OutfitSummary()
+	--[[
+	print("OutfitStack")
+	for k,v in pairs(Outfitter.OutfitStack) do
+		print(k,v)
+	end
+	--]]
+	print("-----")
+	print("OutfitStack Outfits")
+	for oIndex,outfit in pairs(Outfitter.OutfitStack.Outfits) do
+		print(oIndex,outfit.Name,outfit.CategoryID)
+		for itemSlot,slotInfo in pairs(outfit.Items) do
+			print(itemSlot, slotInfo.Link or "(empty)")
+			--print(itemSlot)
+			--[[
+			if slotInfo.Link then
+				for k,v in pairs(slotInfo) do
+					print(k,v)
+				end
+			end
+			--print("--")
+			--]]
+		end
+		print("---")
+	end
+	print("-----")
+
 end
 
 function Outfitter:RatingSummary()
@@ -4951,7 +4977,6 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	--print(eventName.." "..cvar.." "..value.." ("..type(value)..")") --DAC
 	if GearManagerDialog then
 		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
 			-- Scoot the title drop down over a little and adjust the button and frame
@@ -7971,7 +7996,6 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
-		--print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
 
 		vTooltip:SetScript("OnUpdate", function ()
