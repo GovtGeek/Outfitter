@@ -8521,7 +8521,8 @@ function Outfitter._ListItem:SetToOutfit(pOutfit, pCategoryID, pOutfitIndex, pIn
 	self:Show()
 
 	-- Turn off the server storage icon for classic
-	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+	--if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+	if LE_EXPANSION_LEVEL_CURRENT < LE_EXPANSION_WRATH_OF_THE_LICH_KING then
 		----[[--
 		local vScriptIcon = _G[vOutfitFrameName.."ScriptIcon"]
 		local vServerButton = _G[vOutfitFrameName.."ServerButton"]
