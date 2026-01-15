@@ -1,9 +1,9 @@
-## Interface: 50501, 50502, 40402, 30403, 20505, 11508
+## Interface: 50503, 40402, 30403, 20505, 11508
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 5.5.3.1
+## Version: 5.5.3.2
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps:
 ## RequiredDeps:
