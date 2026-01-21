@@ -1522,9 +1522,11 @@ function Outfitter:UpdateCurrentOutfitIcon()
 		if type(vTexture) == "number" then
 			vTexture = 	self:ConvertTextureIDToPath(vTexture)
 		end
-		SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+		--SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+		OutfitterMinimapButton.CurrentOutfitTexture:SetTexture(vTexture)
 	elseif OutfitterMinimapButton.icon and vTexture then
-		SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
+		--SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
+		OutfitterMinimapButton.icon:SetTexture(vTexture)
 	end
 end
 
@@ -3672,6 +3674,32 @@ function Outfitter:FindOutfitByStatID(pStatID)
 end
 
 function Outfitter:OutfitSummary()
+	--[[
+	print("OutfitStack")
+	for k,v in pairs(Outfitter.OutfitStack) do
+		print(k,v)
+	end
+	--]]
+	print("-----")
+	print("OutfitStack Outfits")
+	for oIndex,outfit in pairs(Outfitter.OutfitStack.Outfits) do
+		print(oIndex,outfit.Name,outfit.CategoryID)
+		for itemSlot,slotInfo in pairs(outfit.Items) do
+			print(itemSlot, slotInfo.Link or "(empty)")
+			--print(itemSlot)
+			--[[
+			if slotInfo.Link then
+				for k,v in pairs(slotInfo) do
+					print(k,v)
+				end
+			end
+			--print("--")
+			--]]
+		end
+		print("---")
+	end
+	print("-----")
+
 end
 
 function Outfitter:RatingSummary()
@@ -4951,7 +4979,6 @@ end
 
 -- Needs to fix GearManagerDialog too
 function Outfitter:EquipmentManagerAdjust(eventName, cvar, value)
-	--print(eventName.." "..cvar.." "..value.." ("..type(value)..")") --DAC
 	if GearManagerDialog then
 		if cvar == "equipmentManager" and value == "1" then -- cvar values are strings
 			-- Scoot the title drop down over a little and adjust the button and frame
@@ -7971,7 +7998,6 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	local vTooltip = self.Tooltips[self.NumTooltipsShown]
 
 	if not vTooltip then
-		--print("Creating vTooltip") --DAC
 		vTooltip = CreateFrame("GameTooltip", "OutfitterCompareTooltip"..self.NumTooltipsShown, UIParent, "ShoppingTooltipTemplate")
 
 		vTooltip:SetScript("OnUpdate", function ()
@@ -8497,7 +8523,8 @@ function Outfitter._ListItem:SetToOutfit(pOutfit, pCategoryID, pOutfitIndex, pIn
 	self:Show()
 
 	-- Turn off the server storage icon for classic
-	if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+	--if WOW_PROJECT_ID == WOW_PROJECT_CLASSIC then
+	if LE_EXPANSION_LEVEL_CURRENT < LE_EXPANSION_WRATH_OF_THE_LICH_KING then
 		----[[--
 		local vScriptIcon = _G[vOutfitFrameName.."ScriptIcon"]
 		local vServerButton = _G[vOutfitFrameName.."ServerButton"]
