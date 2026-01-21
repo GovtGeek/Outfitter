@@ -1522,9 +1522,11 @@ function Outfitter:UpdateCurrentOutfitIcon()
 		if type(vTexture) == "number" then
 			vTexture = 	self:ConvertTextureIDToPath(vTexture)
 		end
-		SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+		--SetPortraitToTexture(OutfitterMinimapButton.CurrentOutfitTexture, vTexture)
+		OutfitterMinimapButton.CurrentOutfitTexture:SetTexture(vTexture)
 	elseif OutfitterMinimapButton.icon and vTexture then
-		SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
+		--SetPortraitToTexture(OutfitterMinimapButton.icon, vTexture)
+		OutfitterMinimapButton.icon:SetTexture(vTexture)
 	end
 end
 
