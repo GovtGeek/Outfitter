@@ -669,17 +669,49 @@ function Outfitter._OutfitMethodsEM:GetItem(pSlotName)
 	end
 end
 
-function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
-	if not _G["EquipmentManager_UnpackLocation"] then
-		return nil, nil, nil, nil, nil
+--[[ Blizzard removed a function. I'm including it here ]]
+local function _EquipmentManager_UnpackLocation (location) -- Use me, I'm here to be used.
+	-- Default to the original version
+	if _G["EquipmentManager_UnpackLocation"] then
+		return EquipmentManager_UnpackLocation(location)
 	end
 
-	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex
-	if Outfitter.IsMainline then
-		vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
-	else
-		vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex = EquipmentManager_UnpackLocation(pLocation)
+	--[[ Continue with the copied version]]--
+	if ( location < 0 ) then -- Thanks Seerah!
+		return false, false, false, 0;
 	end
+	
+	local player = (bit.band(location, ITEM_INVENTORY_LOCATION_PLAYER) ~= 0);
+	local bank = (bit.band(location, ITEM_INVENTORY_LOCATION_BANK) ~= 0);
+	local bags = (bit.band(location, ITEM_INVENTORY_LOCATION_BAGS) ~= 0);
+
+	if ( player ) then
+		location = location - ITEM_INVENTORY_LOCATION_PLAYER;
+	elseif ( bank ) then
+		location = location - ITEM_INVENTORY_LOCATION_BANK;
+	end
+	
+	if ( bags ) then
+		location = location - ITEM_INVENTORY_LOCATION_BAGS;
+		local bag = bit.rshift(location, ITEM_INVENTORY_BAG_BIT_OFFSET);
+		local slot = location - bit.lshift(bag, ITEM_INVENTORY_BAG_BIT_OFFSET);	
+		
+		if ( bank ) then
+			bag = bag + ITEM_INVENTORY_BANK_BAG_OFFSET;
+		end
+		return player, bank, bags, slot, bag
+	else
+		return player, bank, bags, location
+	end
+end
+
+function Outfitter._OutfitMethodsEM:UnpackLocation(pLocation)
+	local vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex
+	--if Outfitter.IsMainline then
+	--	vOnPlayer, vInBank, vInBags, vVoidStorage, vSlotIndex, vBagIndex = _EquipmentManager_UnpackLocation(pLocation)
+	--else
+		vOnPlayer, vInBank, vInBags, vSlotIndex, vBagIndex = _EquipmentManager_UnpackLocation(pLocation)
+	--end
 
 	if vInBags
 	and Outfitter:IsBankBagIndex(vBagIndex) then
@@ -838,7 +870,6 @@ function Outfitter._OutfitMethodsEM:SlotIsEquipped(pSlotName, pInventoryCache)
 	end
 
 	local vOnPlayer, vInBank, vInBags = self:UnpackLocation(vLocation)
-
 	return vOnPlayer and not vInBank and not vInBags
 end
 --[[
