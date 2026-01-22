@@ -4412,6 +4412,7 @@ function Outfitter:SetSlotEnable(pSlotName, pEnable)
 		Outfitter:DebugMessage("Enabling slot "..pSlotName)
 		self.SelectedOutfit:SetInventoryItem(pSlotName)
 	else
+		Outfitter:DebugMessage("Disabling slot "..pSlotName)
 		self.SelectedOutfit:RemoveItem(pSlotName)
 	end
 
