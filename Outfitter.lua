@@ -4466,6 +4466,11 @@ function Outfitter:GetPlayerAuraStates()
 		self.AuraStates[vKey] = false
 	end
 
+	-- As of 12.0, getting aura states in combat is banned by Blizzard
+	if Outfitter.InCombat then
+		return self.AuraStates
+	end
+
 	while true do
 		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
 		local auraInfo = C_UnitAuras.GetBuffDataByIndex("player", vBuffIndex)
