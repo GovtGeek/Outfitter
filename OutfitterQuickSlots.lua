@@ -40,7 +40,6 @@ end
 
 function Outfitter._FlyoutQuickSlots:PostClick(pButton, ...)
 	if not Outfitter.Settings.Options.QuickslotFlyouts or Outfitter.FlyoutsUnavailable then return end
-	print(Outfitter.FlyoutsUnavailable)
 	local vSlotItemLink = Outfitter:GetInventorySlotIDLink(pButton.id or pButton:GetID())
 
 	if EquipmentFlyoutFrame:IsVisible() and EquipmentFlyoutFrame.button == pButton then
