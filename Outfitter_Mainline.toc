@@ -1,9 +1,9 @@
-## Interface: 120000
+## Interface: 120001
 ## Author: GovtGeek
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 5.5.3.8
+## Version: 5.5.3.9
 ## Notes: Clothing and weapon management and automated equipment changes
 ## AddonCompartmentFunc: Outfitter_OnAddonCompartmentClick
 #### AddonCompartmentFuncOnEnter:

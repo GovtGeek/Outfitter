@@ -1635,9 +1635,7 @@ function Outfitter:UnitHealthOrManaChanged(pUnitID)
 	self:BeginEquipmentUpdate()
 
 	-- Check to see if the player is full while dining
-
-	if self.SpecialState.Dining
-	and self:PlayerIsFull() then
+	if self.SpecialState.Dining	and self:PlayerIsFull() then
 		self:SetSpecialOutfitEnabled("Dining", false)
 	end
 
@@ -1739,7 +1737,11 @@ function Outfitter:SpiritRegenTimer()
 	self:SetSpecialOutfitEnabled("Spirit", true)
 end
 
+-- This is currently only used for a dining outfit check
+-- Default to "full enough" when values are inaccessible
 function Outfitter:PlayerIsFull()
+	if canaccessvalue and not canaccessvalue(UnitHealth("player")) then return true end
+
 	if UnitHealth("player") < (UnitHealthMax("player") * 0.85) then
 		return false
 	end
@@ -4467,13 +4469,18 @@ function Outfitter:GetPlayerAuraStates()
 	end
 
 	-- As of 12.0, getting aura states in combat is banned by Blizzard
-	if Outfitter.InCombat then
+	if Outfitter.InCombat or InCombatLockdown() then
+		Outfitter.InCombat = true
 		return self.AuraStates
 	end
 
 	while true do
 		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
 		local auraInfo = C_UnitAuras.GetBuffDataByIndex("player", vBuffIndex)
+
+		-- Bail out if we can't use the value (not combat, just 'secret')
+		if canaccessvalue and not canaccessvalue(auraInfo) then return self.AuraStates end
+
 		local vName, vTexture, vSpellID
 		if auraInfo then
 			vName, vTexture, vSpellID = auraInfo.name, auraInfo.icon, auraInfo.spellId
@@ -4569,7 +4576,6 @@ function Outfitter:UpdateAuraStates()
 	self:BeginEquipmentUpdate()
 
 	-- Check for special aura outfits
-
 	local vAuraStates = self:GetPlayerAuraStates()
 
 	for vSpecialID, vIsActive in pairs(vAuraStates) do
@@ -4582,15 +4588,11 @@ function Outfitter:UpdateAuraStates()
 		end
 
 		-- Don't equip the dining outfit if health and mana are almost topped up
-
-		if vSpecialID == "Dining"
-		and vIsActive
-		and self:PlayerIsFull() then
+		if vSpecialID == "Dining" and vIsActive and self:PlayerIsFull() then
 			vIsActive = false
 		end
 
 		-- Update the state
-
 		self:SetSpecialOutfitEnabled(vSpecialID, vIsActive)
 	end
 
