@@ -691,15 +691,11 @@ if not isEquipped then
 end
 
 if setting.Buffcheck and #setting.Buffcheck > 0 then
-    local i = 1
-    local buff = UnitBuff("player", i)
-    while buff do
-        for j=0,#setting.Buffcheck,1 do
-            if buff == setting.Buffcheck[j] then return end
-        end;
-        i = i + 1
-        buff = UnitBuff("player", i)
+  for j=1,#setting.Buffcheck,1 do
+    if C_UnitAuras.GetAuraDataBySpellName("player", setting.Buffcheck[j]) then
+      return
     end
+  end
 end
 
 local itemInfo0, itemInfo1
@@ -1384,7 +1380,7 @@ end
 
 if select(1, ...) ~= "player" then return end
 
-if UnitBuff("player", setting.buffName) then
+if C_UnitAuras.GetAuraDataBySpellName("player", setting.buffName) then
     equip = true
 end
 
