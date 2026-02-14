@@ -7601,7 +7601,7 @@ function Outfitter:InventoryItemIsActive(pInventorySlot)
 	local vSlotID = self.cSlotIDs[pInventorySlot]
 	local vItemLink = self:GetInventorySlotIDLink(vSlotID)
 	local vItemCode = self:GetSlotIDLinkInfo(vSlotID)[1]
-	local vStartTime, vDuration, vEnable = GetItemCooldown(vItemCode)
+	local vStartTime, vDuration, vEnable = C_Container.GetItemCooldown(vItemCode)
 
 	if not vStartTime or vStartTime == 0 then
 		return false
