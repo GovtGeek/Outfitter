@@ -7600,7 +7600,8 @@ function Outfitter:InventoryItemIsActive(pInventorySlot)
 	if pInventorySlot == nil then return false end
 	local vSlotID = self.cSlotIDs[pInventorySlot]
 	local vItemLink = self:GetInventorySlotIDLink(vSlotID)
-	local vItemCode = self:GetSlotIDLinkInfo(vSlotID)[1]
+	if not vItemLink then return false end -- Bail if there isn't an item
+	local vItemCode = C_Item.GetItemIDForItemInfo(vItemLink)
 	local vStartTime, vDuration, vEnable = C_Container.GetItemCooldown(vItemCode)
 
 	if not vStartTime or vStartTime == 0 then
@@ -7772,6 +7773,7 @@ Outfitter._ExtendedCompareTooltip = {}
 
 function Outfitter._ExtendedCompareTooltip:Construct()
 	hooksecurefunc("GameTooltip_ShowCompareItem", function (pShift)
+		if not pShift then return end -- Not sure how a nil tooltip is getting passed, but bail out if so
 		if not Outfitter.Settings.Options.DisableItemComparisons then
 			if TooltipUtil and TooltipUtil.ShouldDoItemComparison(pShift) then
 				self:ShowCompareItem(pShift)
@@ -7811,7 +7813,7 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 
 	--local _, vLink = GameTooltip:GetItem()
 	local vLink = Outfitter:GetLinkFromTooltip(GameTooltip)
-	if not vLink then
+	if not vLink or (canaccessvalue and not canaccessvalue(vLink)) then
 		return
 	end
 
