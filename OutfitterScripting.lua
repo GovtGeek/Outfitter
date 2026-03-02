@@ -609,7 +609,7 @@ Outfitter.PresetScripts =
 -- $DESC Equips event on Spec Change
 -- $SETTING spec={Label="Spec", Type="Number"}
 
-if not isEquipped and GetActiveTalentGroup() == setting.spec then
+if not isEquipped and C_SpecializationInfo.GetActiveSpecGroup() == setting.spec then
     equip = true
 else
     return
