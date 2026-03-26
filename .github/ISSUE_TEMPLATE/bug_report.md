@@ -3,7 +3,6 @@ name: Bug report
 about: Report a bug (WoW and Outfitter versions required)
 title: ''
 labels: ''
-assignees: GovtGeek
 
 ---
 
