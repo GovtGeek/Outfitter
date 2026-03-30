@@ -7838,8 +7838,11 @@ function Outfitter._ExtendedCompareTooltip:ShowCompareItem()
 		return
 	end
 
-	-- Figure out which direction to stack in
+	if canaccessvalue and not canaccessvalue(GameTooltip:GetLeft()) then
+		return
+	end
 
+	-- Figure out which direction to stack in
 	local vLeftDist = GameTooltip:GetLeft() or 0
 	local vRightDist = GetScreenWidth() - (GameTooltip:GetRight() or 0)
 
