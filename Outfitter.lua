@@ -4479,7 +4479,9 @@ function Outfitter:GetPlayerAuraStates()
 		local auraInfo = C_UnitAuras.GetBuffDataByIndex("player", vBuffIndex)
 
 		-- Bail out if we can't use the value (not combat, just 'secret')
-		if canaccessvalue and not canaccessvalue(auraInfo) then return self.AuraStates end
+		--if canaccessvalue and not canaccessvalue(auraInfo) then return self.AuraStates end
+		if canaccesssecrets and not canaccesssecrets() then return self.AuraStates end
+
 
 		local vName, vTexture, vSpellID
 		if auraInfo then
