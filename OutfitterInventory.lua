@@ -420,6 +420,7 @@ function Outfitter._ItemInfo:ParseTooltip()
 	-- Grab a tooltip
 	local tooltip = Outfitter.TooltipLib:SharedTooltip()
 	tooltip:ClearLines()
+
 	if self.Location and self.Location.BagIndex then
 		tooltip:SetBagItem(self.Location.BagIndex, self.Location.BagSlotIndex)
 	elseif self.Location and self.Location.SlotID then
@@ -441,10 +442,18 @@ function Outfitter._ItemInfo:ParseTooltip()
 		self:ParseTooltipLine(line.leftText, line.leftColor)
 	end
 
+	--[[ Original
 	self.Gem1UniqueType, self.Gem1UniqueCount = self:ParseGemLinkForUniqueEquips(self.Gem1Link)
 	self.Gem2UniqueType, self.Gem2UniqueCount = self:ParseGemLinkForUniqueEquips(self.Gem2Link)
 	self.Gem3UniqueType, self.Gem3UniqueCount = self:ParseGemLinkForUniqueEquips(self.Gem3Link)
 	self.Gem4UniqueType, self.Gem4UniqueCount = self:ParseGemLinkForUniqueEquips(self.Gem4Link)
+	--]]
+
+	local itemLink = select(2, tooltip:GetItem())
+	self.Gem1UniqueType, self.Gem1UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 1)))
+	self.Gem2UniqueType, self.Gem2UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 2)))
+	self.Gem3UniqueType, self.Gem3UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 3)))
+	self.Gem4UniqueType, self.Gem4UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 4)))
 
 	-- Done
 	self.didParseTooltip = true
@@ -459,6 +468,7 @@ function Outfitter._ItemInfo:ParseGemLinkForUniqueEquips(link)
 	local tooltip = Outfitter.TooltipLib:SharedTooltip()
 	tooltip:ClearLines()
 	tooltip:SetHyperlink(link)
+	local gemName = tooltip:GetItem()
 
 	-- Return if something went wrong
 	if not tooltip:IsShown() then
@@ -466,10 +476,18 @@ function Outfitter._ItemInfo:ParseGemLinkForUniqueEquips(link)
 	end
 
 	for line in Outfitter.TooltipLib:TooltipLines(tooltip) do
+		--if line.leftText then print(line.leftText) end
 		-- Check for Unique-Equipped
 		local type, count = line.leftText:match(Outfitter.cUniqueEquippedSearchPattern)
 		if type then
+			--print("Unique") --DAC
 			return type, tonumber(count)
+		end
+
+		local matchString = line.leftText:match("^Unique%-Equipped$")
+		if matchString then
+			--print("Found unique equipped gem", gemName) --DAC
+			return gemName, 1
 		end
 	end
 
@@ -616,7 +634,7 @@ function Outfitter:GetSlotIDItemInfo(slotID)
 
 	itemInfo.Location = {SlotID = slotID}
 
-	local location = ItemLocation:CreateFromEquipmentSlot(slotID)
+	--local location = ItemLocation:CreateFromEquipmentSlot(slotID)
 
 	return itemInfo
 end
