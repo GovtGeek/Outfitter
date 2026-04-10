@@ -612,7 +612,7 @@ Outfitter.PresetScripts =
 if not isEquipped and C_SpecializationInfo.GetActiveSpecGroup() == setting.spec then
     equip = true
 else
-    return
+	equip = false
 end
 ]],
 	},
