@@ -450,10 +450,12 @@ function Outfitter._ItemInfo:ParseTooltip()
 	--]]
 
 	local itemLink = select(2, tooltip:GetItem())
-	self.Gem1UniqueType, self.Gem1UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 1)))
-	self.Gem2UniqueType, self.Gem2UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 2)))
-	self.Gem3UniqueType, self.Gem3UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 3)))
-	self.Gem4UniqueType, self.Gem4UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 4)))
+	if itemLink then
+		self.Gem1UniqueType, self.Gem1UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 1)))
+		self.Gem2UniqueType, self.Gem2UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 2)))
+		self.Gem3UniqueType, self.Gem3UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 3)))
+		self.Gem4UniqueType, self.Gem4UniqueCount = self:ParseGemLinkForUniqueEquips(select(2, C_Item.GetItemGem(itemLink, 4)))
+	end
 
 	-- Done
 	self.didParseTooltip = true
