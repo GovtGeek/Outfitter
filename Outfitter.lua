@@ -15,6 +15,7 @@ local IsMainline = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local IsClassicPandaria = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_MISTS_OF_PANDARIA
 local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 local IsClassicWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+local IsClassicTBC = WOW_PROJECT_ID == WOW_PROJECT_BURNING_CRUSADE_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
 local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
 
@@ -35,7 +36,10 @@ function Outfitter:IsClassicCataclysm()
 end
 --]]--
 function Outfitter:IsClassicWrath()
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+	return IsClassicWrath
+end
+function Outfitter:IsClassicTBC()
+	return IsClassicTBC
 end
 --[[
 function Outfitter:IsClassicEra()
@@ -981,7 +985,7 @@ Outfitter.cSpecialIDEvents =
 	Bear = {Equip = "BEAR_FORM", Unequip = "NOT_BEAR_FORM"},
 	Cat = {Equip = "CAT_FORM", Unequip = "NOT_CAT_FORM"},
 	Travel = {Equip = "TRAVEL_FORM", Unequip = "NOT_TRAVEL_FORM"},
-	--Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}, -- Classic Wrath only
+	Flight = {Equip = "SWIFT_FLIGHT_FORM", Unequip = "NOT_SWIFT_FLIGHT_FORM"}, -- Classic Wrath and TBC only
 	Moonkin = {Equip = "MOONKIN_FORM", Unequip = "NOT_MOONKIN_FORM"},
 	Tree = {Equip = "TREE_FORM", Unequip = "NOT_TREE_FORM"},
 	Prowl = {Equip = "STEALTH", Unequip = "NOT_STEALTH"},

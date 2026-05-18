@@ -142,8 +142,8 @@ Outfitter.ScriptModules.DruidShapeshift.Events =
 	Tree = "TREE_FORM",
 	Flight = "SWIFT_FLIGHT_FORM" --DAC
 }
--- Add Swift Flight Form if we're in Classic Wrath
-if Outfitter:IsClassicWrath() then
+-- Add Swift Flight Form if we're in Classic TBC or Wrath
+if Outfitter:IsClassicTBC() or Outfitter:IsClassicWrath() then
 	Outfitter.ScriptModules.DruidShapeshift.Events.Flight = "SWIFT_FLIGHT_FORM"
 end
 
@@ -1772,7 +1772,7 @@ end
 }
 
 -- Add Classic Wrath
-if Outfitter:IsClassicWrath() then
+if Outfitter:IsClassicTBC() or Outfitter:IsClassicWrath() then
 	table.insert(Outfitter.PresetScripts, {
 		Name = Outfitter.cDruidSwiftFlightForm, --DAC
 		ID = "Flight",
