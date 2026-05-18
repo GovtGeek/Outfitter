@@ -14,28 +14,21 @@ Outfitter.Debug =
 local IsMainline = WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
 local IsClassicPandaria = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_MISTS_OF_PANDARIA
 local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
-local IsClassicWrath = WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+local IsClassicWrath = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+local IsClassicTBC = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
 local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
 local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
 
 Outfitter.IsMainline = IsMainline
 Outfitter.IsClassicPandaria = IsClassicPandaria
+Outfitter.IsClassicTBC = IsClassicTBC
 Outfitter.IsClassicEra = IsClassicEra
 
---[[
-function Outfitter:IsMainline()
-	return WOW_PROJECT_ID == WOW_PROJECT_MAINLINE
-end
---]]
-
-----[[--
 function Outfitter:IsClassicCataclysm()
-	--return WOW_PROJECT_ID == WOW_PROJECT_CATA_CLASSIC
-	return LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
+	return IsClassicCataclysm
 end
---]]--
 function Outfitter:IsClassicWrath()
-	return WOW_PROJECT_ID == WOW_PROJECT_WRATH_CLASSIC and LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
+	return IsClassicWrath
 end
 --[[
 function Outfitter:IsClassicEra()
@@ -636,6 +629,7 @@ Outfitter.PhantomItemIDs = {
 Outfitter.cUniqueGemItemIDs =
 {
 	[33140] = 33140, -- Blood of Amber, ItemCode 33140, +13 Spell Critical Strike Rating
+	[28362] = 28362, -- Bold Ornate Ruby, ItemCode 28362, +20 Attack Power
 	[33139] = 33139, -- Brilliant Bladestone, ItemCode 33139, +12 Intellect
 	[34256] = 34256, -- Charmed Amani Jewel, ItemCode 34256, +15 Stamina
 	[33131] = 33131, -- Crimson Sun, ItemCode 33131, +24 Attack Power
@@ -8354,13 +8348,14 @@ function Outfitter:GetTalentTreeName(pIndex)
 	end
 
 	if pIndex then
-		return GetTalentTabInfo(pIndex)
+		return select(2, GetTalentTabInfo(pIndex))
 	end
 	-- The function name isn't right for what is returned,
 	-- but it's used in OutitterScripting
-	local vName1, _, vTab1 = GetTalentTabInfo(1)
-	local vName2, _, vTab2 = GetTalentTabInfo(2)
-	local vName3, _, vTab3 = GetTalentTabInfo(3)
+	local treeID1, vName1, _, vTab1 = GetTalentTabInfo(1)
+	local treeID2, vName2, _, vTab2 = GetTalentTabInfo(2)
+	local treeID3, vName3, _, vTab3 = GetTalentTabInfo(3)
+	local treeID4, vName4, _, vTab4 = GetTalentTabInfo(4)
 	if vTab1 >= vTab2 and vTab1 >= vTab3 then
 		return vName1
 		--return "1"
