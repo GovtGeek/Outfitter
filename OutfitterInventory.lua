@@ -479,14 +479,16 @@ function Outfitter._ItemInfo:ParseGemLinkForUniqueEquips(link)
 
 	for line in Outfitter.TooltipLib:TooltipLines(tooltip) do
 		--if line.leftText then print(line.leftText) end
+		local leftText = line.leftText or ""
+
 		-- Check for Unique-Equipped
-		local type, count = line.leftText:match(Outfitter.cUniqueEquippedSearchPattern)
+		local type, count = leftText:match(Outfitter.cUniqueEquippedSearchPattern)
 		if type then
 			--print("Unique") --DAC
 			return type, tonumber(count)
 		end
 
-		local matchString = line.leftText:match("^Unique%-Equipped$")
+		local matchString = leftText:match("^Unique%-Equipped$")
 		if matchString then
 			--print("Found unique equipped gem", gemName) --DAC
 			return gemName, 1
@@ -497,6 +499,10 @@ function Outfitter._ItemInfo:ParseGemLinkForUniqueEquips(link)
 end
 
 function Outfitter._ItemInfo:ParseTooltipLine(text, color)
+	if not text then
+		return
+	end
+
 	-- Check for Binds on Equip
 	if text == ITEM_BIND_ON_EQUIP then
 		self.BoE = true

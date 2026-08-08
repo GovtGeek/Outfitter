@@ -39,7 +39,8 @@ function Addon.TooltipLib:TooltipLeftLines(tooltip)
 			tooltip[line] = fontString
 		end
 		
-		return fontString:GetText()
+		-- a generic-for stops at the first nil return
+		return fontString:GetText() or ""
 	end
 end
 
