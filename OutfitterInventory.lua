@@ -497,6 +497,8 @@ function Outfitter._ItemInfo:ParseGemLinkForUniqueEquips(link)
 end
 
 function Outfitter._ItemInfo:ParseTooltipLine(text, color)
+	if not text then return end
+
 	-- Check for Binds on Equip
 	if text == ITEM_BIND_ON_EQUIP then
 		self.BoE = true
