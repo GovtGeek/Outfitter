@@ -17,6 +17,7 @@ local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 local IsClassicWrath = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 local IsClassicTBC = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
 local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local IsClassicForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
 local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
 
 Outfitter.IsMainline = IsMainline
@@ -1250,6 +1251,18 @@ function Outfitter:OutfitterButtonAdjust()
 	end
 	if IsClassicCataclysm or IsClassicPandaria then
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
+	if IsClassicForever then
+		OutfitterButton:ClearAllPoints()
+		OutfitterFrame:ClearAllPoints()
+		OutfitterFrame:SetPoint("TOPLEFT", CharacterFrameModeTabs, "TOPRIGHT", -12, 0)
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 0, -34)
+
+		OutfitterFrameTab2:ClearAllPoints()
+		OutfitterFrameTab2:SetPoint("RIGHT", OutfitterFrameTab1, "LEFT")
+
+		OutfitterFrameTab3:ClearAllPoints()
+		OutfitterFrameTab3:SetPoint("RIGHT", OutfitterFrameTab2, "LEFT")
 	end
 	--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
 	if not IsClassicCataclysm then
@@ -7783,21 +7796,32 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		self:HideCompareItems()
 	end)
 
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (tooltip)
+		if tooltip ~= GameTooltip then return end
+		if not IsModifiedClick("COMPAREITEMS") then
+			self:HideCompareItems()
+		end
+	end)
+
+	--[[
 	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (tooltip)
+			if tooltip ~= GameTooltip then return end
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
 			end
 		end)
+
 	else
-		----[[-- Old way of hooking tooltip when an item is assigned
-		GameTooltip:HookScript("OnTooltipSetItem", function ()
+		-- Old way of hooking tooltip when an item is assigned
+		GameTooltip:HookScript("OnTooltipSetItem", function (tooltip)
+			if tooltip ~= GameTooltip then return end
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
 			end
 		end)
-		--]]--
 	end
+	--]]--
 
 	self.Tooltips = {}
 	self.NumTooltipsShown = 0
