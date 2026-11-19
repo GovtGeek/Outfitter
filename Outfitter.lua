@@ -7784,8 +7784,9 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 	end)
 
 	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
-			if not IsModifiedClick("COMPAREITEMS") then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (pTooltip)
+			-- Only the hovered item should clear comparisons, not comparison or addon scanning tooltips.
+			if pTooltip == GameTooltip and not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
 			end
 		end)
