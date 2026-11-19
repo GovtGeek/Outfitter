@@ -1,7 +1,8 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
-	<Button name="OutfitterTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
+	<!--<Button name="OutfitterTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">-->
+	<Button name="OutfitterTabTemplate" inherits="PanelTabButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPEN)
@@ -1059,7 +1060,7 @@
 					<Button name="OutfitterFrameTab2" inherits="OutfitterTabTemplate" id="2" text="Outfitter_cOptionsTabTitle">
 						<Anchors>
 							<Anchor point="RIGHT" relativeTo="OutfitterFrameTab1" relativePoint="LEFT">
-								<Offset x="16" y="0"/>
+								<Offset x="0" y="0"/>
 							</Anchor>
 						</Anchors>
 					</Button>
@@ -1531,7 +1532,8 @@
 		</Frames>
 	</ScrollFrame>
 
-	<Button name="OutfitterScriptTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">
+	<!--<Button name="OutfitterScriptTabTemplate" inherits="CharacterFrameTabButtonTemplate" virtual="true">-->
+	<Button name="OutfitterScriptTabTemplate" inherits="PanelTabButtonTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
 				local vTab = self:GetParent()
