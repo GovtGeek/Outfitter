@@ -17,18 +17,16 @@ end
 ----------------------------------------
 -- Escape key handling for dialogs
 ----------------------------------------
+--Addon.EscapeHooked = false
 
-hooksecurefunc("StaticPopup_EscapePressed", function () self:StaticPopup_EscapePressed() end)
+if RegisterGameMenuEscHandler and GameMenuEscPriority then
+    RegisterGameMenuEscHandler(GameMenuEscPriority.AddOn, function() return Addon.UIElementsLib:EscapePressed() end)
+elseif StaticPopup_EscapePressed then -- older clients
+    hooksecurefunc("StaticPopup_EscapePressed", function() Addon.UIElementsLib:EscapePressed() end)
+end
 
 function Addon.UIElementsLib:BeginDialog(pDialog)
-	if not self.OpenDialogs then
-		self.OpenDialogs = {}
-
-		--self.OrigStaticPopup_EscapePressed = StaticPopup_EscapePressed
-		--StaticPopup_EscapePressed = function (...) return self:StaticPopup_EscapePressed(...) end
-
-	end
-
+	if not self.OpenDialogs then self.OpenDialogs = {} end
 	table.insert(self.OpenDialogs, pDialog)
 end
 
@@ -43,17 +41,14 @@ function Addon.UIElementsLib:EndDialog(pDialog)
 	Addon:ErrorMessage("DialogClosed called on an unknown dialog: %s", tostring(pDialog:GetName()))
 end
 
-function Addon.UIElementsLib:StaticPopup_EscapePressed(...)
-	local vClosed = self.OrigStaticPopup_EscapePressed(...)
+function Addon.UIElementsLib:EscapePressed(...)
+	if not self.OpenDialogs then self.OpenDialogs = {} end
 	local vNumDialogs = #self.OpenDialogs
-
 	for vIndex = 1, vNumDialogs do
 		local vDialog = self.OpenDialogs[1]
 		vDialog:Cancel()
-		vClosed = 1
+		self.EndDialog(vDialog)
 	end
-
-	return vClosed
 end
 
 
