@@ -18,12 +18,15 @@ end
 -- Escape key handling for dialogs
 ----------------------------------------
 
+hooksecurefunc("StaticPopup_EscapePressed", function () self:StaticPopup_EscapePressed() end)
+
 function Addon.UIElementsLib:BeginDialog(pDialog)
 	if not self.OpenDialogs then
 		self.OpenDialogs = {}
 
-		self.OrigStaticPopup_EscapePressed = StaticPopup_EscapePressed
-		StaticPopup_EscapePressed = function (...) return self:StaticPopup_EscapePressed(...) end
+		--self.OrigStaticPopup_EscapePressed = StaticPopup_EscapePressed
+		--StaticPopup_EscapePressed = function (...) return self:StaticPopup_EscapePressed(...) end
+
 	end
 
 	table.insert(self.OpenDialogs, pDialog)
