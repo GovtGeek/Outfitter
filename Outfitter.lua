@@ -325,6 +325,7 @@ Outfitter.IsFeigning = false
 Outfitter.BankFrameIsOpen = false
 Outfitter.VoidStorageIsOpen = false
 
+Outfitter.CanDualWield2H = false
 Outfitter.HasHWEvent = false
 
 Outfitter.SettingTypeInfo =
@@ -1241,6 +1242,7 @@ end
 for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
 end
+
 function Outfitter:OutfitterButtonAdjust()
 	if IsClassicEra then
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -40)
@@ -2077,6 +2079,8 @@ function Outfitter:DeleteSelectedOutfit()
 end
 
 function Outfitter:TalentsChanged()
+	self.CanDualWield2H = false	--reset, just in case
+	if IsClassicForever then return false end
 	if _G["GetSpecialization"] then
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
 	elseif IsClassicPandaria then
@@ -5180,7 +5184,8 @@ function Outfitter:Initialize()
 
 	-- Adjust the Blizzard UI and Outfitter frames
 	if IsMainline or IsClassicCataclysm or IsClassicPandaria then
-		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
+		-- This probably shouldn't be done as it may taint the UI
+		--PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
 	end
 	if IsClassicCataclysm or IsClassicPandaria then
 		OutfitterFrame:SetPoint("TOPLEFT", "OutfitterButtonFrame", "TOPRIGHT", -2, -30)
