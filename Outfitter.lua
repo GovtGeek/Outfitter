@@ -1294,10 +1294,11 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 	if CharacterFrame:IsShown() then
 		Outfitter:ToggleOutfitterFrame()
 	else
-		--[[-- Not sure why this is needed. Pulled from Blizzard forums --]]--
+		--[[-- Not sure why this is needed. Pulled from Blizzard forums --
 		if not CharacterFrameTab3:GetRight() then
 			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
 		end
+		--]]
 		Outfitter:OpenUI()
 		--[[
 		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
