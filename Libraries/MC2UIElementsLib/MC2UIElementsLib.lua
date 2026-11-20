@@ -19,21 +19,23 @@ end
 ----------------------------------------
 --Addon.EscapeHooked = false
 
-if RegisterGameMenuEscHandler and GameMenuEscPriority then
-    RegisterGameMenuEscHandler(GameMenuEscPriority.AddOn, function() return Addon.UIElementsLib:EscapePressed() end)
-elseif StaticPopup_EscapePressed then -- older clients
-    hooksecurefunc("StaticPopup_EscapePressed", function() Addon.UIElementsLib:EscapePressed() end)
-end
+hooksecurefunc("StaticPopup_EscapePressed", function() Addon.UIElementsLib:EscapePressed() end)
 
 function Addon.UIElementsLib:BeginDialog(pDialog)
 	if not self.OpenDialogs then self.OpenDialogs = {} end
 	table.insert(self.OpenDialogs, pDialog)
+	if pDialog:GetName() ~= nil then
+		table.insert(UISpecialFrames, pDialog:GetName())
+	end
 end
 
 function Addon.UIElementsLib:EndDialog(pDialog)
 	for vIndex, vDialog in ipairs(self.OpenDialogs) do
 		if vDialog == pDialog then
 			table.remove(self.OpenDialogs, vIndex)
+			if pDialog:GetName() ~= nil then
+				table.remove(UISpecialFrames, pDialog:GetName())
+			end
 			return
 		end
 	end
@@ -47,7 +49,6 @@ function Addon.UIElementsLib:EscapePressed(...)
 	for vIndex = 1, vNumDialogs do
 		local vDialog = self.OpenDialogs[1]
 		vDialog:Cancel()
-		self.EndDialog(vDialog)
 	end
 end
 
