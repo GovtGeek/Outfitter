@@ -4485,6 +4485,9 @@ function Outfitter:GetPlayerAuraStates()
 		Outfitter.InCombat = true
 		return self.AuraStates
 	end
+	if C_Secrets.ShouldAurasBeSecret() then
+		return self.AuraStates
+	end
 
 	while true do
 		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
