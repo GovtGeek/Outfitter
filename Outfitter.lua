@@ -1,6 +1,7 @@
 ----------------------------------------
 -- Outfitter Copyright 2006-2018 John Stephen
 ----------------------------------------
+local addonName, addon = ...
 Outfitter.Debug =
 {
 	InventoryCache = false,
@@ -6642,7 +6643,7 @@ end
 function Outfitter:OpenUI()
 	-- Make sure the PaperDollFrame is visible
 	if not PaperDollFrame:IsVisible() then
-		ToggleCharacter("PaperDollFrame")
+		ShowUIPanel(CharacterFrame) -- More secure than previouse ToggleCharacter
 	end
 
 	OutfitterFrame:Show()
@@ -8374,6 +8375,8 @@ function Outfitter:SynchronizeCompanionState()
 end
 
 function Outfitter:GetTalentTreeName(pIndex)
+	if not pIndex then return "Unknown" end
+
 	-- Retail shortcut
 	if _G["GetSpecializationInfo"] then
 		local _, vName = GetSpecializationInfo(pIndex)
@@ -8381,7 +8384,16 @@ function Outfitter:GetTalentTreeName(pIndex)
 	end
 
 	if pIndex then
-		return select(2, GetTalentTabInfo(pIndex))
+		if type(GetTalentTabInfo) == "function" then
+			return select(2, GetTalentTabInfo(pIndex))
+		else
+			local configInfo = C_Traits.GetConfigInfo(C_Traits.GetConfigIDBySystemID(Enum.SpecializationSystem.TalentTab))
+			local displayInfos = C_Traits.GetGroupDisplayInfoByTreeID(configInfo.treeIDs[1])
+			if pIndex <= #displayInfos then
+				return displayInfos[pIndex].displayName
+			end
+			return "Unknown"
+		end
 	end
 	-- The function name isn't right for what is returned,
 	-- but it's used in OutitterScripting
