@@ -1,3 +1,9 @@
+local addonName, addon = ...
+
+addon.L = addon.L or {}
+L = addon.L
+
+print("Outfitter loaded French")
 if GetLocale() == "frFR" then
 	Outfitter.cTitle = "Outfitter"
 	Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
