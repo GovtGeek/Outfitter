@@ -1,6 +1,7 @@
 ----------------------------------------
 -- Outfitter Copyright 2006-2018 John Stephen
 ----------------------------------------
+local addonName, addon = ...
 Outfitter.Debug =
 {
 	InventoryCache = false,
@@ -17,6 +18,7 @@ local IsClassicCataclysm = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_CATACLYSM
 local IsClassicWrath = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_WRATH_OF_THE_LICH_KING
 local IsClassicTBC = LE_EXPANSION_LEVEL_CURRENT == LE_EXPANSION_BURNING_CRUSADE
 local IsClassicEra = WOW_PROJECT_ID == WOW_PROJECT_CLASSIC
+local IsClassicForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
 local NUM_BANKBAGSLOTS = NUM_BANKBAGSLOTS or 98
 
 Outfitter.IsMainline = IsMainline
@@ -324,6 +326,7 @@ Outfitter.IsFeigning = false
 Outfitter.BankFrameIsOpen = false
 Outfitter.VoidStorageIsOpen = false
 
+Outfitter.CanDualWield2H = false
 Outfitter.HasHWEvent = false
 
 Outfitter.SettingTypeInfo =
@@ -1240,6 +1243,7 @@ end
 for vIndex, vSlotName in ipairs(Outfitter.cSlotNames) do
 	Outfitter.cSlotOrder[vSlotName] = vIndex
 end
+
 function Outfitter:OutfitterButtonAdjust()
 	if IsClassicEra then
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", -28, -40)
@@ -1250,6 +1254,18 @@ function Outfitter:OutfitterButtonAdjust()
 	end
 	if IsClassicCataclysm or IsClassicPandaria then
 		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 4, -28)
+	end
+	if IsClassicForever then
+		OutfitterButton:ClearAllPoints()
+		OutfitterFrame:ClearAllPoints()
+		OutfitterFrame:SetPoint("TOPLEFT", CharacterFrameModeTabs, "TOPRIGHT", -12, 0)
+		OutfitterButton:SetPoint("TOPRIGHT", PaperDollFrame, "TOPRIGHT", 0, -34)
+
+		OutfitterFrameTab2:ClearAllPoints()
+		OutfitterFrameTab2:SetPoint("RIGHT", OutfitterFrameTab1, "LEFT")
+
+		OutfitterFrameTab3:ClearAllPoints()
+		OutfitterFrameTab3:SetPoint("RIGHT", OutfitterFrameTab2, "LEFT")
 	end
 	--[[-- TODO? Use this for all adjustments - remove the EquipmentManagerAdjust
 	if not IsClassicCataclysm then
@@ -1281,10 +1297,11 @@ function Outfitter_OnAddonCompartmentClick(addonName, buttonName)
 	if CharacterFrame:IsShown() then
 		Outfitter:ToggleOutfitterFrame()
 	else
-		--[[-- Not sure why this is needed. Pulled from Blizzard forums --]]--
+		--[[-- Not sure why this is needed. Pulled from Blizzard forums --
 		if not CharacterFrameTab3:GetRight() then
 			CharacterFrame:SetPoint("TOPLEFT", 20, -100)
 		end
+		--]]
 		Outfitter:OpenUI()
 		--[[
 		PanelTemplates_SetTab(CharacterFrame, PaperDollFrame:GetID())
@@ -2063,6 +2080,8 @@ function Outfitter:DeleteSelectedOutfit()
 end
 
 function Outfitter:TalentsChanged()
+	self.CanDualWield2H = false	--reset, just in case
+	if IsClassicForever then return false end
 	if _G["GetSpecialization"] then
 		self.CanDualWield2H = self.PlayerClass == "WARRIOR" and GetSpecialization() == 2
 	elseif IsClassicPandaria then
@@ -4467,6 +4486,9 @@ function Outfitter:GetPlayerAuraStates()
 		Outfitter.InCombat = true
 		return self.AuraStates
 	end
+	if C_Secrets.ShouldAurasBeSecret() then
+		return self.AuraStates
+	end
 
 	while true do
 		--local vName, vTexture, _, _, _, _, _, _, _, vSpellID = UnitBuff("player", vBuffIndex)
@@ -5166,7 +5188,8 @@ function Outfitter:Initialize()
 
 	-- Adjust the Blizzard UI and Outfitter frames
 	if IsMainline or IsClassicCataclysm or IsClassicPandaria then
-		PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
+		-- This probably shouldn't be done as it may taint the UI
+		--PaperDollSidebarTabs:SetPoint("BOTTOMRIGHT", CharacterFrameInsetRight, "TOPRIGHT", -30, -1)
 	end
 	if IsClassicCataclysm or IsClassicPandaria then
 		OutfitterFrame:SetPoint("TOPLEFT", "OutfitterButtonFrame", "TOPRIGHT", -2, -30)
@@ -6620,7 +6643,7 @@ end
 function Outfitter:OpenUI()
 	-- Make sure the PaperDollFrame is visible
 	if not PaperDollFrame:IsVisible() then
-		ToggleCharacter("PaperDollFrame")
+		ShowUIPanel(CharacterFrame) -- More secure than previouse ToggleCharacter
 	end
 
 	OutfitterFrame:Show()
@@ -7783,21 +7806,32 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		self:HideCompareItems()
 	end)
 
+	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (tooltip)
+		if tooltip ~= GameTooltip then return end
+		if not IsModifiedClick("COMPAREITEMS") then
+			self:HideCompareItems()
+		end
+	end)
+
+	--[[
 	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function ()
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (tooltip)
+			if tooltip ~= GameTooltip then return end
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
 			end
 		end)
+
 	else
-		----[[-- Old way of hooking tooltip when an item is assigned
-		GameTooltip:HookScript("OnTooltipSetItem", function ()
+		-- Old way of hooking tooltip when an item is assigned
+		GameTooltip:HookScript("OnTooltipSetItem", function (tooltip)
+			if tooltip ~= GameTooltip then return end
 			if not IsModifiedClick("COMPAREITEMS") then
 				self:HideCompareItems()
 			end
 		end)
-		--]]--
 	end
+	--]]--
 
 	self.Tooltips = {}
 	self.NumTooltipsShown = 0
@@ -8341,6 +8375,8 @@ function Outfitter:SynchronizeCompanionState()
 end
 
 function Outfitter:GetTalentTreeName(pIndex)
+	if not pIndex then return "Unknown" end
+
 	-- Retail shortcut
 	if _G["GetSpecializationInfo"] then
 		local _, vName = GetSpecializationInfo(pIndex)
@@ -8348,7 +8384,16 @@ function Outfitter:GetTalentTreeName(pIndex)
 	end
 
 	if pIndex then
-		return select(2, GetTalentTabInfo(pIndex))
+		if type(GetTalentTabInfo) == "function" then
+			return select(2, GetTalentTabInfo(pIndex))
+		else
+			local configInfo = C_Traits.GetConfigInfo(C_Traits.GetConfigIDBySystemID(Enum.SpecializationSystem.TalentTab))
+			local displayInfos = C_Traits.GetGroupDisplayInfoByTreeID(configInfo.treeIDs[1])
+			if pIndex <= #displayInfos then
+				return displayInfos[pIndex].displayName
+			end
+			return "Unknown"
+		end
 	end
 	-- The function name isn't right for what is returned,
 	-- but it's used in OutitterScripting

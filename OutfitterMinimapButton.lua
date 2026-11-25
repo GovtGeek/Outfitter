@@ -1,13 +1,20 @@
 local addonName, addon  = ...
 local OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 80
 
+local IsClassicForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
+
 if LE_EXPANSION_LEVEL_CURRENT > 0 and LE_EXPANSION_LEVEL_CURRENT >= LE_EXPANSION_DRAGONFLIGHT then
 	OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 105
+end
+if IsClassicForever then
+	OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 112
 end
 
 ---- Create the minimap button in code rather than XML
 local function CreateMinimapButton()
 	OutfitterMinimapButton = CreateFrame("Button", "OutfitterMinimapButton", Minimap)
+	OutfitterMinimapButton:SetFrameStrata("MEDIUM")
+	OutfitterMinimapButton:SetFrameLevel(8)
 	OutfitterMinimapButton:SetSize(32, 32)
 	OutfitterMinimapButton:SetPoint("CENTER", MinimapBackdrop, "CENTER", -OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH, 0)
 	OutfitterMinimapButton:SetMovable(true)

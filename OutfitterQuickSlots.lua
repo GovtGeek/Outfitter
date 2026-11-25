@@ -12,6 +12,25 @@ function Outfitter._FlyoutQuickSlots:Construct()
 	end
 
 	local vFlyoutSettings = PaperDollItemsFrame.flyoutSettings or {} -- flyoutSettings are only in live
+	Outfitter._FlyoutQuickSlots._getItemsFunc = function (pSlotID, pItemTable, ...)
+		-- Remove items on the player from the choices
+		for vLocation, vItemID in next, pItemTable do
+			local vOnPlayer = bit.band(vLocation, ITEM_INVENTORY_LOCATION_PLAYER + ITEM_INVENTORY_LOCATION_BAGS + ITEM_INVENTORY_LOCATION_BANK) == ITEM_INVENTORY_LOCATION_PLAYER
+			if vOnPlayer then pItemTable[vLocation] = nil end
+		end
+	end
+	Outfitter._FlyoutQuickSlots._postGetItemsFunc = function (pItemSlotButton, pItemDisplayTable, pNumItems)
+		-- If the first item is the PLACEINBAGS item, then move it to the end
+		if pNumItems > 0 and (pItemDisplayTable[1] == EQUIPMENTFLYOUT_PLACEINBAGS_LOCATION) then
+			table.remove(pItemDisplayTable, 1)
+			table.insert(pItemDisplayTable, EQUIPMENTFLYOUT_PLACEINBAGS_LOCATION)
+		end
+		return vNumItems
+	end
+
+	hooksecurefunc(vFlyoutSettings, "getItemsFunc", Outfitter._FlyoutQuickSlots._getItemsFunc)
+	hooksecurefunc(vFlyoutSettings, "postGetItemsFunc", Outfitter._FlyoutQuickSlots._postGetItemsFunc)
+	--[[
 	local vOrigGetItemsFunc = vFlyoutSettings.getItemsFunc
 	vFlyoutSettings.getItemsFunc = function (pSlotID, pItemTable, ...)
 		vOrigGetItemsFunc(pSlotID, pItemTable, ...)
@@ -31,6 +50,7 @@ function Outfitter._FlyoutQuickSlots:Construct()
 		end
 		return vNumItems
 	end
+	--]]
 end
 
 function Outfitter._FlyoutQuickSlots:PreClick(pButton, ...)

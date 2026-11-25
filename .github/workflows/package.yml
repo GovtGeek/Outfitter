@@ -20,7 +20,7 @@ jobs:
       ADDON_VERSION: ${{ steps.extract_addon_version.outputs.ADDON_VERSION }}
       ZIP_FILE_NAME: ${{ steps.set_zip_file_name.outputs.ZIP_FILE_NAME}}
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
       - name: Identify repository and build type
         run: |
@@ -51,7 +51,7 @@ jobs:
         # Bind directory to allow saving of output
         - /tmp/Outfitter:/tmp/Outfitter
     steps:
-      - uses: actions/checkout@v4
+      - uses: actions/checkout@v7
 
 #      - name: Identify repository and build type
 #        run: |
