@@ -35,15 +35,9 @@ Libraries/MC2ItemLinkLib/MC2ItemLinkLib.lua
 Libraries/MC2TooltipLib/MC2TooltipLib.lua
 Libraries/MC2ItemStatsLib/MC2ItemStatsLib.lua
 
-OutfitterStrings.lua
+#OutfitterStrings.lua
 Localization/OutfitterStrings_enUS.lua
 Localization/OutfitterStrings_[TextLocale].lua [AllowLoadTextLocale koKR, frFR, deDE, zhCN, zhTW, ruRU]
-#Localization/OutfitterStrings_de.lua
-#Localization/OutfitterStrings_fr.lua
-#Localization/OutfitterStrings_cn.lua
-#Localization/OutfitterStrings_tw.lua
-#Localization/OutfitterStrings_kr.lua
-#Localization/OutfitterStrings_ru.lua
 
 Outfitter.lua
 
