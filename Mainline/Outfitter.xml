@@ -1,6 +1,7 @@
 <Ui xmlns="http://www.blizzard.com/wow/ui/" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xsi:schemaLocation="http://www.blizzard.com/wow/ui/ ..\FrameXML\UI.xsd">
 
+	<!--
 	<Button name="OutfitterTabTemplate" inherits="CharacterFrameTabTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
@@ -9,6 +10,7 @@
 			</OnClick>
 		</Scripts>
 	</Button>
+	-->
 
 	<CheckButton name="OutfitterCheckboxTemplate" inherits="OptionsBaseCheckButtonTemplate" virtual="true">
 		<Scripts>
@@ -1486,6 +1488,7 @@
 		</Frames>
 	</ScrollFrame>
 
+	<!--
 	<Button name="OutfitterScriptTabTemplate" inherits="CharacterFrameTabTemplate" virtual="true">
 		<Scripts>
 			<OnClick>
@@ -1497,6 +1500,7 @@
 			</OnClick>
 		</Scripts>
 	</Button>
+	-->
 
 	<Frame name="OutfitterEditScriptDialog" toplevel="true" frameStrata="DIALOG" enableMouse="true"
 		hidden="true" parent="UIParent">
