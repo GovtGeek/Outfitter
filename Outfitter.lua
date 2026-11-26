@@ -2,6 +2,7 @@
 -- Outfitter Copyright 2006-2018 John Stephen
 ----------------------------------------
 local addonName, addon = ...
+local L = addon.L
 Outfitter.Debug =
 {
 	InventoryCache = false,
@@ -46,7 +47,7 @@ Outfitter.CreditPlayersByRealm =
 -- 3 Donor
 ----------------------------------------
 {
-	[Outfitter.cDragonFlightCompatiblity] = {
+	[L.cDragonFlightCompatiblity] = {
 		["GovtGeek\nVersion Unifier"] = 1,
 		["Nulian.. We applaude you!"] = 1,
 		["Coremeeko2"] = 1,
@@ -60,38 +61,38 @@ Outfitter.CreditPlayersByRealm =
 		["LibTipHooker"] = 2,
 		["LibDropdown"] = 2,
 	},
-	[Outfitter.cGermanLocalization] =
+	[L.cGermanLocalization] =
 	{
 		["Ani"] = 2,
 		["Zokrym"] = 2,
 		["Dessa"] = 2,
 	},
-	[Outfitter.cChineseLocalization] =
+	[L.cChineseLocalization] =
 	{
 		["AndyAska"] = 2,
 		["xingdvd"] = 2,
 	},
-	[Outfitter.cFrenchLocalization] =
+	[L.cFrenchLocalization] =
 	{
 		["Jullye"] = 2,
 		["Quetzaco"] = 2,
 		["Ekhurr"] = 2,
 		["Negwe"] = 2,
 	},
-	[Outfitter.cSpanishLocalization] =
+	[L.cSpanishLocalization] =
 	{
 		["Marutak"] = 2,
 		["Marosth"] = 2,
 	},
-	[Outfitter.cRussianLocalization] =
+	[L.cRussianLocalization] =
 	{
 		["Delika"] = 2,
 	},
-	[Outfitter.cKoreanLocalization] =
+	[L.cKoreanLocalization] =
 	{
 		["Unknown"] = 2,
 	},
-	[Outfitter.cContributingDeveloper] =
+	[L.cContributingDeveloper] =
 	{
 		["GovtGeek"] = 1,
 		["Miv\n\"Restoshaman\"\n<Onslaught>"] = 1,
@@ -274,7 +275,7 @@ Outfitter.CreditPlayersByRealm =
 		Airmid = 0,
 		Pistachio = 0,
 		Fizzlebang = 0,
-		[Outfitter.cGuildCreditFormat:format("Bloodforged")] = 1,
+		[L.cGuildCreditFormat:format("Bloodforged")] = 1,
 	},
 	["Ysondre"] =
 	{
@@ -378,11 +379,11 @@ function Outfitter:FormatItemList(pList)
 	if vNumItems == 0 then
 		return ""
 	elseif vNumItems == 1 then
-		return string.format(self.cSingleItemFormat, pList[1])
+		return string.format(L.cSingleItemFormat, pList[1])
 	elseif vNumItems == 2 then
-		return string.format(self.cTwoItemFormat, pList[1], pList[2])
+		return string.format(L.cTwoItemFormat, pList[1], pList[2])
 	else
-		local vStartIndex, vEndIndex, vPrefix, vRepeat, vSuffix = string.find(self.cMultiItemFormat, "(.*){{(.*)}}(.*)")
+		local vStartIndex, vEndIndex, vPrefix, vRepeat, vSuffix = string.find(L.cMultiItemFormat, "(.*){{(.*)}}(.*)")
 		local vResult
 		local vParamIndex = 1
 
@@ -410,38 +411,38 @@ end
 -- Define global variables to be used directly in the XML
 -- file since those references can't be object paths
 
-Outfitter_cTitle = Outfitter.cTitle
-Outfitter_cTitleVersion = Outfitter.cTitleVersion
+Outfitter_cTitle = L.cTitle
+Outfitter_cTitleVersion = L.cTitleVersion
 
-Outfitter_cCreateUsingTitle = Outfitter.cCreateUsingTitle
-Outfitter_cAutomationLabel = Outfitter.cAutomationLabel
-Outfitter_cOutfitterTabTitle = Outfitter.cOutfitterTabTitle
-Outfitter_cOptionsTabTitle = Outfitter.cOptionsTabTitle
-Outfitter_cAboutTabTitle = Outfitter.cAboutTabTitle
+Outfitter_cCreateUsingTitle = L.cCreateUsingTitle
+Outfitter_cAutomationLabel = L.cAutomationLabel
+Outfitter_cOutfitterTabTitle = L.cOutfitterTabTitle
+Outfitter_cOptionsTabTitle = L.cOptionsTabTitle
+Outfitter_cAboutTabTitle = L.cAboutTabTitle
 
-Outfitter_cNewOutfit = Outfitter.cNewOutfit
-Outfitter_cNameAlreadyUsedError = Outfitter.cNameAlreadyUsedError
-Outfitter_cEnableAll = Outfitter.cEnableAll
-Outfitter_cEnableNone = Outfitter.cEnableNone
-Outfitter_cOptionsTitle = Outfitter.cOptionsTitle
+Outfitter_cNewOutfit = L.cNewOutfit
+Outfitter_cNameAlreadyUsedError = L.cNameAlreadyUsedError
+Outfitter_cEnableAll = L.cEnableAll
+Outfitter_cEnableNone = L.cEnableNone
+Outfitter_cOptionsTitle = L.cOptionsTitle
 
-Outfitter_cEditScriptTitle = Outfitter.cEditScriptTitle
-Outfitter_cEditScriptEllide = Outfitter.cEditScriptEllide
-Outfitter_cPresetScript = Outfitter.cPresetScript
-Outfitter_cSettings = Outfitter.cSettings
-Outfitter_cSource = Outfitter.cSource
+Outfitter_cEditScriptTitle = L.cEditScriptTitle
+Outfitter_cEditScriptEllide = L.cEditScriptEllide
+Outfitter_cPresetScript = L.cPresetScript
+Outfitter_cSettings = L.cSettings
+Outfitter_cSource = L.cSource
 
-Outfitter_cIconFilterLabel = Outfitter.cIconFilterLabel
-Outfitter_cIconSetLabel = Outfitter.cIconSetLabel
+Outfitter_cIconFilterLabel = L.cIconFilterLabel
+Outfitter_cIconSetLabel = L.cIconSetLabel
 
 -- These definitions are for backward compatibility with third-party addons
 -- which call into Outfitter directly (OutfitterFu, FishingBuddy, ArkInventory)
 -- Hopefully the authors of those addons will eventually migrate their code to
 -- use the new functions instead so that these can eventually be eliminated.
 
-Outfitter_cCompleteOutfits = Outfitter.cCompleteOutfits
-Outfitter_cAccessoryOutfits = Outfitter.cAccessoryOutfits
-Outfitter_cOddsNEndsOutfits = Outfitter.cOddsNEndsOutfits
+Outfitter_cCompleteOutfits = L.cCompleteOutfits
+Outfitter_cAccessoryOutfits = L.cAccessoryOutfits
+Outfitter_cOddsNEndsOutfits = L.cOddsNEndsOutfits
 
 function Outfitter_OnLoad(...) return Outfitter:OnLoad(...) end
 function Outfitter_IsInitialized(...) return Outfitter:IsInitialized(...) end
@@ -755,7 +756,7 @@ Outfitter.cUniqueGemItemIDs =
 
 StaticPopupDialogs.OUTFITTER_CANT_RELOADUI =
 {
-	text = Outfitter.cCantReloadUI,
+	text = L.cCantReloadUI,
 	button1 = OKAY,
 	OnAccept = function() end,
 	OnCancel = function() end,
@@ -767,7 +768,7 @@ StaticPopupDialogs.OUTFITTER_CANT_RELOADUI =
 
 StaticPopupDialogs.OUTFITTER_SERVER_FULL =
 {
-	text = Outfitter.cTooManyServerOutfits,
+	text = L.cTooManyServerOutfits,
 	button1 = OKAY,
 	OnAccept = function() end,
 	OnCancel = function() end,
@@ -779,8 +780,8 @@ StaticPopupDialogs.OUTFITTER_SERVER_FULL =
 
 StaticPopupDialogs.OUTFITTER_CANT_SET_ICON =
 {
-	text = Outfitter.cCantSetIcon,
-	button1 = Outfitter.cChangeIcon,
+	text = L.cCantSetIcon,
+	button1 = L.cChangeIcon,
 	button2 = CANCEL,
 	OnAccept = function() end,
 	OnCancel = function() end,
@@ -792,7 +793,7 @@ StaticPopupDialogs.OUTFITTER_CANT_SET_ICON =
 
 StaticPopupDialogs.OUTFITTER_CONFIRM_DELETE =
 {
-	text = Outfitter.cConfirmDeleteMsg,
+	text = L.cConfirmDeleteMsg,
 	button1 = DELETE,
 	button2 = CANCEL,
 	OnAccept = function() Outfitter:DeleteSelectedOutfit() end,
@@ -803,8 +804,8 @@ StaticPopupDialogs.OUTFITTER_CONFIRM_DELETE =
 
 StaticPopupDialogs.OUTFITTER_CONFIRM_REBUILD =
 {
-	text = Outfitter.cConfirmRebuildMsg,
-	button1 = Outfitter.cRebuild,
+	text = L.cConfirmRebuildMsg,
+	button1 = L.cRebuild,
 	button2 = CANCEL,
 	OnAccept = function() Outfitter:RebuildOutfit(Outfitter.OutfitToRebuild) Outfitter.OutfitToRebuild = nil end,
 	timeout = 0,
@@ -814,8 +815,8 @@ StaticPopupDialogs.OUTFITTER_CONFIRM_REBUILD =
 
 StaticPopupDialogs.OUTFITTER_CONFIRM_SET_CURRENT =
 {
-	text = Outfitter.cConfirmSetCurrentMsg,
-	button1 = Outfitter.cSetCurrent,
+	text = L.cConfirmSetCurrentMsg,
+	button1 = L.cSetCurrent,
 	button2 = CANCEL,
 	OnAccept = function() Outfitter:SetOutfitToCurrent(Outfitter.OutfitToRebuild); Outfitter.OutfitToRebuild = nil end,
 	timeout = 0,
@@ -825,10 +826,10 @@ StaticPopupDialogs.OUTFITTER_CONFIRM_SET_CURRENT =
 
 Outfitter.cCategoryDescriptions =
 {
-	Complete = Outfitter.cCompleteCategoryDescription,
-	Accessory = Outfitter.cAccessoryCategoryDescription,
-	OddsNEnds = Outfitter.cOddsNEndsCategoryDescription,
-	BoEs = Outfitter.cBoEsCategoryDescription,
+	Complete = L.cCompleteCategoryDescription,
+	Accessory = L.cAccessoryCategoryDescription,
+	OddsNEnds = L.cOddsNEndsCategoryDescription,
+	BoEs = L.cBoEsCategoryDescription,
 }
 
 Outfitter.cSlotNames =
@@ -875,10 +876,10 @@ Outfitter.cSlotDisplayNames =
 	WaistSlot = WAISTSLOT,
 	LegsSlot = LEGSSLOT,
 	FeetSlot = FEETSLOT,
-	Finger0Slot = Outfitter.cFinger0SlotName,
-	Finger1Slot = Outfitter.cFinger1SlotName,
-	Trinket0Slot = Outfitter.cTrinket0SlotName,
-	Trinket1Slot = Outfitter.cTrinket1SlotName,
+	Finger0Slot = L.cFinger0SlotName,
+	Finger1Slot = L.cFinger1SlotName,
+	Trinket0Slot = L.cTrinket0SlotName,
+	Trinket1Slot = L.cTrinket1SlotName,
 	MainHandSlot = MAINHANDSLOT,
 	SecondaryHandSlot = SECONDARYHANDSLOT,
 	--RangedSlot = RANGEDSLOT,
@@ -1022,27 +1023,27 @@ Outfitter.cClassSpecialOutfits =
 {
 	WARRIOR =
 	{
-		{Name = Outfitter.cWarriorBattleStance, ScriptID = "Battle"},
-		{Name = Outfitter.cWarriorDefensiveStance, ScriptID = "Defensive"},
-		{Name = Outfitter.cWarriorBerserkerStance, ScriptID = "Berserker"},
+		{Name = L.cWarriorBattleStance, ScriptID = "Battle"},
+		{Name = L.cWarriorDefensiveStance, ScriptID = "Defensive"},
+		{Name = L.cWarriorBerserkerStance, ScriptID = "Berserker"},
 	},
 	MONK =
 	{
-		{Name = Outfitter.cMonkFierceTigerStance, ScriptID = "FierceTiger"},
-		{Name = Outfitter.cMonkSturdyOxStance, ScriptID = "SturdyOx"},
-		{Name = Outfitter.cMonkWiseSerpentStance, ScriptID = "WiseSerpent"},
+		{Name = L.cMonkFierceTigerStance, ScriptID = "FierceTiger"},
+		{Name = L.cMonkSturdyOxStance, ScriptID = "SturdyOx"},
+		{Name = L.cMonkWiseSerpentStance, ScriptID = "WiseSerpent"},
 	},
 
 	DRUID =
 	{
-		{Name = Outfitter.cDruidCasterForm, ScriptID = "Caster"},
-		{Name = Outfitter.cDruidBearForm, ScriptID = "Bear"},
-		{Name = Outfitter.cDruidCatForm, ScriptID = "Cat"},
-		{Name = Outfitter.cDruidTravelForm, ScriptID = "Travel"},
-		--{Name = Outfitter.cDruidSwiftFlightForm, ScriptID = "Flight"}, -- Wrath only
-		{Name = Outfitter.cDruidMoonkinForm, ScriptID = "Moonkin"},
-		{Name = Outfitter.cDruidTreeOfLifeForm, ScriptID = "Tree"},
-		{Name = Outfitter.cDruidProwl, ScriptID = "Prowl"},
+		{Name = L.cDruidCasterForm, ScriptID = "Caster"},
+		{Name = L.cDruidBearForm, ScriptID = "Bear"},
+		{Name = L.cDruidCatForm, ScriptID = "Cat"},
+		{Name = L.cDruidTravelForm, ScriptID = "Travel"},
+		--{Name = L.cDruidSwiftFlightForm, ScriptID = "Flight"}, -- Wrath only
+		{Name = L.cDruidMoonkinForm, ScriptID = "Moonkin"},
+		{Name = L.cDruidTreeOfLifeForm, ScriptID = "Tree"},
+		{Name = L.cDruidProwl, ScriptID = "Prowl"},
 	},
 
 	PRIEST =
@@ -1051,12 +1052,12 @@ Outfitter.cClassSpecialOutfits =
 
 	ROGUE =
 	{
-		{Name = Outfitter.cRogueStealth, ScriptID = "Stealth"},
+		{Name = L.cRogueStealth, ScriptID = "Stealth"},
 	},
 
 	SHAMAN =
 	{
-		{Name = Outfitter.cShamanGhostWolf, ScriptID = "GhostWolf"},
+		{Name = L.cShamanGhostWolf, ScriptID = "GhostWolf"},
 	},
 
 	HUNTER =
@@ -1918,12 +1919,12 @@ end
 
 function Outfitter:DisableAutoChanges()
 	self:SetAutoSwitch(false)
-	self:NoteMessage(self.cAutoChangesDisabled)
+	self:NoteMessage(L.cAutoChangesDisabled)
 end
 
 function Outfitter:EnableAutoChanges()
 	self:SetAutoSwitch(true)
-	self:NoteMessage(self.cAutoChangesEnabled)
+	self:NoteMessage(L.cAutoChangesEnabled)
 end
 
 function Outfitter:ShowCommandHelp()
@@ -2203,8 +2204,8 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 	menu:AddFunction(PET_RENAME, function (menu)
 		self:PerformAction("RENAME", outfit)
 	end)
-	menu:AddSelect(self.cKeyBinding, {
-		self.cNone,
+	menu:AddSelect(L.cKeyBinding, {
+		L.cNone,
 		_G["BINDING_NAME_OUTFITTER_OUTFIT1"],
 		_G["BINDING_NAME_OUTFITTER_OUTFIT2"],
 		_G["BINDING_NAME_OUTFITTER_OUTFIT3"],
@@ -2234,11 +2235,11 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 
 	-- Build the menu
 	local maxTitlesPerMenu = 30
-	menu:AddChildMenu(self.cPlayerTitle, function (submenu)
+	menu:AddChildMenu(L.cPlayerTitle, function (submenu)
 		local startIndex = 1
 
 		-- Add the None item
-		submenu:AddToggle(self.cNone,
+		submenu:AddToggle(L.cNone,
 			function ()
 				return outfit.ShowTitleID == nil
 			end, function (menu, value)
@@ -2264,25 +2265,25 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 
 	-- Outfit Display
 	if _G["ShowHelm"] and _G["ShowCloak"] then
-		menu:AddChildMenu(self.cOutfitDisplay, function (submenu)
+		menu:AddChildMenu(L.cOutfitDisplay, function (submenu)
 
 			-- Helm
-			submenu:AddCategoryTitle(self.cHelm)
-			submenu:AddToggle(self.cDontChange,
+			submenu:AddCategoryTitle(L.cHelm)
+			submenu:AddToggle(L.cDontChange,
 				function ()
 					return outfit.ShowHelm == nil
 				end,
 				function ()
 					self:PerformAction("IGNOREHELM", outfit)
 				end)
-			submenu:AddToggle(self.cShow,
+			submenu:AddToggle(L.cShow,
 				function ()
 					return outfit.ShowHelm == true
 				end,
 				function ()
 					self:PerformAction("SHOWHELM", outfit)
 				end)
-			submenu:AddToggle(self.cHide,
+			submenu:AddToggle(L.cHide,
 				function ()
 					return outfit.ShowHelm == false
 				end,
@@ -2291,22 +2292,22 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 				end)
 
 			-- Cloak
-			submenu:AddCategoryTitle(self.cCloak)
-			submenu:AddToggle(self.cDontChange,
+			submenu:AddCategoryTitle(L.cCloak)
+			submenu:AddToggle(L.cDontChange,
 				function ()
 					return outfit.ShowCloak == nil
 				end,
 				function ()
 					self:PerformAction("IGNORECLOAK", outfit)
 				end)
-			submenu:AddToggle(self.cShow,
+			submenu:AddToggle(L.cShow,
 				function ()
 					return outfit.ShowCloak == true
 				end,
 				function ()
 					self:PerformAction("SHOWCLOAK", outfit)
 				end)
-			submenu:AddToggle(self.cHide,
+			submenu:AddToggle(L.cHide,
 				function ()
 					return outfit.ShowCloak == false
 				end,
@@ -2317,29 +2318,29 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 		end)
 	end
 
-	menu:AddChildMenu(self.cBankCategoryTitle, function (submenu)
-		submenu:AddFunction(self.cDepositToBank, function () self:PerformAction("DEPOSIT", outfit) end, not self.BankFrameIsOpen)
-		submenu:AddFunction(self.cDepositUniqueToBank, function () self:PerformAction("DEPOSITUNIQUE", outfit) end, not self.BankFrameIsOpen)
-		submenu:AddFunction(self.cWithdrawFromBank, function () self:PerformAction("WITHDRAW", outfit) end, not self.BankFrameIsOpen)
+	menu:AddChildMenu(L.cBankCategoryTitle, function (submenu)
+		submenu:AddFunction(L.cDepositToBank, function () self:PerformAction("DEPOSIT", outfit) end, not self.BankFrameIsOpen)
+		submenu:AddFunction(L.cDepositUniqueToBank, function () self:PerformAction("DEPOSITUNIQUE", outfit) end, not self.BankFrameIsOpen)
+		submenu:AddFunction(L.cWithdrawFromBank, function () self:PerformAction("WITHDRAW", outfit) end, not self.BankFrameIsOpen)
 		submenu:AddDivider()
-		submenu:AddFunction(self.cDepositOthersToBank, function () self:PerformAction("DEPOSITOTHERS", outfit) end, not self.BankFrameIsOpen)
-		submenu:AddFunction(self.cWithdrawOthersFromBank, function () self:PerformAction("WITHDRAWOTHERS", outfit) end, not self.BankFrameIsOpen)
+		submenu:AddFunction(L.cDepositOthersToBank, function () self:PerformAction("DEPOSITOTHERS", outfit) end, not self.BankFrameIsOpen)
+		submenu:AddFunction(L.cWithdrawOthersFromBank, function () self:PerformAction("WITHDRAWOTHERS", outfit) end, not self.BankFrameIsOpen)
 	end)
 	if outfit.CategoryID ~= "Complete" then
-		menu:AddToggle(self.cUnequipOthers, function ()
+		menu:AddToggle(L.cUnequipOthers, function ()
 			return outfit.UnequipOthers
 		end, function (menu, value)
 			outfit.UnequipOthers = value or nil
 			self:OutfitSettingsChanged(outfit)
 		end)
-		menu:AddToggle(self.cPreventUnequip, function()
+		menu:AddToggle(L.cPreventUnequip, function()
 		  return outfit.PreventUnequip
 		end, function (menu, value)
 		  outfit.PreventUnequip = value or nil
 		  self:OutfitSettingsChanged(outfit)
 		end)
 	end
-	menu:AddToggle(self.cIgnoreComparisons, function ()
+	menu:AddToggle(L.cIgnoreComparisons, function ()
 		return outfit.IgnoreComparisons
 	end, function (menu, value)
 		outfit.IgnoreComparisons = value or nil
@@ -2349,8 +2350,8 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 	end)
 
 	-- Rebuild
-	menu:AddCategoryTitle(self.cRebuild)
-	menu:AddFunction(self.cSetCurrentItems, function ()
+	menu:AddCategoryTitle(L.cRebuild)
+	menu:AddFunction(L.cSetCurrentItems, function ()
 		self:PerformAction("SET_CURRENT", outfit)
 	end)
 	local statName
@@ -2360,36 +2361,36 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 		statName = self:GetStatIDName(outfit.StatID)
 	end
 	if statName then
-		menu:AddFunction(format(self.cRebuildOutfitFormat, statName),
+		menu:AddFunction(format(L.cRebuildOutfitFormat, statName),
 			function ()
 				self:PerformAction("REBUILD", outfit)
 			end)
 	end
-	menu:AddFunction(self.cRebuildFor, function () self:PerformAction("REBUILD_FOR", outfit) end)
+	menu:AddFunction(L.cRebuildFor, function () self:PerformAction("REBUILD_FOR", outfit) end)
 
 	-- Automation
-	menu:AddCategoryTitle(self.cAutomation)
+	menu:AddCategoryTitle(L.cAutomation)
 
 	local presetScript = self:GetPresetScriptByID(outfit.ScriptID)
 	local scriptName
 	if presetScript then
 		scriptName = presetScript.Name
 	elseif outfit.Script then
-		scriptName = self.cCustomScript
+		scriptName = L.cCustomScript
 	else
 		scriptName = nil
 	end
 
-	menu:AddChildMenu(string.format(self.cScriptFormat, scriptName or self.cNoScript),
+	menu:AddChildMenu(string.format(L.cScriptFormat, scriptName or L.cNoScript),
 		function (submenu)
 			local hasAnyScript = self:GetScript(outfit) ~= nil
-			submenu:AddToggle(self.cNoScript,
+			submenu:AddToggle(L.cNoScript,
 				function ()
 					return (outfit.ScriptID == nil) and not hasAnyScript
 				end, function (menu, value)
 					self:PerformAction("PRESET_NONE", outfit)
 				end)
-			submenu:AddFunction(self.cEditScriptEllide,
+			submenu:AddFunction(L.cEditScriptEllide,
 				function ()
 					self:PerformAction("EDIT_SCRIPT", outfit)
 				end, (outfit.ScriptID == nil) and hasAnyScript)
@@ -2418,17 +2419,17 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 				end -- if
 			end -- for
 		end)
-	menu:AddFunction(self.cScriptSettings,
+	menu:AddFunction(L.cScriptSettings,
 		function ()
 			self:PerformAction("SCRIPT_SETTINGS", outfit)
 		end, scriptName == nil)
-	menu:AddToggle(self.cDisableScript,
+	menu:AddToggle(L.cDisableScript,
 		function ()
 			return outfit.Disabled
 		end, function (menu, value)
 			self:SetScriptEnabled(outfit, not value)
 		end, scriptName == nil)
-	menu:AddToggle(self.cDisableOutfitInCombat,
+	menu:AddToggle(L.cDisableOutfitInCombat,
 		function ()
 			return outfit.CombatDisabled
 		end, function (menu, value)
@@ -2437,14 +2438,14 @@ function Outfitter:AddOutfitMenu(menu, outfit)
 
 	-- Outfit bar
 	if self.OutfitBar then
-		menu:AddCategoryTitle(self.cOutfitBar)
-		menu:AddToggle(self.cShowInOutfitBar,
+		menu:AddCategoryTitle(L.cOutfitBar)
+		menu:AddToggle(L.cShowInOutfitBar,
 			function ()
 				return self.OutfitBar:IsOutfitShown(outfit)
 			end, function (menu, value)
 				self:PerformAction("OUTFITBAR_SHOW", outfit)
 			end)
-		menu:AddFunction(self.cChangeIcon.."...",
+		menu:AddFunction(L.cChangeIcon.."...",
 			function ()
 				self:PerformAction("OUTFITBAR_CHOOSEICON", outfit)
 			end)
@@ -2513,7 +2514,7 @@ function Outfitter:AddTitleSelectMenu(menu, menuTitle, outfit, titles, startInde
 end
 
 function Outfitter:AddScriptCategorySubmenu(menu, category, get, set)
-	local title = self.cScriptCategoryName[category]
+	local title = L.cScriptCategoryName[category]
 	if not title then
 		local isFemale = UnitSex("player") == 3
 		if isFemale then
@@ -2697,7 +2698,8 @@ function Outfitter.MinimapDropDown_InitializeOutfitList(pFrame)
 	local vCategoryOrder = Outfitter:GetCategoryOrder()
 
 	for vCategoryIndex, vCategoryID in ipairs(vCategoryOrder) do
-		local vCategoryName = Outfitter["c"..vCategoryID.."Outfits"]
+		--local vCategoryName = Outfitter["c"..vCategoryID.."Outfits"]
+		local vCategoryName = L["c"..vCategoryID.."Outfits"]
 		local vOutfits = Outfitter:GetOutfitsByCategoryID(vCategoryID)
 
 		if Outfitter:HasVisibleOutfits(vOutfits) then
@@ -2754,7 +2756,7 @@ function Outfitter:GenerateItemListString(pLabel, pListColorCode, pItems)
 		if not vItemList then
 			vItemList = HIGHLIGHT_FONT_COLOR_CODE..pLabel..pListColorCode..tostring(vOutfitItem.Name)
 		else
-			vItemList = vItemList..self.cMissingItemsSeparator..tostring(vOutfitItem.Name)
+			vItemList = vItemList..L.cMissingItemsSeparator..tostring(vOutfitItem.Name)
 		end
 	end
 
@@ -2798,12 +2800,12 @@ function Outfitter:ShowOutfitTooltip(pOutfit, pOwner, pMissingItems, pBankedItem
 		end
 
 		if pMissingItems then
-			local vItemList = self:GenerateItemListString(self.cMissingItemsLabel, RED_FONT_COLOR_CODE, pMissingItems)
+			local vItemList = self:GenerateItemListString(L.cMissingItemsLabel, RED_FONT_COLOR_CODE, pMissingItems)
 			GameTooltip:AddLine(vItemList, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
 		end
 
 		if pBankedItems then
-			local vItemList = self:GenerateItemListString(self.cBankedItemsLabel, self.BANKED_FONT_COLOR_CODE, pBankedItems)
+			local vItemList = self:GenerateItemListString(L.cBankedItemsLabel, self.BANKED_FONT_COLOR_CODE, pBankedItems)
 			GameTooltip:AddLine(vItemList, RED_FONT_COLOR.r, RED_FONT_COLOR.g, RED_FONT_COLOR.b, true)
 		end
 
@@ -3522,8 +3524,8 @@ end
 
 StaticPopupDialogs.OUTFITTER_CONFIRM_RESET =
 {
-	text = Outfitter.cConfirmResetMsg,
-	button1 = Outfitter.cReset,
+	text = L.cConfirmResetMsg,
+	button1 = L.cReset,
 	button2 = CANCEL,
 	OnAccept = function() Outfitter:Reset() end,
 	timeout = 0,
@@ -3602,16 +3604,16 @@ function Outfitter:WearBoundOutfit(pBindingIndex)
 				if vCategoryID == "Complete" then
 					self:WearOutfitNow(vOutfit)
 					if not self.Settings.Options.DisableHotkeyMessages then
-						UIErrorsFrame:AddMessage(format(self.cEquipOutfitMessageFormat, vOutfit:GetName()), self.OUTFIT_MESSAGE_COLOR.r, self.OUTFIT_MESSAGE_COLOR.g, self.OUTFIT_MESSAGE_COLOR.b)
+						UIErrorsFrame:AddMessage(format(L.cEquipOutfitMessageFormat, vOutfit:GetName()), self.OUTFIT_MESSAGE_COLOR.r, self.OUTFIT_MESSAGE_COLOR.g, self.OUTFIT_MESSAGE_COLOR.b)
 					end
 				else
 					local vEquipped = self:ToggleOutfitNow(vOutfit, vCategoryID)
 
 					if not self.Settings.Options.DisableHotkeyMessages then
 						if vEquipped then
-							UIErrorsFrame:AddMessage(format(self.cEquipOutfitMessageFormat, vOutfit:GetName()), self.OUTFIT_MESSAGE_COLOR.r, self.OUTFIT_MESSAGE_COLOR.g, self.OUTFIT_MESSAGE_COLOR.b)
+							UIErrorsFrame:AddMessage(format(L.cEquipOutfitMessageFormat, vOutfit:GetName()), self.OUTFIT_MESSAGE_COLOR.r, self.OUTFIT_MESSAGE_COLOR.g, self.OUTFIT_MESSAGE_COLOR.b)
 						else
-							UIErrorsFrame:AddMessage(format(self.cUnequipOutfitMessageFormat, vOutfit:GetName()), self.OUTFIT_MESSAGE_COLOR.r, self.OUTFIT_MESSAGE_COLOR.g, self.OUTFIT_MESSAGE_COLOR.b)
+							UIErrorsFrame:AddMessage(format(L.cUnequipOutfitMessageFormat, vOutfit:GetName()), self.OUTFIT_MESSAGE_COLOR.r, self.OUTFIT_MESSAGE_COLOR.g, self.OUTFIT_MESSAGE_COLOR.b)
 						end
 					end
 				end
@@ -5572,16 +5574,16 @@ function Outfitter:InitializeOutfits()
 
 	-- Create the normal outfit using the current
 	-- inventory and set it as the currently equipped outfit
-	vOutfit = self:FindOutfitByName(Outfitter.cNormalOutfit)
+	vOutfit = self:FindOutfitByName(L.cNormalOutfit)
 	if not vOutfit then
-		vOutfit = self:GetInventoryOutfit(Outfitter.cNormalOutfit)
+		vOutfit = self:GetInventoryOutfit(L.cNormalOutfit)
 		self:AddOutfit(vOutfit)
 	end
-	self.Settings.LastOutfitStack = {{Name = Outfitter.cNormalOutfit}}
+	self.Settings.LastOutfitStack = {{Name = L.cNormalOutfit}}
 	Outfitter.OutfitStack.Outfits = {vOutfit}
 
 	-- Create the naked outfit
-	vOutfit = self:NewNakedOutfit(Outfitter.cNakedOutfit)
+	vOutfit = self:NewNakedOutfit(L.cNakedOutfit)
 	self:AddOutfit(vOutfit)
 
 	-- Generate the smart outfits
@@ -5720,7 +5722,7 @@ function Outfitter:ConvertFormatStringToSearchPattern(pFormat)
 
 	return vFormat:gsub(
 			"%%[%-%d%.]-([sdgf%%])",
-			self.cDeformat)
+			Outfitter.cDeformat)
 end
 
 function Outfitter:FindTooltipLine(pTooltip, pText, pPlain)
@@ -5790,21 +5792,21 @@ function Outfitter._NameOutfitDialog:Construct(pParent)
 
 	-- Controls
 
-	self.InfoSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, Outfitter.cInfo)
-	self.BuildSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, Outfitter.cBuild)
-	self.StatsSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, Outfitter.cStats)
+	self.InfoSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, L.cInfo)
+	self.BuildSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, L.cBuild)
+	self.StatsSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, L.cStats)
 
-	self.Name = Outfitter:New(Outfitter.UIElementsLib._EditBox, self.InfoSection, Outfitter.cNameLabel, 40, 170)
+	self.Name = Outfitter:New(Outfitter.UIElementsLib._EditBox, self.InfoSection, L.cNameLabel, 40, 170)
 
 	self.ScriptMenu = Outfitter:New(Outfitter.UIElementsLib._TitledDropDownMenuButton, self.InfoSection,
 		function (menu, ...)
 			self:ScriptMenuFunc(menu, ...)
 		end)
-	self.ScriptMenu:SetTitle(Outfitter.cAutomationLabel)
+	self.ScriptMenu:SetTitle(L.cAutomationLabel)
 
-	self.EmptyOutfitCheckButton = Outfitter:New(Outfitter.UIElementsLib._CheckButton, self.BuildSection, Outfitter.cUseEmptyOutfit, true)
-	self.ExistingOutfitCheckButton = Outfitter:New(Outfitter.UIElementsLib._CheckButton, self.BuildSection, Outfitter.cUseCurrentOutfit, true)
-	self.GenerateOutfitCheckButton = Outfitter:New(Outfitter.UIElementsLib._CheckButton, self.BuildSection, Outfitter.cCreateUsingTitle, true)
+	self.EmptyOutfitCheckButton = Outfitter:New(Outfitter.UIElementsLib._CheckButton, self.BuildSection, L.cUseEmptyOutfit, true)
+	self.ExistingOutfitCheckButton = Outfitter:New(Outfitter.UIElementsLib._CheckButton, self.BuildSection, L.cUseCurrentOutfit, true)
+	self.GenerateOutfitCheckButton = Outfitter:New(Outfitter.UIElementsLib._CheckButton, self.BuildSection, L.cCreateUsingTitle, true)
 
 	self.MultiStatConfig = Outfitter:New(Outfitter._MultiStatConfig, self.StatsSection)
 
@@ -5897,16 +5899,16 @@ function Outfitter._NameOutfitDialog:Open(pOutfit)
 	self.OutfitToRename = pOutfit
 
 	if self.OutfitToRename then
-		self.Title:SetText(Outfitter.cRenameOutfit)
+		self.Title:SetText(L.cRenameOutfit)
 
 		self.Name:SetText(self.OutfitToRename.Name)
 
 	else
-		self.Title:SetText(Outfitter.cNewOutfit)
+		self.Title:SetText(L.cNewOutfit)
 
 		self.Name:SetText("")
 
-		self.ScriptMenu:SetCurrentValueText(Outfitter.cNone)
+		self.ScriptMenu:SetCurrentValueText(L.cNone)
 
 		self.EmptyOutfitCheckButton:SetChecked(false)
 		self.ExistingOutfitCheckButton:SetChecked(true)
@@ -5968,7 +5970,7 @@ end
 function Outfitter._NameOutfitDialog:ScriptMenuFunc(menu)
 	local category
 
-	menu:AddToggle(Outfitter.cNoScript,
+	menu:AddToggle(L.cNoScript,
 		function ()
 			return self.ScriptID
 		end, function (menu, value)
@@ -6031,7 +6033,7 @@ function Outfitter._NameOutfitDialog:Done()
 						pOutfit.StatConfig = vStatConfig
 						self:AddOutfit(pOutfit, vScriptID)
 					else
-						Outfitter:ErrorMessage(Outfitter.cNoItemsWithStat);
+						Outfitter:ErrorMessage(L.cNoItemsWithStat);
 					end
 				end)
 
@@ -6101,7 +6103,7 @@ function Outfitter._NameOutfitDialog:Update(pCheckForStatOutfit)
 
 		if vOutfit
 		and vOutfit ~= self.OutfitToRename then
-			vErrorMessage = Outfitter.cNameAlreadyUsedError
+			vErrorMessage = L.cNameAlreadyUsedError
 			vEnableDoneButton = false
 		end
 	end
@@ -6118,7 +6120,7 @@ function Outfitter._NameOutfitDialog:Update(pCheckForStatOutfit)
 			vOutfit = Outfitter:GenerateSmartOutfit("temp outfit", vStat, Outfitter:GetInventoryCache())
 			if not vOutfit
 			or vOutfit:IsEmpty() then
-				vErrorMessage = Outfitter.cNoItemsWithStatError
+				vErrorMessage = L.cNoItemsWithStatError
 			end
 		end
 	end
@@ -6158,7 +6160,7 @@ Outfitter._RebuildOutfitDialog = {}
 ----------------------------------------
 
 function Outfitter._RebuildOutfitDialog:New(pParent)
-	return Outfitter:New(Outfitter.UIElementsLib._ModalDialogFrame, pParent, Outfitter.cRebuild, 315, 207)
+	return Outfitter:New(Outfitter.UIElementsLib._ModalDialogFrame, pParent, L.cRebuild, 315, 207)
 end
 
 function Outfitter._RebuildOutfitDialog:Construct(pParent)
@@ -6170,7 +6172,7 @@ function Outfitter._RebuildOutfitDialog:Construct(pParent)
 
 	-- Controls
 
-	self.StatsSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, Outfitter.cStats)
+	self.StatsSection = Outfitter:New(Outfitter.UIElementsLib._Section, self, L.cStats)
 	self.MultiStatConfig = Outfitter:New(Outfitter._MultiStatConfig, self.StatsSection)
 
 	-- Layout
@@ -6248,7 +6250,7 @@ function Outfitter._RebuildOutfitDialog:Update(pCheckForStatOutfit)
 
 		if vOutfit
 		and vOutfit ~= self.OutfitToRename then
-			vErrorMessage = Outfitter.cNameAlreadyUsedError
+			vErrorMessage = L.cNameAlreadyUsedError
 			vEnableDoneButton = false
 		end
 	end
@@ -6265,7 +6267,7 @@ function Outfitter._RebuildOutfitDialog:Update(pCheckForStatOutfit)
 			vOutfit = Outfitter:GenerateSmartOutfit("temp outfit", vStat, Outfitter:GetInventoryCache())
 			if not vOutfit
 			or vOutfit:IsEmpty() then
-				vErrorMessage = Outfitter.cNoItemsWithStatError
+				vErrorMessage = L.cNoItemsWithStatError
 			end
 		end
 	end
@@ -7047,7 +7049,7 @@ function Outfitter:WithdrawOtherOutfits(pOutfit)
 
 	-- Execute the changes
 
-	self:ExecuteEquipmentChangeList2(vEquipmentChangeList, vEmptyBagSlots, self.cWithdrawBagsFullError, vExpectedInventoryCache)
+	self:ExecuteEquipmentChangeList2(vEquipmentChangeList, vEmptyBagSlots, L.cWithdrawBagsFullError, vExpectedInventoryCache)
 
 	self:DispatchOutfitEvent("EDIT_OUTFIT", pOutfit:GetName(), pOutfit)
 end
@@ -7533,7 +7535,7 @@ function Outfitter:CalcItemHasUseFeature(pItemLink)
 
 		local vLeftText = vLeftTextFrame:GetText()
 		if vLeftText then
-			local vStartIndex, vEndIndex = vLeftText:find(Outfitter.cUseTooltipLineFormat)
+			local vStartIndex, vEndIndex = vLeftText:find(L.cUseTooltipLineFormat)
 
 			if vStartIndex then
 				return true
@@ -7562,10 +7564,10 @@ function Outfitter:CalcItemUseDuration(pItemLink)
 
 		local vLeftText = vLeftTextFrame:GetText()
 		if vLeftText then
-			local vStartIndex, vEndIndex, vSeconds = vLeftText:find(Outfitter.cUseDurationTooltipLineFormat)
+			local vStartIndex, vEndIndex, vSeconds = vLeftText:find(L.cUseDurationTooltipLineFormat)
 
 			if not vSeconds then
-				vStartIndex, vEndIndex, vSeconds = vLeftText:find(Outfitter.cUseDurationTooltipLineFormat2)
+				vStartIndex, vEndIndex, vSeconds = vLeftText:find(L.cUseDurationTooltipLineFormat2)
 			end
 
 			if vSeconds then
@@ -7691,7 +7693,7 @@ end
 
 function Outfitter:ShowMissingItems()
 	if not Outfitter.BankFrameIsOpen then
-		Outfitter:ErrorMessage(Outfitter.cMustBeAtBankError)
+		Outfitter:ErrorMessage(L.cMustBeAtBankError)
 		return
 	end
 
@@ -7705,7 +7707,7 @@ function Outfitter:ShowMissingItems()
 			if vMissingItems then
 				for _, vItem in pairs(vMissingItems) do
 					if not vFoundItems then
-						Outfitter:NoteMessage(Outfitter.cMissingItemReportIntro)
+						Outfitter:NoteMessage(L.cMissingItemReportIntro)
 						vFoundItems = true
 					end
 
@@ -7716,7 +7718,7 @@ function Outfitter:ShowMissingItems()
 	end
 
 	if not vFoundItems then
-		Outfitter:NoteMessage(Outfitter.cNoMissingItems)
+		Outfitter:NoteMessage(L.cNoMissingItems)
 	end
 end
 
@@ -8116,7 +8118,7 @@ function Outfitter._ExtendedCompareTooltip:AddShoppingLink(pTitle, pItemName, pL
 	vTextLeft:SetText(pTitle)
 	vTextLeft:SetTextColor(0.5, 0.5, 0.5)
 
-	vTextRight:SetText(Outfitter.cTitle)
+	vTextRight:SetText(L.cTitle)
 	vTextRight:SetTextColor(0.5, 0.5, 0.5)
 	vTextRight:Show()
 
@@ -8562,7 +8564,7 @@ function Outfitter._ListItem:SetToOutfit(pOutfit, pCategoryID, pOutfitIndex, pIn
 	self.BankedItems = vBankedItems
 
 	if pOutfit.Disabled then
-		vItemNameField:SetText(format(Outfitter.cDisabledOutfitName, pOutfit:GetName()))
+		vItemNameField:SetText(format(L.cDisabledOutfitName, pOutfit:GetName()))
 		self.DefaultColor = GRAY_FONT_COLOR
 	else
 		vItemNameField:SetText(pOutfit:GetName())
@@ -8683,7 +8685,8 @@ function Outfitter._ListItem:SetToItem(pOutfitItem)
 end
 
 function Outfitter._ListItem:SetToCategory(pCategoryID)
-	local vCategoryName = Outfitter["c"..pCategoryID.."Outfits"]
+	--local vCategoryName = Outfitter["c"..pCategoryID.."Outfits"]
+	local vCategoryName = L["c"..pCategoryID.."Outfits"]
 	local vItemName = self:GetName()
 	local vCategoryFrameName = vItemName.."Category"
 	local vOutfitFrame = _G[vItemName.."Outfit"]
@@ -8786,7 +8789,7 @@ function Outfitter._ListItem:OnEnter()
 		local vDescription = Outfitter.cCategoryDescriptions[self.categoryID]
 
 		if vDescription then
-			local vCategoryName = Outfitter["c"..self.categoryID.."Outfits"]
+			local vCategoryName = L["c"..self.categoryID.."Outfits"]
 			Outfitter.AddNewbieTip(self, vCategoryName, 1.0, 1.0, 1.0, vDescription, 1)
 		end
 
