@@ -198,7 +198,7 @@
                 Outfitter:SlotEnableClicked(self, "LeftButton", 1)
             </OnReceiveDrag>
             <OnEnter>
-				Outfitter.AddNewbieTip(self, Outfitter.cSlotEnableTitle, 1, 1, 1, Outfitter.cSlotEnableDescription, 1)
+				Outfitter.AddNewbieTip(self, Outfitter.L.cSlotEnableTitle, 1, 1, 1, Outfitter.L.cSlotEnableDescription, 1)
             </OnEnter>
             <OnLeave>
 				GameTooltip:Hide()
@@ -486,9 +486,9 @@
 						<Scripts>
 							<OnEnter>
 								if self:GetChecked() then
-									Outfitter.AddNewbieTip(self, Outfitter.cStoreOnServer, 1, 1, 1, Outfitter.cStoreOnServerOnDescription, 1)
+									Outfitter.AddNewbieTip(self, Outfitter.L.cStoreOnServer, 1, 1, 1, Outfitter.L.cStoreOnServerOnDescription, 1)
 								else
-									Outfitter.AddNewbieTip(self, Outfitter.cStoreOnServer, 1, 1, 1, Outfitter.cStoreOnServerOffDescription, 1)
+									Outfitter.AddNewbieTip(self, Outfitter.L.cStoreOnServer, 1, 1, 1, Outfitter.L.cStoreOnServerOffDescription, 1)
 								end
 							</OnEnter>
 							<OnLeave>
@@ -850,16 +850,16 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cAutoSwitch)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cAutoSwitch)
 									</OnLoad>
 									<OnClick>
 										Outfitter:SetAutoSwitch(not self:GetChecked())
 									</OnClick>
 									<OnEnter>
 										if self:GetChecked() then
-											Outfitter.AddNewbieTip(self, Outfitter.cAutoSwitch, 1.0, 1.0, 1.0, Outfitter.cAutoSwitchOnDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cAutoSwitch, 1.0, 1.0, 1.0, Outfitter.L.cAutoSwitchOnDescription, 1)
 										else
-											Outfitter.AddNewbieTip(self, Outfitter.cAutoSwitch, 1.0, 1.0, 1.0, Outfitter.cAutoSwitchOffDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cAutoSwitch, 1.0, 1.0, 1.0, Outfitter.L.cAutoSwitchOffDescription, 1)
 										end
 									</OnEnter>
 									<OnLeave>
@@ -877,7 +877,7 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cShowOutfitBar)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cShowOutfitBar)
 									</OnLoad>
 									<OnClick>
 										if Outfitter.OutfitBar then
@@ -885,7 +885,7 @@
 										end
 									</OnClick>
 									<OnEnter>
-										Outfitter.AddNewbieTip(self, Outfitter.cShowOutfitBar, 1.0, 1.0, 1.0, Outfitter.cShowOutfitBarDescription, 1)
+										Outfitter.AddNewbieTip(self, Outfitter.L.cShowOutfitBar, 1.0, 1.0, 1.0, Outfitter.L.cShowOutfitBarDescription, 1)
 									</OnEnter>
 									<OnLeave>
 										GameTooltip:Hide()
@@ -902,16 +902,16 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cShowMinimapButton)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cShowMinimapButton)
 									</OnLoad>
 									<OnClick>
 										Outfitter:SetShowMinimapButton(self:GetChecked())
 									</OnClick>
 									<OnEnter>
 										if self:GetChecked() then
-											Outfitter.AddNewbieTip(self, Outfitter.cShowMinimapButton, 1.0, 1.0, 1.0, Outfitter.cShowMinimapButtonOnDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cShowMinimapButton, 1.0, 1.0, 1.0, Outfitter.L.cShowMinimapButtonOnDescription, 1)
 										else
-											Outfitter.AddNewbieTip(self, Outfitter.cShowMinimapButton, 1.0, 1.0, 1.0, Outfitter.cShowMinimapButtonOffDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cShowMinimapButton, 1.0, 1.0, 1.0, Outfitter.L.cShowMinimapButtonOffDescription, 1)
 										end
 									</OnEnter>
 									<OnLeave>
@@ -929,16 +929,16 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cShowHotkeyMessages)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cShowHotkeyMessages)
 									</OnLoad>
 									<OnClick>
 										Outfitter:SetShowHotkeyMessages(self:GetChecked())
 									</OnClick>
 									<OnEnter>
 										if self:GetChecked() then
-											Outfitter.AddNewbieTip(self, Outfitter.cShowHotkeyMessages, 1.0, 1.0, 1.0, Outfitter.cShowHotkeyMessagesOnDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cShowHotkeyMessages, 1.0, 1.0, 1.0, Outfitter.L.cShowHotkeyMessagesOnDescription, 1)
 										else
-											Outfitter.AddNewbieTip(self, Outfitter.cShowHotkeyMessages, 1.0, 1.0, 1.0, Outfitter.cShowHotkeyMessagesOffDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cShowHotkeyMessages, 1.0, 1.0, 1.0, Outfitter.L.cShowHotkeyMessagesOffDescription, 1)
 										end
 									</OnEnter>
 									<OnLeave>
@@ -956,16 +956,16 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cTooltipInfo)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cTooltipInfo)
 									</OnLoad>
 									<OnClick>
 										Outfitter:SetShowTooltipInfo(self:GetChecked())
 									</OnClick>
 									<OnEnter>
 										if self:GetChecked() then
-											Outfitter.AddNewbieTip(self, Outfitter.cTooltipInfo, 1.0, 1.0, 1.0, Outfitter.cTooltipInfoOnDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cTooltipInfo, 1.0, 1.0, 1.0, Outfitter.L.cTooltipInfoOnDescription, 1)
 										else
-											Outfitter.AddNewbieTip(self, Outfitter.cTooltipInfo, 1.0, 1.0, 1.0, Outfitter.cTooltipInfoOffDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cTooltipInfo, 1.0, 1.0, 1.0, Outfitter.L.cTooltipInfoOffDescription, 1)
 										end
 									</OnEnter>
 									<OnLeave>
@@ -983,16 +983,16 @@
 								</Anchors>
 								<Scripts>
 									<OnLoad>
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cItemComparisons)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cItemComparisons)
 									</OnLoad>
 									<OnClick>
 										Outfitter:SetShowItemComparisons(self:GetChecked())
 									</OnClick>
 									<OnEnter>
 										if self:GetChecked() then
-											Outfitter.AddNewbieTip(self, Outfitter.cItemComparisons, 1.0, 1.0, 1.0, Outfitter.cItemComparisonsOnDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cItemComparisons, 1.0, 1.0, 1.0, Outfitter.L.cItemComparisonsOnDescription, 1)
 										else
-											Outfitter.AddNewbieTip(self, Outfitter.cItemComparisons, 1.0, 1.0, 1.0, Outfitter.cItemComparisonsOffDescription, 1)
+											Outfitter.AddNewbieTip(self, Outfitter.L.cItemComparisons, 1.0, 1.0, 1.0, Outfitter.L.cItemComparisonsOffDescription, 1)
 										end
 									</OnEnter>
 									<OnLeave>
@@ -1011,13 +1011,13 @@
 								<Scripts>
 									<OnLoad>
 										if Outfitter.FlyoutsUnavailable then OutfitterQuickslotFlyouts:Hide() end
-										getglobal(self:GetName().."Text"):SetText(Outfitter.cEnableQuickslotFlyouts)
+										getglobal(self:GetName().."Text"):SetText(Outfitter.L.cEnableQuickslotFlyouts)
 									</OnLoad>
 									<OnClick>
 										Outfitter:SetQuickslotFlyouts(self:GetChecked())
 									</OnClick>
 									<OnEnter>
-										Outfitter.AddNewbieTip(self, Outfitter.cEnableQuickslotFlyouts, 1.0, 1.0, 1.0, Outfitter.cEnableQuickslotFlyoutsDescription, 1)
+										Outfitter.AddNewbieTip(self, Outfitter.L.cEnableQuickslotFlyouts, 1.0, 1.0, 1.0, Outfitter.L.cEnableQuickslotFlyoutsDescription, 1)
 									</OnEnter>
 									<OnLeave>
 										GameTooltip:Hide()
@@ -1362,7 +1362,7 @@
 				self:ToggleMenu()
 			</OnMouseUp>
 			<OnEnter>
-				Outfitter.AddNewbieTip(self, Outfitter.cMinimapButtonTitle, 1, 1, 1, Outfitter.cMinimapButtonDescription, 1)
+				Outfitter.AddNewbieTip(self, Outfitter.L.cMinimapButtonTitle, 1, 1, 1, Outfitter.L.cMinimapButtonDescription, 1)
 			</OnEnter>
 			<OnLeave>
 				GameTooltip:Hide()
@@ -1491,7 +1491,7 @@
 		</Size>
 		<Scripts>
 			<OnShow>
-				self:SetText(string.format(Outfitter.cInsertFormat, self.GetTextFunc()))
+				self:SetText(string.format(Outfitter.L.cInsertFormat, self.GetTextFunc()))
 
 				self:RegisterEvent("ZONE_CHANGED_NEW_AREA")
 				self:RegisterEvent("ZONE_CHANGED_INDOORS")
@@ -1503,7 +1503,7 @@
 				self:UnregisterEvent("ZONE_CHANGED")
 			</OnHide>
 			<OnEvent>
-				self:SetText(string.format(Outfitter.cInsertFormat, self.GetTextFunc()))
+				self:SetText(string.format(Outfitter.L.cInsertFormat, self.GetTextFunc()))
 			</OnEvent>
 			<OnClick>
 				PlaySound(SOUNDKIT.IG_MAINMENU_OPTION_CHECKBOX_ON)
@@ -1616,7 +1616,7 @@
 						function (menu)
 							OutfitterEditScriptDialog:ScriptMenuFunc(menu, self:GetParent().Outfit)
 						end, 150)
-						self:SetTitle(Outfitter.cPresetScript)
+						self:SetTitle(Outfitter.L.cPresetScript)
 					</OnLoad>
 				</Scripts>
 			</Frame>
@@ -1643,7 +1643,7 @@
 						</Anchors>
 						<Scripts>
 							<OnLoad>
-								getglobal(self:GetName().."Label"):SetText(Outfitter.cScriptLabel)
+								getglobal(self:GetName().."Label"):SetText(Outfitter.L.cScriptLabel)
 							</OnLoad>
 						</Scripts>
 					</ScrollFrame>

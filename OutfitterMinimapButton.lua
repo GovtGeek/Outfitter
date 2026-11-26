@@ -1,4 +1,6 @@
 local addonName, addon  = ...
+L = addon.L
+
 local OUTFITTER_MINIMAP_BUTTON_RADIUS_LENGTH = 80
 
 local IsClassicForever = WOW_PROJECT_ID == WOW_PROJECT_CAMELOT
@@ -47,7 +49,7 @@ end
 
 ---- Define button functions
 local function _OnEnter()
-	addon.AddNewbieTip(OutfitterMinimapButton, addon.cMinimapButtonTitle, 1, 1, 1, addon.cMinimapButtonDescription, 1)
+	addon.AddNewbieTip(OutfitterMinimapButton, L.cMinimapButtonTitle, 1, 1, 1, L.cMinimapButtonDescription, 1)
 end
 
 local function _OnLeave()
@@ -309,11 +311,11 @@ function addon:GetMinimapDropdownItems(items)
 	end
 
 	-- Add controls for the addon
-	items:AddCategoryTitle(self.cTitleVersion)
-	items:AddFunction(self.cOpenOutfitter, function ()
+	items:AddCategoryTitle(L.cTitleVersion)
+	items:AddFunction(L.cOpenOutfitter, function ()
 		self:OpenUI()
 		end)
-	items:AddToggle(self.cAutoSwitch,
+	items:AddToggle(L.cAutoSwitch,
 		function ()
 			return self.Settings.Options.DisableAutoSwitch
 		end, function (menu, value)
@@ -335,7 +337,8 @@ function addon:GetMinimapOutfitItems(items)
 	local categoryOrder = self:GetCategoryOrder()
 
 	for _, categoryID in ipairs(categoryOrder) do
-		local categoryName = self["c"..categoryID.."Outfits"]
+		--local categoryName = self["c"..categoryID.."Outfits"]
+		local categoryName = L["c"..categoryID.."Outfits"]
 		local outfits = self:GetOutfitsByCategoryID(categoryID)
 
 		if self:HasVisibleOutfits(outfits) then

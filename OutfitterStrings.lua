@@ -1,7 +1,7 @@
 Outfitter.cVersion = C_AddOns.GetAddOnMetadata("Outfitter", "Version")
 
-Outfitter.cTitle = "Outfitter"
-Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
+--Outfitter.cTitle = "Outfitter"
+--Outfitter.cTitleVersion = Outfitter.cTitle.." "..Outfitter.cVersion
 
 Outfitter.cSingleItemFormat = "%s"
 Outfitter.cTwoItemFormat = "%s and %s"
@@ -207,7 +207,7 @@ Outfitter.cOpenOutfitter = "Open Outfitter"
 
 Outfitter.cKeyBinding = "Key Binding"
 
-BINDING_HEADER_OUTFITTER_TITLE = Outfitter.cTitle
+--BINDING_HEADER_OUTFITTER_TITLE = Outfitter.cTitle
 BINDING_NAME_OUTFITTER_OUTFIT = "Open Outfitter"
 
 BINDING_NAME_OUTFITTER_OUTFIT1  = "Outfit 1"

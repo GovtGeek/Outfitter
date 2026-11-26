@@ -1,12 +1,11 @@
 local addonName, addon = ...
-
 addon.L = addon.L or {}
 L = addon.L
 
 L.cVersion = C_AddOns.GetAddOnMetadata(addonName, "Version")
 
 L.cTitle = addonName
-L.cTitleVersion = L.cTitle.." (te) "..L.cVersion
+L.cTitleVersion = L.cTitle.." "..L.cVersion
 
 L.cSingleItemFormat = "%s"
 L.cTwoItemFormat = "%s and %s"

@@ -1,3 +1,5 @@
+local addonName, addon = ...
+local L = addon.L
 ----------------------------------------
 -- Stat categories
 ----------------------------------------
@@ -212,8 +214,8 @@ Outfitter.SimpleStatCategories =
 			{ID = "AGI", Name = Outfitter.ItemStatsLib.strings.Agility, ExpansionMin = LE_EXPANSION_CLASSIC},
 
 			{ID = "SPI", Name = Outfitter.ItemStatsLib.strings.Spirit, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = LE_EXPANSION_WARLORDS_OF_DRAENOR},
-			{ID = "TOTAL_STATS", Name = Outfitter.cTotalStatsName, ExpansionMin = LE_EXPANSION_CLASSIC},
-			{ID = "ITEM_LEVEL", Name = Outfitter.cItemLevelName, ExpansionMin = LE_EXPANSION_CLASSIC},
+			{ID = "TOTAL_STATS", Name = L.cTotalStatsName, ExpansionMin = LE_EXPANSION_CLASSIC},
+			{ID = "ITEM_LEVEL", Name = L.cItemLevelName, ExpansionMin = LE_EXPANSION_CLASSIC},
 		},
 	},
 	----[[--
@@ -300,7 +302,7 @@ Outfitter.SimpleStatCategories =
 	},
 	{
 		CategoryID = "Resist",
-		Name = Outfitter.cResistCategory,
+		Name = L.cResistCategory,
 		Stats =
 		{
 			{ID = RESISTANCE6_NAME, Name = Outfitter.ItemStatsLib.strings.ArcaneResist, ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = LE_EXPANSION_CATACLYSM},
@@ -313,7 +315,7 @@ Outfitter.SimpleStatCategories =
 	--[[ TODO
 	{
 		CategoryID = "Trade",
-		Name = Outfitter.cTradeCategory,
+		Name = L.cTradeCategory,
 		Stats =
 		{
 			{ID = "FISHING", ExpansionMin = LE_EXPANSION_CLASSIC, ExpansionMax = LE_EXPANSION_WRATH_OF_THE_LICH_KING},

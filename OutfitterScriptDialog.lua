@@ -1,3 +1,5 @@
+local addonName, addon = ...
+local L = addon.L
 ------------------------------------
 Outfitter._EditScriptDialog = {}
 ------------------------------------
@@ -35,7 +37,7 @@ end
 function Outfitter._EditScriptDialog:Open(pOutfit, pShowSource)
 	self.Outfit = pOutfit
 	
-	self.Widgets.Title:SetText(string.format(Outfitter.cEditScriptTitle, pOutfit:GetName()))
+	self.Widgets.Title:SetText(string.format(L.cEditScriptTitle, pOutfit:GetName()))
 	
 	local vScript = Outfitter:GetScript(pOutfit)
 	
@@ -109,10 +111,10 @@ function Outfitter._EditScriptDialog:LoadScript(pScript)
 	local vFunction, vMessage = loadstring(Outfitter.cScriptPrefix..pScript..Outfitter.cScriptSuffix, "Script for "..(self.Outfit.Name or "untitled outfit"))
 	
 	if vMessage then
-		local _, _, vLine, vMessage2 = string.find(vMessage, Outfitter.cExtractErrorFormat)
+		local _, _, vLine, vMessage2 = string.find(vMessage, L.cExtractErrorFormat)
 		
 		if vLine then
-			vMessage = string.format(Outfitter.cScriptErrorFormat, vLine - Outfitter.cScriptPrefixNumLines, vMessage2)
+			vMessage = string.format(L.cScriptErrorFormat, vLine - Outfitter.cScriptPrefixNumLines, vMessage2)
 		end
 	end
 	
@@ -141,7 +143,7 @@ function Outfitter._EditScriptDialog:SetPresetScriptID(pID)
 	
 	if not vPresetScript then
 		self.SelectedScriptID = "CUSTOM"
-		self.Widgets.PresetScript:SetCurrentValueText(Outfitter.cCustom)
+		self.Widgets.PresetScript:SetCurrentValueText(L.cCustom)
 		return
 	end
 	
@@ -320,7 +322,7 @@ function Outfitter._EditScriptDialog:ConstructSettingsFields(pSettings)
 					local vZoneButton = getglobal(vFrame:GetName().."ZoneButton")
 					
 					vZoneButton.GetTextFunc = getglobal("Get"..vType.."Text")
-					vZoneButton:SetText(string.format(Outfitter.cInsertFormat, vZoneButton.GetTextFunc()))
+					vZoneButton:SetText(string.format(L.cInsertFormat, vZoneButton.GetTextFunc()))
 				end
 				
 				-- Show it
@@ -329,7 +331,7 @@ function Outfitter._EditScriptDialog:ConstructSettingsFields(pSettings)
 			end
 		end
 	else -- if pSettings.Inputs
-		self.Widgets.SettingsDescription:SetText(pSettings.Description or Outfitter.cNoScriptSettings)
+		self.Widgets.SettingsDescription:SetText(pSettings.Description or L.cNoScriptSettings)
 	end
 	
 	self:SetScriptSettings()
@@ -438,7 +440,7 @@ end
 function Outfitter.EditorScript_TextChanged(pEditBox)
 	local vDialog = pEditBox.Dialog
 	
-	vDialog.Widgets.SourceStatusMessage:SetText(Outfitter.cTyping)
+	vDialog.Widgets.SourceStatusMessage:SetText(L.cTyping)
 	
 	Outfitter.SchedulerLib:RescheduleTask(1.5, vDialog.CheckScriptErrors, vDialog)
 end

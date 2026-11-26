@@ -1,3 +1,5 @@
+local addonName, addon = ...
+local L = addon.L
 Outfitter.EquipmentUpdateCount = 0
 
 ----------------------------------------
@@ -1364,6 +1366,6 @@ function Outfitter.OutfitStack:GetCurrentOutfitInfo()
 	if vOutfit and vOutfit:GetName() then
 		return vOutfit:GetName(), vOutfit
 	else
-		return Outfitter.cCustom, vOutfit
+		return L.cCustom, vOutfit
 	end
 end

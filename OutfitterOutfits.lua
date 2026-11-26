@@ -52,7 +52,7 @@ function Outfitter._OutfitMethods:AddNewItems(pNewItems)
 		if not vCheckbox:GetChecked()
 		or not vCheckbox.IsUnknown then
 			self:SetItem(vInventorySlot, vNewItem)
-			Outfitter:NoteMessage(Outfitter.cAddingItem, vNewItem.Name, self:GetName())
+			Outfitter:NoteMessage(L.cAddingItem, vNewItem.Name, self:GetName())
 		end
 
 		-- Add the new items to the current compiled outfit

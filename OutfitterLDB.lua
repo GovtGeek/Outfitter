@@ -1,8 +1,10 @@
+local addonName, addon = ...
+local L = addon.L
 Outfitter.LDB = {}
 
 function Outfitter.LDB:Initialize()
 	self.LDB = LibStub("LibDataBroker-1.1", true)
-	self.DataObj = self.LDB:NewDataObject(Outfitter.cTitle,
+	self.DataObj = self.LDB:NewDataObject(L.cTitle,
 	{
 		type = "data source",
 		icon = "Interface\\Icons\\INV_Chest_Cloth_21",
@@ -22,7 +24,7 @@ function Outfitter.LDB:OutfitEvent(pEvent, pOutfitName, pOutfit)
 		self.DataObj.text = vOutfitName
 		self.DataObj.icon = Outfitter.OutfitBar:GetOutfitTexture(vOutfit)
 	else
-		self.DataObj.text = Outfitter.cTitle
+		self.DataObj.text = L.cTitle
 		self.DataObj.icon = "Interface\\AddOns\\Outfitter\\Textures\\Icon"
 	end
 end

@@ -1,3 +1,5 @@
+local addonName, addon = ...
+local L = addon.L
 ----------------------------------------
 -- General
 ----------------------------------------
@@ -480,7 +482,7 @@ function Outfitter._ItemInfo:ParseGemLinkForUniqueEquips(link)
 	for line in Outfitter.TooltipLib:TooltipLines(tooltip) do
 		--if line.leftText then print(line.leftText) end
 		-- Check for Unique-Equipped
-		local type, count = line.leftText:match(Outfitter.cUniqueEquippedSearchPattern)
+		local type, count = line.leftText:match(L.cUniqueEquippedSearchPattern)
 		if type then
 			--print("Unique") --DAC
 			return type, tonumber(count)
@@ -506,7 +508,7 @@ function Outfitter._ItemInfo:ParseTooltipLine(text, color)
 	end
 
 	-- Check for Unique-Equipped
-	local type, count = text:match(Outfitter.cUniqueEquippedSearchPattern)
+	local type, count = text:match(L.cUniqueEquippedSearchPattern)
 	if type then
 		self.UniqueType = type
 		self.UniqueCount = tonumber(count)
@@ -514,7 +516,7 @@ function Outfitter._ItemInfo:ParseTooltipLine(text, color)
 	end
 
 	-- Check for Requires
-	if text:match(Outfitter.cRequiresPrefix) then
+	if text:match(L.cRequiresPrefix) then
 		local hsvColor = Outfitter:RGBToHSV(color)
 		self.FailedRequirements = hsvColor.s > 0.2 and hsvColor.v > 0.2 and (hsvColor.h < 50 or hsvColor.h > 310)
 		return

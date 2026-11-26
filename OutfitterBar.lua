@@ -1,3 +1,5 @@
+local addonName, addon = ...
+local L = addon.L
 -- Global Backdrops
 BACKDROP_OUTFITTER_DIALOG_32_32 = {
 	bgFile = "Interface\\Addons\\Outfitter\\Textures\\DialogBox-Background",
@@ -61,9 +63,9 @@ Outfitter.OutfitBar.cDefaultScriptIcons =
 }
 -- Give the birthday suit a special icon (no birthday cake icon in Vanilla)
 if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
-	Outfitter.OutfitBar.cDefaultScriptIcons[Outfitter.cNakedOutfit] = 237360
+	Outfitter.OutfitBar.cDefaultScriptIcons[L.cNakedOutfit] = 237360
 else
-	Outfitter.OutfitBar.cDefaultScriptIcons[Outfitter.cNakedOutfit] = 134140
+	Outfitter.OutfitBar.cDefaultScriptIcons[L.cNakedOutfit] = 134140
 end
 
 function Outfitter.OutfitBar:Construct()
@@ -937,12 +939,12 @@ function Outfitter.OutfitBar._ChooseIconDialog:Construct()
 
 	-- Icon sets
 	self.iconSets = {
-		{id = "Recommend", name = Outfitter.cSuggestedIcons},
-		{id = "Spellbook", name = Outfitter.cSpellbookIcons},
-		{id = "Inventory", name = Outfitter.cYourItemIcons},
-		{id = "All", name = Outfitter.cEveryIcon},
-		{id = "Items", name = Outfitter.cItemIcons},
-		{id = "Abilities", name = Outfitter.cAbilityIcons},
+		{id = "Recommend", name = L.cSuggestedIcons},
+		{id = "Spellbook", name = L.cSpellbookIcons},
+		{id = "Inventory", name = L.cYourItemIcons},
+		{id = "All", name = L.cEveryIcon},
+		{id = "Items", name = L.cItemIcons},
+		{id = "Abilities", name = L.cAbilityIcons},
 	}
 
 	-- Set the default icon set
@@ -957,7 +959,7 @@ function Outfitter.OutfitBar._ChooseIconDialog:Open(pOutfit)
 		self.SelectedTexture = Outfitter.OutfitBar.cWildcardIcon
 	end
 
-	self.Widgets.Title:SetText(string.format(Outfitter.cChooseIconTitle, pOutfit:GetName()))
+	self.Widgets.Title:SetText(string.format(L.cChooseIconTitle, pOutfit:GetName()))
 	self.Widgets.FilterEditBox:SetText("")
 	self:SetIconSetID(self.IconSetID)
 
@@ -1122,7 +1124,7 @@ function Outfitter.OutfitBar._IconButton:OnEnter()
 	local vTextureName
 
 	if self.Texture == Outfitter.OutfitBar.cWildcardIcon then
-		vTextureName = Outfitter.cOutfitterDecides
+		vTextureName = L.cOutfitterDecides
 	else
 		vTextureName = self.Texture
 	end
@@ -1452,22 +1454,22 @@ function Outfitter.OutfitBar._SettingsDialog:Construct()
 	self:SetWidth(180)
 	self:SetHeight(245)
 
-	self.SizeSlider = self:NewSlider(Outfitter.cOutfitBarSizeLabel, 0.5, 1.5, Outfitter.cOutfitBarSmallSizeLabel, Outfitter.cOutfitBarLargeSizeLabel, self.SizeSlider_OnValueChanged)
+	self.SizeSlider = self:NewSlider(L.cOutfitBarSizeLabel, 0.5, 1.5, L.cOutfitBarSmallSizeLabel, L.cOutfitBarLargeSizeLabel, self.SizeSlider_OnValueChanged)
 	self.SizeSlider:SetPoint("TOP", self, "TOP", 0, -27)
 
-	self.AlphaSlider = self:NewSlider(Outfitter.cOutfitBarAlphaLabel, 0, 1, nil, nil, self.AlphaSlider_OnValueChanged)
+	self.AlphaSlider = self:NewSlider(L.cOutfitBarAlphaLabel, 0, 1, nil, nil, self.AlphaSlider_OnValueChanged)
 	self.AlphaSlider:SetPoint("TOPLEFT", self.SizeSlider, "BOTTOMLEFT", 0, -30)
 
-	self.CombatAlphaSlider = self:NewSlider(Outfitter.cOutfitBarCombatAlphaLabel, 0, 1, nil, nil, self.CombatAlphaSlider_OnValueChanged)
+	self.CombatAlphaSlider = self:NewSlider(L.cOutfitBarCombatAlphaLabel, 0, 1, nil, nil, self.CombatAlphaSlider_OnValueChanged)
 	self.CombatAlphaSlider:SetPoint("TOPLEFT", self.AlphaSlider, "BOTTOMLEFT", 0, -30)
 
-	self.VerticalCheckbutton = self:NewCheckbutton(Outfitter.cOutfitBarVerticalLabel, self.VerticalCheckbutton_OnClick)
+	self.VerticalCheckbutton = self:NewCheckbutton(L.cOutfitBarVerticalLabel, self.VerticalCheckbutton_OnClick)
 	self.VerticalCheckbutton:SetPoint("TOPLEFT", self.CombatAlphaSlider, "BOTTOMLEFT", -5, -15)
 
-	self.LockPositionCheckbutton = self:NewCheckbutton(Outfitter.cOutfitBarLockPositionLabel, self.LockPositionCheckbutton_OnClick)
+	self.LockPositionCheckbutton = self:NewCheckbutton(L.cOutfitBarLockPositionLabel, self.LockPositionCheckbutton_OnClick)
 	self.LockPositionCheckbutton:SetPoint("TOPLEFT", self.VerticalCheckbutton, "BOTTOMLEFT", 0, 7)
 
-	self.HideBackgroundCheckbutton = self:NewCheckbutton(Outfitter.cOutfitBarHideBackgroundLabel, self.HideBackgroundCheckbutton_OnClick)
+	self.HideBackgroundCheckbutton = self:NewCheckbutton(L.cOutfitBarHideBackgroundLabel, self.HideBackgroundCheckbutton_OnClick)
 	self.HideBackgroundCheckbutton:SetPoint("TOPLEFT", self.LockPositionCheckbutton, "BOTTOMLEFT", 0, 7)
 
 	self:Hide() -- Hidden by default
@@ -1683,7 +1685,7 @@ function Outfitter.OutfitBar._DragBar:OnDragStart()
 	if not Outfitter.Settings.OutfitBar.LockPosition then
 		Outfitter:StartMovingFrame(self.OutfitBar.DragBar1)
 	else
-		Outfitter:ErrorMessage(Outfitter.cPositionLockedError)
+		Outfitter:ErrorMessage(L.cPositionLockedError)
 	end
 end
 

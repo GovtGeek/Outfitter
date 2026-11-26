@@ -1,8 +1,5 @@
-----------------------------------------
--- Outfitter Copyright 2009-2018 John Stephen
--- All rights reserved, unauthorized redistribution is prohibited
-----------------------------------------
-
+local addonName, addon = ...
+local L = addon.L
 ----------------------------------------
 Outfitter._AboutView = {}
 ----------------------------------------
@@ -15,19 +12,19 @@ function Outfitter._AboutView:Construct(pParent)
 	self.Title = self:CreateFontString(nil, "OVERLAY", "GameFontNormalLarge")
 	self.Title:SetPoint("TOP", self, "TOP", -4, -36)
 	self.Title:SetWidth(230)
-	self.Title:SetText(Outfitter.cAboutTitle:format(Outfitter.cVersion))
+	self.Title:SetText(L.cAboutTitle:format(L.cVersion))
 
 	self.AuthorText = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	self.AuthorText:SetPoint("TOP", self.Title, "BOTTOM", 0, -13)
 	self.AuthorText:SetWidth(230)
 	self.AuthorText:SetJustifyH("CENTER")
-	self.AuthorText:SetText(Outfitter.cAboutAuthor)
+	self.AuthorText:SetText(L.cAboutAuthor)
 
 	self.ThanksText = self:CreateFontString(nil, "OVERLAY", "GameFontNormal")
 	self.ThanksText:SetPoint("TOP", self.AuthorText, "BOTTOM", 0, 0)
 	self.ThanksText:SetWidth(230)
 	self.ThanksText:SetJustifyH("CENTER")
-	self.ThanksText:SetText(Outfitter.cAboutThanks)
+	self.ThanksText:SetText(L.cAboutThanks)
 
 	self.Credits = Outfitter:New(Outfitter._Credits, self)
 	self.Credits:SetPoint("TOP", self.ThanksText, "BOTTOM", 0, -10)
@@ -38,7 +35,7 @@ function Outfitter._AboutView:Construct(pParent)
 	self.CopyrightText:SetPoint("BOTTOM", self.Credits, "BOTTOM", 0, 0)
 	self.CopyrightText:SetWidth(230)
 	self.CopyrightText:SetJustifyH("CENTER")
-	self.CopyrightText:SetText(Outfitter.cAboutCopyright)
+	self.CopyrightText:SetText(L.cAboutCopyright)
 
 end
 
