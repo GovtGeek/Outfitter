@@ -34,7 +34,11 @@ function Addon.UIElementsLib:EndDialog(pDialog)
 		if vDialog == pDialog then
 			table.remove(self.OpenDialogs, vIndex)
 			if pDialog:GetName() ~= nil then
-				table.remove(UISpecialFrames, pDialog:GetName())
+				for uiIndex, frameName in pairs(UISpecialFrames) do
+					if frameName == pDialog:GetName() then
+						table.remove(UISpecialFrames, uiIndex)
+					end
+				end
 			end
 			return
 		end
