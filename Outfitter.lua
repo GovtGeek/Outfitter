@@ -7806,12 +7806,22 @@ function Outfitter._ExtendedCompareTooltip:Construct()
 		self:HideCompareItems()
 	end)
 
-	TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (tooltip)
-		if tooltip ~= GameTooltip then return end
-		if not IsModifiedClick("COMPAREITEMS") then
-			self:HideCompareItems()
-		end
-	end)
+	if type(TooltipDataProcessor) == "table" then
+		TooltipDataProcessor.AddTooltipPostCall(Enum.TooltipDataType.Item, function (tooltip)
+			if tooltip ~= GameTooltip then return end
+			if not IsModifiedClick("COMPAREITEMS") then
+				self:HideCompareItems()
+			end
+		end)
+	else
+		-- Old way of hooking tooltip when an item is assigned
+		GameTooltip:HookScript("OnTooltipSetItem", function (tooltip)
+			if tooltip ~= GameTooltip then return end
+			if not IsModifiedClick("COMPAREITEMS") then
+				self:HideCompareItems()
+			end
+		end)
+	end
 
 	--[[
 	if WOW_PROJECT_ID == WOW_PROJECT_MAINLINE then
