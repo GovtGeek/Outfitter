@@ -28,8 +28,11 @@ function Outfitter._FlyoutQuickSlots:Construct()
 		return vNumItems
 	end
 
-	hooksecurefunc(vFlyoutSettings, "getItemsFunc", Outfitter._FlyoutQuickSlots._getItemsFunc)
-	hooksecurefunc(vFlyoutSettings, "postGetItemsFunc", Outfitter._FlyoutQuickSlots._postGetItemsFunc)
+	-- Assume that if getItemsFunc is nil that we created vFlyoutSettings as {} and don't have anything to hook to
+	if vFlyoutSettings.getItemsFunc then
+		hooksecurefunc(vFlyoutSettings, "getItemsFunc", Outfitter._FlyoutQuickSlots._getItemsFunc)
+		hooksecurefunc(vFlyoutSettings, "postGetItemsFunc", Outfitter._FlyoutQuickSlots._postGetItemsFunc)
+	end
 	--[[
 	local vOrigGetItemsFunc = vFlyoutSettings.getItemsFunc
 	vFlyoutSettings.getItemsFunc = function (pSlotID, pItemTable, ...)
