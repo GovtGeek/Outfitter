@@ -3,7 +3,7 @@
 ## X-Original-Author: John Stephen
 ## X-Credits: Mundocani, Miv, Gogo, LemonDrake
 ## Title: Outfitter
-## Version: 5.5.4.6
+## Version: 5.5.4.7
 ## Notes: Clothing and weapon management and automated equipment changes
 ## OptionalDeps:
 ## RequiredDeps:
@@ -60,6 +60,8 @@ OutfitterAbout.lua
 
 OutfitterLDB.lua
 
+Templates/Vanilla.xml [AllowLoadGameType vanilla]
+Templates/Standard.xml [ExcludeLoadGameType vanilla]
 Outfitter.xml [ExcludeLoadGameType standard]
 Mainline/Outfitter.xml [AllowLoadGameType standard]
 OutfitterBar.xml
